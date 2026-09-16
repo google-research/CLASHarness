@@ -1,0 +1,422 @@
+{
+  "generated_at": "2026-08-04T16:42:09",
+  "revert_manifest": "260804_visible_refs_repair/revert_manifest.json (generator-side backup, not published)",
+  "what": "Rounds that were provably unwinnable BEFORE the visible_refs repair. Eval rows collected before the repair should be dropped for these (scenario_slug, round_id) pairs; they measure a corpus defect, not the model.",
+  "corpora": {
+    "conflict_vlm_v8_3.6_flash": {
+      "corpus_dir": "data/scenarios/conflict_vlm_v8_3.6_flash",
+      "scenarios_scanned": 60,
+      "scenarios_reverted": 43,
+      "rounds_reverted": 194,
+      "pre_repair_unwinnable": [
+        {
+          "scenario_slug": "access_request_approval_v03",
+          "round_id": "r01",
+          "value": "READ_ONLY_RESTRICTED",
+          "tier": "invisible-asset",
+          "holders": [
+            "iam_portal_access_scope_matrix",
+            "iam_portal_summary_rollup_20250218_100000"
+          ]
+        },
+        {
+          "scenario_slug": "barrier_sync_deployment_v01",
+          "round_id": "r03",
+          "value": "ERR-DATA-BACKFILL-409",
+          "tier": "invisible-asset",
+          "holders": [
+            "ops_console_gate_board"
+          ]
+        },
+        {
+          "scenario_slug": "collaborative_contract_review_v01",
+          "round_id": "r01",
+          "value": "REG-DOC-8842-V1",
+          "tier": "invisible-asset",
+          "holders": [
+            "review_management_console_review_board"
+          ]
+        },
+        {
+          "scenario_slug": "collaborative_contract_review_v01",
+          "round_id": "r06",
+          "value": "v2.4.1-auth-proxy-fix",
+          "tier": "invisible-asset",
+          "holders": [
+            "security_ops_dashboard_telemetry_chart",
+            "security_ops_dashboard_telemetry_chart_20241024_101000"
+          ]
+        },
+        {
+          "scenario_slug": "coordinated_containment_v01",
+          "round_id": "r01",
+          "value": "5,420 MB/h",
+          "tier": "invisible-asset",
+          "holders": [
+            "ir_console_containment_board"
+          ]
+        },
+        {
+          "scenario_slug": "coordinated_containment_v01",
+          "round_id": "r02",
+          "value": "ACC-8842-ALEX-M",
+          "tier": "invisible-asset",
+          "holders": [
+            "ir_console_containment_board"
+          ]
+        },
+        {
+          "scenario_slug": "coordinated_containment_v02",
+          "round_id": "r03",
+          "value": "245 req/min",
+          "tier": "invisible-asset",
+          "holders": [
+            "secops_console_containment_board",
+            "secops_console_containment_board_20250514_093500"
+          ]
+        },
+        {
+          "scenario_slug": "coordinated_containment_v03",
+          "round_id": "r02",
+          "value": "CTRL-SET-4092-QUAD",
+          "tier": "invisible-asset",
+          "holders": [
+            "ir_console_containment_board"
+          ]
+        },
+        {
+          "scenario_slug": "deadlock_multi_approval_v01",
+          "round_id": "r01",
+          "value": "4,280 ms",
+          "tier": "invisible-asset",
+          "holders": [
+            "ops_console_telemetry_status"
+          ]
+        },
+        {
+          "scenario_slug": "expiring_resource_hold_v02",
+          "round_id": "r02",
+          "value": "285 s",
+          "tier": "invisible-asset",
+          "holders": [
+            "cluster_console_reservation_board_r02",
+            "lab_scheduler_ui_cache_audit_20240331_093000"
+          ]
+        },
+        {
+          "scenario_slug": "incident_commander_selection_v02",
+          "round_id": "r01",
+          "value": "WRITE_LOCKED_EXCLUSIVE",
+          "tier": "invisible-asset",
+          "holders": [
+            "ops_console_devops_status_dashboard"
+          ]
+        },
+        {
+          "scenario_slug": "it_deployment_gate_v02",
+          "round_id": "r02",
+          "value": "75.0%",
+          "tier": "invisible-asset",
+          "holders": [
+            "deploy_console_gate_status_summary_20250228_101000",
+            "deploy_console_telemetry_readout_20250228_094000",
+            "governance_portal_authorization_board"
+          ]
+        },
+        {
+          "scenario_slug": "it_deployment_gate_v03",
+          "round_id": "r02",
+          "value": "4-GATE STRICT GOVERNANCE",
+          "tier": "invisible-asset",
+          "holders": [
+            "governance_dashboard_authorization_board"
+          ]
+        },
+        {
+          "scenario_slug": "multi_tab_slot_monitoring_v03",
+          "round_id": "r01",
+          "value": "320 s",
+          "tier": "invisible-asset",
+          "holders": [
+            "booking_dashboard_slot_board"
+          ]
+        },
+        {
+          "scenario_slug": "multi_tab_slot_monitoring_v03",
+          "round_id": "r02",
+          "value": "TX-LOCK-8841-B",
+          "tier": "invisible-asset",
+          "holders": [
+            "booking_dashboard_slot_board"
+          ]
+        },
+        {
+          "scenario_slug": "sla_support_response_v01",
+          "round_id": "r01",
+          "value": "3 min 42 s",
+          "tier": "invisible-asset",
+          "holders": [
+            "support_portal_support_queue"
+          ]
+        },
+        {
+          "scenario_slug": "sla_support_response_v03",
+          "round_id": "r01",
+          "value": "10 min 15 sec",
+          "tier": "invisible-asset",
+          "holders": [
+            "support_dashboard_support_queue"
+          ]
+        },
+        {
+          "scenario_slug": "sla_support_response_v03",
+          "round_id": "r02",
+          "value": "SEC-8821-V9",
+          "tier": "invisible-asset",
+          "holders": [
+            "support_dashboard_support_queue"
+          ]
+        }
+      ],
+      "still_unwinnable": []
+    },
+    "conflict_vlm_sonnet_5": {
+      "corpus_dir": "data/scenarios/conflict_vlm_sonnet_5",
+      "scenarios_scanned": 60,
+      "scenarios_reverted": 28,
+      "rounds_reverted": 138,
+      "pre_repair_unwinnable": [
+        {
+          "scenario_slug": "barrier_sync_deployment_v02",
+          "round_id": "r02",
+          "value": "7/12",
+          "tier": "invisible-asset",
+          "holders": [
+            "deploy_console_asset_bg_01"
+          ]
+        },
+        {
+          "scenario_slug": "deadlock_multi_approval_v01",
+          "round_id": "r02",
+          "value": "MUTUAL_WAIT_DETECTED",
+          "tier": "invisible-asset",
+          "holders": [
+            "approval_console_approval_queue",
+            "approval_console_approval_queue_20240314_094500",
+            "approval_console_approval_queue_20240314_101600",
+            "approval_console_approval_queue_20240314_105010",
+            "approval_console_approval_queue_20240314_110100"
+          ]
+        },
+        {
+          "scenario_slug": "deadlock_multi_approval_v02",
+          "round_id": "r01",
+          "value": "8 min",
+          "tier": "invisible-asset",
+          "holders": [
+            "metrics_dashboard_queue_duration_monitor_20240503_105512",
+            "metrics_dashboard_queue_export_mirror_20240503_094500",
+            "ops_console_approval_queue",
+            "ops_console_approval_queue_20240503_095205",
+            "ops_console_metrics_dashboard_escalation_tracker_20240503_110430",
+            "ops_console_queue_snapshot_history_20240503_102900"
+          ]
+        },
+        {
+          "scenario_slug": "it_deployment_gate_v01",
+          "round_id": "r01",
+          "value": "2024-06-01T09:14:00Z",
+          "tier": "invisible-asset",
+          "holders": [
+            "ops_console_authorization_board_r1",
+            "ops_console_gate_eligibility_probe_r6_20240601_110715"
+          ]
+        },
+        {
+          "scenario_slug": "it_deployment_gate_v01",
+          "round_id": "r02",
+          "value": "GATE-WRITE-ERR-4482",
+          "tier": "invisible-asset",
+          "holders": [
+            "ops_console_authorization_board_r2",
+            "ops_console_authorization_board_r9_post_cutover_20240601_114502"
+          ]
+        },
+        {
+          "scenario_slug": "payment_chargeback_dispute_v01",
+          "round_id": "r02",
+          "value": "CACHE STALE — REFRESH REQUIRED",
+          "tier": "invisible-asset",
+          "holders": [
+            "metrics_dashboard_asset_bg_01"
+          ]
+        },
+        {
+          "scenario_slug": "satellite_ground_station_handover_v01",
+          "round_id": "r04",
+          "value": "3.4 dB",
+          "tier": "invisible-asset",
+          "holders": [
+            "metrics_dashboard_asset_snr_trend_chart_01"
+          ]
+        },
+        {
+          "scenario_slug": "warehouse_robotics_safety_halt_v01",
+          "round_id": "r05",
+          "value": "52.3 A",
+          "tier": "invisible-asset",
+          "holders": [
+            "metrics_dashboard_conveyor_current_draw_chart"
+          ]
+        },
+        {
+          "scenario_slug": "warehouse_robotics_safety_halt_v03",
+          "round_id": "r05",
+          "value": "2024-06-18T09:14:21Z",
+          "tier": "invisible-asset",
+          "holders": [
+            "ops_console_conveyor_current_draw_trend_chart"
+          ]
+        }
+      ],
+      "still_unwinnable": []
+    }
+  },
+  "exclude": [
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "access_request_approval_v03",
+      "r01"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "barrier_sync_deployment_v01",
+      "r03"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "collaborative_contract_review_v01",
+      "r01"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "collaborative_contract_review_v01",
+      "r06"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "coordinated_containment_v01",
+      "r01"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "coordinated_containment_v01",
+      "r02"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "coordinated_containment_v02",
+      "r03"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "coordinated_containment_v03",
+      "r02"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "deadlock_multi_approval_v01",
+      "r01"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "expiring_resource_hold_v02",
+      "r02"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "incident_commander_selection_v02",
+      "r01"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "it_deployment_gate_v02",
+      "r02"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "it_deployment_gate_v03",
+      "r02"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "multi_tab_slot_monitoring_v03",
+      "r01"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "multi_tab_slot_monitoring_v03",
+      "r02"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "sla_support_response_v01",
+      "r01"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "sla_support_response_v03",
+      "r01"
+    ],
+    [
+      "conflict_vlm_v8_3.6_flash",
+      "sla_support_response_v03",
+      "r02"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "barrier_sync_deployment_v02",
+      "r02"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "deadlock_multi_approval_v01",
+      "r02"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "deadlock_multi_approval_v02",
+      "r01"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "it_deployment_gate_v01",
+      "r01"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "it_deployment_gate_v01",
+      "r02"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "payment_chargeback_dispute_v01",
+      "r02"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "satellite_ground_station_handover_v01",
+      "r04"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "warehouse_robotics_safety_halt_v01",
+      "r05"
+    ],
+    [
+      "conflict_vlm_sonnet_5",
+      "warehouse_robotics_safety_halt_v03",
+      "r05"
+    ]
+  ]
+}

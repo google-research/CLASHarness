@@ -1,0 +1,14 @@
+{
+  "slug": "event_capacity_replan",
+  "domain": "event_operations",
+  "title": "Event Capacity Replan",
+  "target_rounds": 24,
+  "core_conflict": "An event plan says full capacity is approved, while venue updates and registration evidence require capped admission, waitlist handling, and revised communications.",
+  "participants": ["Logan", "Finley", "Ari", "Shawn"],
+  "required_constraints": [
+    "include contradictory event plan, venue, and registration evidence",
+    "include workspace files, operations emails, task-board replan items, and venue/calendar constraints",
+    "include dynamic updates that change capacity, waitlist, or communication requirements after early rounds",
+    "emphasize calendar/task coordination, dynamic capacity updates, and workflow re-planning"
+  ]
+}

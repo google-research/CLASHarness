@@ -1,0 +1,76 @@
+{
+  "slug": "multi_device_pairing",
+  "domain": "secure multi-device account linking through an ordered, expiring pairing handshake",
+  "title": "Expiring Multi-Step Pairing Handshake for a Field-Ops Dispatch Tablet",
+  "target_rounds": 10,
+  "archetype": "multi_device_pairing",
+  "core_conflict": "A newly issued field-operations tablet must be paired to the secure dispatch account before the shift can begin. The pairing system only links a device through an ORDERED handshake: open a pairing session, have the primary console SHOW a one-time code, have the tablet ENTER that code, and only then CONFIRM the link. The entire session is valid for only a short window (300 seconds) measured from when it was started, and it auto-expires if the handshake is left incomplete — an expired session cannot be confirmed and must be restarted from scratch. A stakeholder pressures the coordinator to finish unrelated onboarding paperwork and skip straight to confirming, tempting the coordinator both to perform the steps out of order and to let the session's window lapse. The pairing console dashboard is the decisive evidence for which device slot is the correct tablet to pair and how much of the session window remains; the coordinator must walk the handshake in order on the right device and confirm BEFORE the window closes — confirming out of order or after the window has elapsed fails and emits no completed pairing.",
+  "conflict_taxonomy": [
+    "multi_device_pairing",
+    "time_window_expiration"
+  ],
+  "difficulty_challenges": [
+    "workflow_completion",
+    "information_transfer",
+    "multi_source_reasoning"
+  ],
+  "force_vision_locus": true,
+  "require_protocol_completion": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Devon_Field_Ops_Lead",
+    "Nadia_Device_Provisioning",
+    "Theo_Shift_Coordinator",
+    "Ilse_Security_Officer"
+  ],
+  "required_constraints": [
+    "The tablet can only be linked through an ordered pairing handshake that must be driven in sequence: 'start' a session, 'show-code' on the console, 'enter-code' on the peer device, then 'confirm'. Skipping or reordering a step (e.g. confirming before the code has been entered) fails, and the whole session is valid for only a short time window (300 seconds) measured from when it was started, auto-expiring if left incomplete. The coordinator must treat 'start then show-code then enter-code then confirm before the window closes' as the required sequence.",
+    "Theo Shift Coordinator presses the coordinator to first finish unrelated onboarding paperwork and jump straight to confirming the pairing; the coordinator must NOT skip a handshake step and must NOT let the session's window lapse while doing so — an out-of-order confirm or the window closing before confirmation is the failure the round grades against.",
+    "The coordinator must visually read the pairing console dashboard chart 'pairing_console.png' to identify which device slot is the correct tablet to pair (only one slot is the newly issued dispatch tablet with an open session) and how much of the session window remains, then write a pairing decision report '/reports/pairing_decision.md' naming the target device and the confirm-before deadline.",
+    "The coordinator starts the session with 'pairing start --device <device> --ttl 300', walks the handshake in order with 'pairing show-code --device <device>', 'pairing enter-code --device <device>', and 'pairing confirm --device <device>', advancing virtual time only with 'wait <seconds>' when it must and confirming only while the session is still live; a confirm attempted out of order or after the window has elapsed fails and emits no completed pairing, and the coordinator restarts the session rather than confirming an expired one.",
+    "Nadia Device Provisioning will only release the tablet's dispatch credentials after the coordinator sends a chat message citing the paired device id (read from the dashboard) and confirming the handshake completed before the window closed. Ilse Security Officer will not authorize the shift start until Nadia confirms the credentials were released."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "pairing"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "evidence": [
+    {
+      "id": "pairing_console",
+      "summary": "Device pairing console dashboard showing each device slot's pairing state (unpaired, session open, code shown, entered, confirmed), which slot is the newly issued dispatch tablet, and the countdown remaining on any active pairing session.",
+      "real_world_source": "dashboard_chart",
+      "role": "decisive"
+    },
+    {
+      "id": "pairing_runbook",
+      "summary": "Device provisioning runbook stating the required handshake order (start, show code, enter code, confirm) and that a session is valid for only 300 seconds from start and cannot be confirmed once it has expired.",
+      "real_world_source": "document",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

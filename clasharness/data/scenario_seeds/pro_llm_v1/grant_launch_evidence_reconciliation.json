@@ -1,0 +1,13 @@
+{
+  "slug": "grant_launch_evidence_reconciliation",
+  "domain": "research_operations",
+  "title": "Grant Launch Evidence Reconciliation",
+  "target_rounds": 24,
+  "core_conflict": "A stale launch summary says the grant release is ready, while newer owner notes and evidence logs require a gated launch.",
+  "participants": ["Avery", "Blair", "Casey", "Devon"],
+  "required_constraints": [
+    "include contradictory stale and final evidence",
+    "include workspace files and chat sessions",
+    "include dynamic updates that arrive after early rounds"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "slug": "model_release_safety_gate",
+  "domain": "ml_platform",
+  "title": "Model Release Safety Gate",
+  "target_rounds": 24,
+  "core_conflict": "A model release summary says the model can ship, while red-team, policy, and owner evidence require a gated release with safety mitigations.",
+  "participants": ["Arden", "Blake", "Cameron", "Dylan"],
+  "required_constraints": [
+    "include contradictory release-readiness summaries and current safety or policy evidence",
+    "include workspace files, safety-review emails, task-board mitigation items, and launch calendar windows",
+    "include dynamic updates that change red-team, mitigation, or policy status after early rounds",
+    "emphasize safety gate evaluation, release blocking, and evidence matrix reasoning"
+  ]
+}

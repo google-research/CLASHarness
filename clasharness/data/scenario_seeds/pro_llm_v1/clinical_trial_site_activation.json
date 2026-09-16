@@ -1,0 +1,14 @@
+{
+  "slug": "clinical_trial_site_activation",
+  "domain": "clinical_operations",
+  "title": "Clinical Trial Site Activation",
+  "target_rounds": 24,
+  "core_conflict": "A site activation checklist says enrollment can begin, while IRB, training, and delegation evidence require staged activation with compliance gates.",
+  "participants": ["Nora", "Owen", "Maya", "Leo"],
+  "required_constraints": [
+    "include contradictory site-readiness checklists and current compliance evidence",
+    "include workspace files, investigator emails, task-board training blockers, and activation calendar windows",
+    "include dynamic updates that change IRB, training, or delegation-log status after early rounds",
+    "emphasize compliance gating, evidence precedence, and update-aware activation decisions"
+  ]
+}

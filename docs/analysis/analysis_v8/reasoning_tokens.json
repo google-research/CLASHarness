@@ -1,0 +1,242 @@
+{
+ "3.5-flash": {
+  "low": {
+   "per_attempt": 236.3,
+   "per_task": 3945,
+   "zero_pct": 0.6,
+   "attempts": 10018,
+   "pass_pct": 13.5
+  },
+  "medium": {
+   "per_attempt": 449.3,
+   "per_task": 8800,
+   "zero_pct": 0.4,
+   "attempts": 11751,
+   "pass_pct": 3.2
+  },
+  "high": {
+   "per_attempt": 445.8,
+   "per_task": 8826,
+   "zero_pct": 0.4,
+   "attempts": 11879,
+   "pass_pct": 3.0
+  },
+  "mult_low_high": 1.89
+ },
+ "3.6-flash": {
+  "low": {
+   "per_attempt": 65.3,
+   "per_task": 704,
+   "zero_pct": 57.3,
+   "attempts": 6475,
+   "pass_pct": 18.5
+  },
+  "medium": {
+   "per_attempt": 231.3,
+   "per_task": 3568,
+   "zero_pct": 0.0,
+   "attempts": 9256,
+   "pass_pct": 20.2
+  },
+  "high": {
+   "per_attempt": 252.7,
+   "per_task": 4266,
+   "zero_pct": 0.0,
+   "attempts": 10127,
+   "pass_pct": 18.5
+  },
+  "mult_low_high": 3.87
+ },
+ "3.7-flash": {
+  "low": {
+   "per_attempt": 83.4,
+   "per_task": 1079,
+   "zero_pct": 39.1,
+   "attempts": 7769,
+   "pass_pct": 20.5
+  },
+  "medium": {
+   "per_attempt": 165.6,
+   "per_task": 2578,
+   "zero_pct": 0.0,
+   "attempts": 9341,
+   "pass_pct": 21.5
+  },
+  "high": {
+   "per_attempt": 233.0,
+   "per_task": 4237,
+   "zero_pct": 0.0,
+   "attempts": 10908,
+   "pass_pct": 20.3
+  },
+  "mult_low_high": 2.8
+ },
+ "3.1-pro": {
+  "low": {
+   "per_attempt": 93.6,
+   "per_task": 1002,
+   "zero_pct": 1.0,
+   "attempts": 6422,
+   "pass_pct": 8.3
+  },
+  "medium": {
+   "per_attempt": 118.0,
+   "per_task": 1394,
+   "zero_pct": 0.1,
+   "attempts": 7092,
+   "pass_pct": 9.8
+  },
+  "high": {
+   "per_attempt": 171.2,
+   "per_task": 2359,
+   "zero_pct": 0.2,
+   "attempts": 8269,
+   "pass_pct": 12.0
+  },
+  "mult_low_high": 1.83
+ },
+ "opus-4.8": {
+  "low": {
+   "per_attempt": 68.6,
+   "per_task": 717,
+   "zero_pct": 64.1,
+   "attempts": 6271,
+   "pass_pct": 21.3
+  },
+  "medium": {
+   "per_attempt": 126.1,
+   "per_task": 1493,
+   "zero_pct": 57.2,
+   "attempts": 7106,
+   "pass_pct": 23.8
+  },
+  "high": {
+   "per_attempt": 177.8,
+   "per_task": 2291,
+   "zero_pct": 51.4,
+   "attempts": 7729,
+   "pass_pct": 22.8
+  },
+  "mult_low_high": 2.59
+ },
+ "opus-5": {
+  "low": {
+   "per_attempt": 5.1,
+   "per_task": 45,
+   "zero_pct": 95.3,
+   "attempts": 5255,
+   "pass_pct": 23.5
+  },
+  "medium": {
+   "per_attempt": 17.6,
+   "per_task": 184,
+   "zero_pct": 88.7,
+   "attempts": 6259,
+   "pass_pct": 25.3
+  },
+  "high": {
+   "per_attempt": 46.5,
+   "per_task": 553,
+   "zero_pct": 76.3,
+   "attempts": 7149,
+   "pass_pct": 25.2
+  },
+  "mult_low_high": 9.07
+ },
+ "sonnet-5": {
+  "low": {
+   "per_attempt": 49.6,
+   "per_task": 406,
+   "zero_pct": 72.7,
+   "attempts": 4902,
+   "pass_pct": 13.8
+  },
+  "medium": {
+   "per_attempt": 114.4,
+   "per_task": 1095,
+   "zero_pct": 64.5,
+   "attempts": 5745,
+   "pass_pct": 17.0
+  },
+  "high": {
+   "per_attempt": 249.8,
+   "per_task": 2847,
+   "zero_pct": 53.0,
+   "attempts": 6840,
+   "pass_pct": 20.8
+  },
+  "mult_low_high": 5.03
+ },
+ "sol": {
+  "low": {
+   "per_attempt": 27.7,
+   "per_task": 301,
+   "zero_pct": 10.6,
+   "attempts": 6506,
+   "pass_pct": 20.8
+  },
+  "medium": {
+   "per_attempt": 57.8,
+   "per_task": 760,
+   "zero_pct": 9.7,
+   "attempts": 7894,
+   "pass_pct": 23.0
+  },
+  "high": {
+   "per_attempt": 94.0,
+   "per_task": 1354,
+   "zero_pct": 10.2,
+   "attempts": 8638,
+   "pass_pct": 24.5
+  },
+  "mult_low_high": 3.39
+ },
+ "luna": {
+  "low": {
+   "per_attempt": 29.1,
+   "per_task": 289,
+   "zero_pct": 23.4,
+   "attempts": 5953,
+   "pass_pct": 19.5
+  },
+  "medium": {
+   "per_attempt": 54.0,
+   "per_task": 632,
+   "zero_pct": 26.6,
+   "attempts": 7024,
+   "pass_pct": 17.7
+  },
+  "high": {
+   "per_attempt": 140.0,
+   "per_task": 1994,
+   "zero_pct": 29.0,
+   "attempts": 8545,
+   "pass_pct": 19.8
+  },
+  "mult_low_high": 4.82
+ },
+ "terra": {
+  "low": {
+   "per_attempt": 25.3,
+   "per_task": 243,
+   "zero_pct": 0.4,
+   "attempts": 5760,
+   "pass_pct": 17.7
+  },
+  "medium": {
+   "per_attempt": 57.2,
+   "per_task": 625,
+   "zero_pct": 0.1,
+   "attempts": 6557,
+   "pass_pct": 20.0
+  },
+  "high": {
+   "per_attempt": 142.5,
+   "per_task": 1760,
+   "zero_pct": 0.1,
+   "attempts": 7409,
+   "pass_pct": 20.0
+  },
+  "mult_low_high": 5.63
+ }
+}

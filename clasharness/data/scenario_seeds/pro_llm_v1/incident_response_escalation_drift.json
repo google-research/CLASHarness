@@ -1,0 +1,14 @@
+{
+  "slug": "incident_response_escalation_drift",
+  "domain": "security_operations",
+  "title": "Incident Response Escalation Drift",
+  "target_rounds": 24,
+  "core_conflict": "An early incident note says the regression was mitigated, while newer monitoring logs and owner updates show an unresolved customer-impacting escalation.",
+  "participants": ["Morgan", "Riley", "Sam", "Taylor"],
+  "required_constraints": [
+    "include contradictory stale mitigation notes and current incident evidence",
+    "include workspace files, email threads, task-board escalation items, and calendar incident-review windows",
+    "include dynamic updates that change severity, ownership, or customer-impact status after early rounds",
+    "emphasize state repair, escalation tracking, and stale incident assumption recovery"
+  ]
+}

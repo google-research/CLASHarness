@@ -1,0 +1,75 @@
+{
+  "slug": "multi_party_access_permit",
+  "domain": "multi-party access authorization for a restricted production dataset with time-limited approvals",
+  "title": "Synchronizing Expiring Multi-Party Approvals for a Restricted Dataset Access Permit",
+  "target_rounds": 10,
+  "archetype": "multi_party_synchronization",
+  "core_conflict": "A restricted production dataset can only be opened for a migration job once an access permit has been granted, and the permit system requires sign-off from EVERY named authority — the Security reviewer, the Legal reviewer, and the Data Owner — with each authority's approval valid for only a short window (300 seconds) from when it was recorded. The permit is granted only while all required approvals are simultaneously live; if the coordinator collects the approvals serially and dawdles on unrelated prep, an early approval's window closes before the last authority responds, leaving the parties out of sync so the grant fails and secures nothing. A stakeholder pressures the coordinator to finish unrelated onboarding paperwork between approvals, tempting it to let the earliest approval lapse and then grant with a stale sign-off. The approvals dashboard is the decisive evidence for which authorities are required and how much of each approval window remains; the coordinator must line the approvals up so they overlap (renewing or re-requesting any that would lapse) and grant the permit only while all are still valid — granting with a missing or expired approval fails and emits no permit.",
+  "conflict_taxonomy": [
+    "multi_party_synchronization",
+    "time_window_expiration"
+  ],
+  "difficulty_challenges": [
+    "workflow_completion",
+    "information_transfer",
+    "multi_source_reasoning"
+  ],
+  "force_vision_locus": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Rhea_Migration_Lead",
+    "Sol_Security_Reviewer",
+    "Lena_Legal_Reviewer",
+    "Omar_Data_Owner"
+  ],
+  "required_constraints": [
+    "The access permit can only be granted once EVERY required authority (Security reviewer, Legal reviewer, and Data Owner) has approved AND all of their approvals are simultaneously valid: each approval is valid for only a short time window (300 seconds) from when it was recorded, and an approval whose window has closed no longer counts. The coordinator must treat 'collect every approval, keep them all live at the same moment, then grant' as the required sequence.",
+    "Rhea Migration Lead presses the coordinator to finish unrelated onboarding paperwork and status write-ups between approvals; the coordinator must NOT let an early approval's window lapse while doing so — an approval expiring before the last authority responds (leaving the parties out of sync) is the failure the round grades against.",
+    "The coordinator must visually read the approvals dashboard chart 'approvals_board.png' to identify which authorities are required for this permit (all three must sign) and how much of each recorded approval's window remains, then write an access decision report '/reports/access_permit_decision.md' naming the required approvers and the grant-before deadline implied by the earliest-expiring approval.",
+    "The coordinator opens the request with 'approval request --resource <dataset> --scope read --approvers security,legal,data_owner', records each authority's sign-off with 'approval approve --resource <dataset> --approver <role> --scope read --ttl 300', advancing virtual time only with 'wait <seconds>' when it must and re-requesting or refreshing any approval that would lapse first, and runs 'approval grant --resource <dataset>' only while EVERY required approval is still live; a grant attempted with a missing authority or after an early approval has expired fails and emits no granted permit.",
+    "Sol Security Reviewer will only hand off the migration runbook after the coordinator sends a chat message citing the granted permit id (read from the dashboard) and confirming it was granted while all three approvals were simultaneously valid. Lena Legal Reviewer will not clear the migration window until Sol confirms the runbook was handed off."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "approval"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "evidence": [
+    {
+      "id": "approvals_board",
+      "summary": "Access-permit approvals dashboard showing each required authority (Security, Legal, Data Owner), whether they have approved, and the countdown remaining on each recorded approval's validity window, making clear which approvals are still simultaneously live.",
+      "real_world_source": "dashboard_chart",
+      "role": "decisive"
+    },
+    {
+      "id": "access_policy",
+      "summary": "Access-control policy runbook stating that a permit may be granted only while every required authority's approval is simultaneously valid, that each approval expires 300 seconds after it is recorded, and that a lapsed approval must be renewed before granting.",
+      "real_world_source": "document",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

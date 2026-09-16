@@ -1,0 +1,4981 @@
+{
+  "version": "agent_tools.v1",
+  "description": "Internal CLASHarness command/tool surface used by agents, GT commands, safety checks, and PRO generators.",
+  "families": [
+    {
+      "family": "calendar",
+      "domains": [
+        "calendar"
+      ],
+      "prefixes": [
+        "calendar",
+        "gcalcli"
+      ],
+      "commands": [
+        {
+          "name": "calendar.list",
+          "tokens": [
+            "calendar",
+            "list"
+          ],
+          "syntax": "calendar list [--from DATE] [--to DATE]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "description": "From.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--from"
+                }
+              },
+              "to": {
+                "type": "string",
+                "description": "To.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--to"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List calendar events."
+        },
+        {
+          "name": "calendar.add_event",
+          "tokens": [
+            "calendar",
+            "add-event"
+          ],
+          "syntax": "calendar add-event --title TITLE --start DATETIME [--location LOC] [--attendees A,B]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--title"
+                }
+              },
+              "start": {
+                "type": "string",
+                "description": "Start.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--start"
+                }
+              },
+              "location": {
+                "type": "string",
+                "description": "Location.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--location"
+                }
+              },
+              "attendees": {
+                "type": "string",
+                "description": "Attendees. Comma-separated.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--attendees"
+                }
+              }
+            },
+            "required": [
+              "title",
+              "start"
+            ]
+          },
+          "required_flags": [
+            "--title",
+            "--start"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "calendar_events_created"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Create a calendar event."
+        },
+        {
+          "name": "calendar.update_event",
+          "tokens": [
+            "calendar",
+            "update-event"
+          ],
+          "syntax": "calendar update-event --id ID [--title TITLE] [--start DATETIME] [--location LOC]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              },
+              "title": {
+                "type": "string",
+                "description": "Title.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--title"
+                }
+              },
+              "start": {
+                "type": "string",
+                "description": "Start.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--start"
+                }
+              },
+              "location": {
+                "type": "string",
+                "description": "Location.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--location"
+                }
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "required_flags": [
+            "--id"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "calendar_events_updated"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Update a calendar event."
+        },
+        {
+          "name": "calendar.delete_event",
+          "tokens": [
+            "calendar",
+            "delete-event"
+          ],
+          "syntax": "calendar delete-event --id ID",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "required_flags": [
+            "--id"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "calendar_events_deleted"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Delete a calendar event."
+        },
+        {
+          "name": "calendar.today",
+          "tokens": [
+            "calendar",
+            "today"
+          ],
+          "syntax": "calendar today --timezone TIMEZONE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "timezone": {
+                "type": "string",
+                "description": "Timezone.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--timezone"
+                }
+              }
+            },
+            "required": [
+              "timezone"
+            ]
+          },
+          "required_flags": [
+            "--timezone"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Return benchmark-local date for a timezone."
+        }
+      ]
+    },
+    {
+      "family": "email",
+      "domains": [
+        "email"
+      ],
+      "prefixes": [
+        "email"
+      ],
+      "commands": [
+        {
+          "name": "email.list",
+          "tokens": [
+            "email",
+            "list"
+          ],
+          "syntax": "email list [--folder FOLDER]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "folder": {
+                "type": "string",
+                "description": "Folder.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--folder"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List emails."
+        },
+        {
+          "name": "email.read",
+          "tokens": [
+            "email",
+            "read"
+          ],
+          "syntax": "email read --id ID",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "required_flags": [
+            "--id"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Read an email."
+        },
+        {
+          "name": "email.send",
+          "tokens": [
+            "email",
+            "send"
+          ],
+          "syntax": "email send --to EMAIL --subject SUBJECT --body BODY",
+          "args": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string",
+                "description": "To.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--to"
+                }
+              },
+              "subject": {
+                "type": "string",
+                "description": "Subject.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--subject"
+                }
+              },
+              "body": {
+                "type": "string",
+                "description": "Body.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--body"
+                }
+              }
+            },
+            "required": [
+              "to",
+              "subject",
+              "body"
+            ]
+          },
+          "required_flags": [
+            "--to",
+            "--subject",
+            "--body"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "emails_sent"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Send an email."
+        },
+        {
+          "name": "email.reply",
+          "tokens": [
+            "email",
+            "reply"
+          ],
+          "syntax": "email reply --id ID --body BODY",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              },
+              "body": {
+                "type": "string",
+                "description": "Body.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--body"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "body"
+            ]
+          },
+          "required_flags": [
+            "--id",
+            "--body"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "emails_sent"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Reply to an email."
+        },
+        {
+          "name": "email.move",
+          "tokens": [
+            "email",
+            "move"
+          ],
+          "syntax": "email move --id ID --folder FOLDER",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              },
+              "folder": {
+                "type": "string",
+                "description": "Folder.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--folder"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "folder"
+            ]
+          },
+          "required_flags": [
+            "--id",
+            "--folder"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "emails_moved"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Move an email to a folder."
+        },
+        {
+          "name": "email.mark",
+          "tokens": [
+            "email",
+            "mark"
+          ],
+          "syntax": "email mark --id ID --flag read|unread",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              },
+              "flag": {
+                "type": "string",
+                "enum": [
+                  "read",
+                  "unread"
+                ],
+                "description": "Flag. One of: read, unread.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--flag"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "flag"
+            ]
+          },
+          "required_flags": [
+            "--id",
+            "--flag"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Mark an email read or unread."
+        },
+        {
+          "name": "email.search",
+          "tokens": [
+            "email",
+            "search"
+          ],
+          "syntax": "email search --query QUERY",
+          "args": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Query.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--query"
+                }
+              }
+            },
+            "required": [
+              "query"
+            ]
+          },
+          "required_flags": [
+            "--query"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Search emails."
+        }
+      ]
+    },
+    {
+      "family": "weather",
+      "domains": [
+        "weather"
+      ],
+      "prefixes": [
+        "weather"
+      ],
+      "commands": [
+        {
+          "name": "weather.get",
+          "tokens": [
+            "weather",
+            "get"
+          ],
+          "syntax": "weather get --location LOCATION",
+          "args": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "Location.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--location"
+                }
+              }
+            },
+            "required": [
+              "location"
+            ]
+          },
+          "required_flags": [
+            "--location"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Get current weather."
+        },
+        {
+          "name": "weather.forecast",
+          "tokens": [
+            "weather",
+            "forecast"
+          ],
+          "syntax": "weather forecast --location LOCATION --days N",
+          "args": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "Location.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--location"
+                }
+              },
+              "days": {
+                "type": "string",
+                "description": "Days.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--days"
+                }
+              }
+            },
+            "required": [
+              "location",
+              "days"
+            ]
+          },
+          "required_flags": [
+            "--location",
+            "--days"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Get a weather forecast."
+        },
+        {
+          "name": "weather.alerts",
+          "tokens": [
+            "weather",
+            "alerts"
+          ],
+          "syntax": "weather alerts --location LOCATION",
+          "args": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "Location.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--location"
+                }
+              }
+            },
+            "required": [
+              "location"
+            ]
+          },
+          "required_flags": [
+            "--location"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Get weather alerts."
+        }
+      ]
+    },
+    {
+      "family": "file",
+      "domains": [
+        "file"
+      ],
+      "prefixes": [
+        "file"
+      ],
+      "commands": [
+        {
+          "name": "file.list",
+          "tokens": [
+            "file",
+            "list"
+          ],
+          "syntax": "file list [--path PATH]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--path"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List virtual workspace files."
+        },
+        {
+          "name": "file.create",
+          "tokens": [
+            "file",
+            "create"
+          ],
+          "syntax": "file create --path PATH --content CONTENT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--path"
+                }
+              },
+              "content": {
+                "type": "string",
+                "description": "Content.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--content"
+                }
+              }
+            },
+            "required": [
+              "path",
+              "content"
+            ]
+          },
+          "required_flags": [
+            "--path",
+            "--content"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "files_created"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Create or overwrite a virtual file."
+        },
+        {
+          "name": "file.read",
+          "tokens": [
+            "file",
+            "read"
+          ],
+          "syntax": "file read --path PATH",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--path"
+                }
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "required_flags": [
+            "--path"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Read a virtual file."
+        },
+        {
+          "name": "file.move",
+          "tokens": [
+            "file",
+            "move"
+          ],
+          "syntax": "file move --src SRC --dst DST",
+          "args": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "description": "SRC.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--src"
+                }
+              },
+              "dst": {
+                "type": "string",
+                "description": "DST.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--dst"
+                }
+              }
+            },
+            "required": [
+              "src",
+              "dst"
+            ]
+          },
+          "required_flags": [
+            "--src",
+            "--dst"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Move a virtual file."
+        },
+        {
+          "name": "file.append",
+          "tokens": [
+            "file",
+            "append"
+          ],
+          "syntax": "file append --path PATH --content CONTENT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--path"
+                }
+              },
+              "content": {
+                "type": "string",
+                "description": "Content.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--content"
+                }
+              }
+            },
+            "required": [
+              "path",
+              "content"
+            ]
+          },
+          "required_flags": [
+            "--path",
+            "--content"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Append to a virtual file."
+        },
+        {
+          "name": "file.delete",
+          "tokens": [
+            "file",
+            "delete"
+          ],
+          "syntax": "file delete --path PATH",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--path"
+                }
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "required_flags": [
+            "--path"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "files_deleted"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Delete a virtual file."
+        }
+      ]
+    },
+    {
+      "family": "asset",
+      "domains": [
+        "asset",
+        "multimodal"
+      ],
+      "prefixes": [
+        "asset"
+      ],
+      "commands": [
+        {
+          "name": "asset.list",
+          "tokens": [
+            "asset",
+            "list"
+          ],
+          "syntax": "asset list [--kind KIND]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "chart",
+                  "natural_image",
+                  "rich_text",
+                  "diagram"
+                ],
+                "description": "Optional. Filter the listing to a single asset kind. OMIT this argument to list every visible asset (the normal case); most scenarios expose only a couple of kinds. Must be one of the enum values -- do not invent values like 'image', 'visual', 'screenshot' or 'all'.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--kind"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "martin",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List visible multimodal assets."
+        },
+        {
+          "name": "asset.info",
+          "tokens": [
+            "asset",
+            "info"
+          ],
+          "syntax": "asset info --id ID",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "required_flags": [
+            "--id"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "assets_accessed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "martin",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show metadata for a visible asset."
+        },
+        {
+          "name": "asset.read_text",
+          "tokens": [
+            "asset",
+            "read-text"
+          ],
+          "syntax": "asset read-text --id ID",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "required_flags": [
+            "--id"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "assets_accessed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "martin",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Check for text attached to a visible asset; these assets carry no OCR or alt-text, so none is found."
+        },
+        {
+          "name": "asset.describe",
+          "tokens": [
+            "asset",
+            "describe"
+          ],
+          "syntax": "asset describe --id ID",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "required_flags": [
+            "--id"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "assets_accessed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "martin",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show a visible asset's identity and structure; its contents are visual and are not described here."
+        },
+        {
+          "name": "asset.open",
+          "tokens": [
+            "asset",
+            "open"
+          ],
+          "syntax": "asset open --id ID",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "required_flags": [
+            "--id"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "assets_opened"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "martin",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Open an asset reference for multimodal providers without printing binary content."
+        }
+      ]
+    },
+    {
+      "family": "tasks",
+      "domains": [
+        "tasks"
+      ],
+      "prefixes": [
+        "tasks"
+      ],
+      "commands": [
+        {
+          "name": "tasks.list",
+          "tokens": [
+            "tasks",
+            "list"
+          ],
+          "syntax": "tasks list [--status STATUS] [--priority PRIORITY]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "description": "Status.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--status"
+                }
+              },
+              "priority": {
+                "type": "string",
+                "description": "Priority.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--priority"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List task-board entries."
+        },
+        {
+          "name": "tasks.add",
+          "tokens": [
+            "tasks",
+            "add"
+          ],
+          "syntax": "tasks add --title TITLE [--due DATE] [--priority PRIORITY]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--title"
+                }
+              },
+              "due": {
+                "type": "string",
+                "description": "Due.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--due"
+                }
+              },
+              "priority": {
+                "type": "string",
+                "description": "Priority.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--priority"
+                }
+              }
+            },
+            "required": [
+              "title"
+            ]
+          },
+          "required_flags": [
+            "--title"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "tasks_created"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Add a task-board entry."
+        },
+        {
+          "name": "tasks.complete",
+          "tokens": [
+            "tasks",
+            "complete"
+          ],
+          "syntax": "tasks complete --id ID | --title TITLE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--id"
+                }
+              },
+              "title": {
+                "type": "string",
+                "description": "Title.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--title"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [
+            "tasks_completed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Complete a task-board entry by id or title."
+        },
+        {
+          "name": "tasks.search",
+          "tokens": [
+            "tasks",
+            "search"
+          ],
+          "syntax": "tasks search --query QUERY",
+          "args": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Query.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--query"
+                }
+              }
+            },
+            "required": [
+              "query"
+            ]
+          },
+          "required_flags": [
+            "--query"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Search task-board entries."
+        }
+      ]
+    },
+    {
+      "family": "system",
+      "domains": [
+        "monitoring",
+        "setup_config",
+        "cron_webhook",
+        "security",
+        "device_node"
+      ],
+      "prefixes": [
+        "system",
+        "wait",
+        "undo"
+      ],
+      "commands": [
+        {
+          "name": "system.status",
+          "tokens": [
+            "system",
+            "status"
+          ],
+          "syntax": "system status [--json]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "json": {
+                "type": "boolean",
+                "description": "Enable --json.",
+                "x_cli": {
+                  "kind": "flag_bool",
+                  "flag": "--json"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show system status."
+        },
+        {
+          "name": "system.health",
+          "tokens": [
+            "system",
+            "health"
+          ],
+          "syntax": "system health",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Check gateway health."
+        },
+        {
+          "name": "system.doctor",
+          "tokens": [
+            "system",
+            "doctor"
+          ],
+          "syntax": "system doctor",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Run diagnostics."
+        },
+        {
+          "name": "system.gateway_start",
+          "tokens": [
+            "system",
+            "gateway",
+            "start"
+          ],
+          "syntax": "system gateway start",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Start the gateway."
+        },
+        {
+          "name": "system.models_set",
+          "tokens": [
+            "system",
+            "models",
+            "set"
+          ],
+          "syntax": "system models set MODEL",
+          "args": {
+            "type": "object",
+            "properties": {
+              "model": {
+                "type": "string",
+                "description": "Model.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 1,
+          "state_effects": [
+            "config_changes"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Set default model."
+        },
+        {
+          "name": "system.config_get",
+          "tokens": [
+            "system",
+            "config",
+            "get"
+          ],
+          "syntax": "system config get PATH",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 1,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Read config value.",
+          "note": "PATH must be an exact config path like agent.model"
+        },
+        {
+          "name": "system.config_set",
+          "tokens": [
+            "system",
+            "config",
+            "set"
+          ],
+          "syntax": "system config set PATH VALUE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              },
+              "value": {
+                "type": "string",
+                "description": "Value.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 1
+                }
+              }
+            },
+            "required": [
+              "path",
+              "value"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 2,
+          "state_effects": [
+            "config_changes"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Set config value."
+        },
+        {
+          "name": "system.cron_add",
+          "tokens": [
+            "system",
+            "cron",
+            "add"
+          ],
+          "syntax": "system cron add --name NAME --cron SCHEDULE --message TEXT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--name"
+                }
+              },
+              "cron": {
+                "type": "string",
+                "description": "Cron.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--cron"
+                }
+              },
+              "message": {
+                "type": "string",
+                "description": "Message.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--message"
+                }
+              }
+            },
+            "required": [
+              "name",
+              "cron",
+              "message"
+            ]
+          },
+          "required_flags": [
+            "--name",
+            "--cron",
+            "--message"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "cron_jobs_created"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Add a cron job."
+        },
+        {
+          "name": "system.cron_list",
+          "tokens": [
+            "system",
+            "cron",
+            "list"
+          ],
+          "syntax": "system cron list",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List cron jobs."
+        },
+        {
+          "name": "system.security_audit",
+          "tokens": [
+            "system",
+            "security",
+            "audit"
+          ],
+          "syntax": "system security audit",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Run security audit."
+        },
+        {
+          "name": "system.setup",
+          "tokens": [
+            "system",
+            "setup"
+          ],
+          "syntax": "system setup",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Run system setup."
+        },
+        {
+          "name": "system.devices_pair",
+          "tokens": [
+            "system",
+            "devices",
+            "pair"
+          ],
+          "syntax": "system devices pair",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Pair a device."
+        },
+        {
+          "name": "system.devices_list",
+          "tokens": [
+            "system",
+            "devices",
+            "list"
+          ],
+          "syntax": "system devices list",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List devices."
+        },
+        {
+          "name": "system.wait",
+          "tokens": [
+            "wait"
+          ],
+          "syntax": "wait <seconds>",
+          "args": {
+            "type": "object",
+            "properties": {
+              "seconds": {
+                "type": "string",
+                "description": "Seconds.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            },
+            "required": [
+              "seconds"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 1,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Wait for a specified number of virtual seconds to allow asynchronous tasks to complete."
+        },
+        {
+          "name": "system.undo",
+          "tokens": [
+            "undo"
+          ],
+          "syntax": "undo [N]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "n": {
+                "type": "string",
+                "description": "N.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Undo the last N steps. Reverts file system and memory, but time continues forward."
+        }
+      ]
+    },
+    {
+      "family": "agent",
+      "domains": [
+        "agent_mgmt"
+      ],
+      "prefixes": [
+        "agent"
+      ],
+      "commands": [
+        {
+          "name": "agent.add",
+          "tokens": [
+            "agent",
+            "add"
+          ],
+          "syntax": "agent add NAME [--model MODEL]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              },
+              "model": {
+                "type": "string",
+                "description": "Model.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--model"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [
+            "agents_created"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Create an agent."
+        },
+        {
+          "name": "agent.list",
+          "tokens": [
+            "agent",
+            "list"
+          ],
+          "syntax": "agent list",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List agents."
+        },
+        {
+          "name": "agent.set_identity",
+          "tokens": [
+            "agent",
+            "set-identity"
+          ],
+          "syntax": "agent set-identity NAME --role ROLE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              },
+              "role": {
+                "type": "string",
+                "description": "Role.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--role"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [
+            "agents_created"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Set agent identity."
+        },
+        {
+          "name": "agent.delegate",
+          "tokens": [
+            "agent",
+            "delegate"
+          ],
+          "syntax": "agent delegate --agent NAME --instruction TEXT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "agent": {
+                "type": "string",
+                "description": "Agent.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--agent"
+                }
+              },
+              "instruction": {
+                "type": "string",
+                "description": "Instruction.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--instruction"
+                }
+              }
+            },
+            "required": [
+              "agent",
+              "instruction"
+            ]
+          },
+          "required_flags": [
+            "--agent",
+            "--instruction"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "agent_tasks_delegated"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Delegate an asynchronous task to a sub-agent."
+        },
+        {
+          "name": "agent.status",
+          "tokens": [
+            "agent",
+            "status"
+          ],
+          "syntax": "agent status [--agent NAME]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "agent": {
+                "type": "string",
+                "description": "Agent.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--agent"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Check the status of pending asynchronous agent tasks."
+        }
+      ]
+    },
+    {
+      "family": "message",
+      "domains": [
+        "messaging"
+      ],
+      "prefixes": [
+        "message"
+      ],
+      "commands": [
+        {
+          "name": "message.send",
+          "tokens": [
+            "message",
+            "send"
+          ],
+          "syntax": "message send --channel NAME --target TARGET --message TEXT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Channel.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--channel"
+                }
+              },
+              "target": {
+                "type": "string",
+                "description": "Target.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--target"
+                }
+              },
+              "message": {
+                "type": "string",
+                "description": "Message.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--message"
+                }
+              }
+            },
+            "required": [
+              "channel",
+              "target",
+              "message"
+            ]
+          },
+          "required_flags": [
+            "--channel",
+            "--target",
+            "--message"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "messages_sent"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Send a message."
+        },
+        {
+          "name": "message.broadcast",
+          "tokens": [
+            "message",
+            "broadcast"
+          ],
+          "syntax": "message broadcast --channel NAME --message TEXT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Channel.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--channel"
+                }
+              },
+              "message": {
+                "type": "string",
+                "description": "Message.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--message"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [
+            "messages_sent"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Broadcast a message."
+        },
+        {
+          "name": "message.search",
+          "tokens": [
+            "message",
+            "search"
+          ],
+          "syntax": "message search --channel NAME --query QUERY",
+          "args": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Channel.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--channel"
+                }
+              },
+              "query": {
+                "type": "string",
+                "description": "Query.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--query"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Search messages."
+        },
+        {
+          "name": "message.react",
+          "tokens": [
+            "message",
+            "react"
+          ],
+          "syntax": "message react --channel NAME --message-id ID --emoji EMOJI",
+          "args": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Channel.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--channel"
+                }
+              },
+              "message_id": {
+                "type": "string",
+                "description": "Message ID.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--message-id"
+                }
+              },
+              "emoji": {
+                "type": "string",
+                "description": "Emoji.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--emoji"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "React to a message."
+        },
+        {
+          "name": "message.poll",
+          "tokens": [
+            "message",
+            "poll"
+          ],
+          "syntax": "message poll --channel NAME --question TEXT --options A,B",
+          "args": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Channel.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--channel"
+                }
+              },
+              "question": {
+                "type": "string",
+                "description": "Question.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--question"
+                }
+              },
+              "options": {
+                "type": "string",
+                "description": "Options. Comma-separated.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--options"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [
+            "messages_sent"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Create a message poll."
+        }
+      ]
+    },
+    {
+      "family": "plugin",
+      "domains": [
+        "plugin_skill"
+      ],
+      "prefixes": [
+        "plugin"
+      ],
+      "commands": [
+        {
+          "name": "plugin.enable",
+          "tokens": [
+            "plugin",
+            "enable"
+          ],
+          "syntax": "plugin enable NAME",
+          "args": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [
+            "plugins_installed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Enable plugin."
+        },
+        {
+          "name": "plugin.disable",
+          "tokens": [
+            "plugin",
+            "disable"
+          ],
+          "syntax": "plugin disable NAME",
+          "args": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [
+            "plugins_installed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Disable plugin."
+        },
+        {
+          "name": "plugin.list",
+          "tokens": [
+            "plugin",
+            "list"
+          ],
+          "syntax": "plugin list",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List plugins."
+        },
+        {
+          "name": "plugin.install",
+          "tokens": [
+            "plugin",
+            "install"
+          ],
+          "syntax": "plugin install NAME",
+          "args": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [
+            "plugins_installed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Install plugin."
+        },
+        {
+          "name": "plugin.skill_info",
+          "tokens": [
+            "plugin",
+            "skill",
+            "info"
+          ],
+          "syntax": "plugin skill info NAME",
+          "args": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show skill info."
+        }
+      ]
+    },
+    {
+      "family": "channel",
+      "domains": [
+        "channel_mgmt"
+      ],
+      "prefixes": [
+        "channel"
+      ],
+      "commands": [
+        {
+          "name": "channel.login",
+          "tokens": [
+            "channel",
+            "login"
+          ],
+          "syntax": "channel login --channel NAME",
+          "args": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Channel.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--channel"
+                }
+              }
+            },
+            "required": [
+              "channel"
+            ]
+          },
+          "required_flags": [
+            "--channel"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "channels_configured"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Log in to a channel."
+        },
+        {
+          "name": "channel.list",
+          "tokens": [
+            "channel",
+            "list"
+          ],
+          "syntax": "channel list [--json]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "json": {
+                "type": "boolean",
+                "description": "Enable --json.",
+                "x_cli": {
+                  "kind": "flag_bool",
+                  "flag": "--json"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List channels."
+        },
+        {
+          "name": "channel.status",
+          "tokens": [
+            "channel",
+            "status"
+          ],
+          "syntax": "channel status",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show channel status."
+        }
+      ]
+    },
+    {
+      "family": "curl",
+      "domains": [
+        "http"
+      ],
+      "prefixes": [
+        "curl"
+      ],
+      "commands": [
+        {
+          "name": "curl.get",
+          "tokens": [
+            "curl"
+          ],
+          "syntax": "curl URL",
+          "args": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            },
+            "required": [
+              "url"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 1,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Fetch a URL through the HTTP backend."
+        }
+      ]
+    },
+    {
+      "family": "shell_inspection",
+      "domains": [
+        "inspection"
+      ],
+      "prefixes": [
+        "cat",
+        "ls",
+        "echo",
+        "grep",
+        "head",
+        "tail",
+        "wc",
+        "jq",
+        "pwd",
+        "whoami",
+        "env",
+        "printenv",
+        "git"
+      ],
+      "commands": [
+        {
+          "name": "shell.cat",
+          "tokens": [
+            "cat"
+          ],
+          "syntax": "cat PATH",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 1,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.ls",
+          "tokens": [
+            "ls"
+          ],
+          "syntax": "ls [PATH]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.echo",
+          "tokens": [
+            "echo"
+          ],
+          "syntax": "echo TEXT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "Text.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.grep",
+          "tokens": [
+            "grep"
+          ],
+          "syntax": "grep PATTERN PATH",
+          "args": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Pattern.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              },
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 1
+                }
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 1,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.head",
+          "tokens": [
+            "head"
+          ],
+          "syntax": "head PATH",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.tail",
+          "tokens": [
+            "tail"
+          ],
+          "syntax": "tail PATH",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.wc",
+          "tokens": [
+            "wc"
+          ],
+          "syntax": "wc PATH",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.jq",
+          "tokens": [
+            "jq"
+          ],
+          "syntax": "jq FILTER [PATH]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "filter": {
+                "type": "string",
+                "description": "Filter.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              },
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 1
+                }
+              }
+            },
+            "required": [
+              "filter"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 1,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.pwd",
+          "tokens": [
+            "pwd"
+          ],
+          "syntax": "pwd",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.whoami",
+          "tokens": [
+            "whoami"
+          ],
+          "syntax": "whoami",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.env",
+          "tokens": [
+            "env"
+          ],
+          "syntax": "env",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.printenv",
+          "tokens": [
+            "printenv"
+          ],
+          "syntax": "printenv",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host inspection command allowed by safety guard only."
+        },
+        {
+          "name": "shell.git",
+          "tokens": [
+            "git"
+          ],
+          "syntax": "git SUBCOMMAND [ARGS]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "subcommand": {
+                "type": "string",
+                "description": "Subcommand.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 0
+                }
+              },
+              "args": {
+                "type": "string",
+                "description": "Args.",
+                "x_cli": {
+                  "kind": "positional",
+                  "index": 1
+                }
+              }
+            },
+            "required": [
+              "subcommand"
+            ]
+          },
+          "required_flags": [],
+          "required_positionals": 1,
+          "state_effects": [
+            "git_commits_created"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Host git command allowed by safety guard only."
+        }
+      ]
+    },
+    {
+      "family": "shell_scripting",
+      "domains": [
+        "scripting"
+      ],
+      "prefixes": [
+        "python3",
+        "bash"
+      ],
+      "agent_verbs": [
+        "run_script"
+      ],
+      "commands": [
+        {
+          "name": "scripting.run",
+          "tokens": [
+            "run_script"
+          ],
+          "syntax": "run_script --path PATH [--args ARGS]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--path"
+                }
+              },
+              "args": {
+                "type": "string",
+                "description": "Args.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--args"
+                }
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "required_flags": [
+            "--path"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Execute a python or bash script."
+        }
+      ]
+    },
+    {
+      "family": "shell_archiving",
+      "domains": [
+        "archiving"
+      ],
+      "prefixes": [
+        "unzip",
+        "tar"
+      ],
+      "agent_verbs": [
+        "decompress_archive"
+      ],
+      "commands": [
+        {
+          "name": "archiving.decompress",
+          "tokens": [
+            "decompress_archive"
+          ],
+          "syntax": "decompress_archive --path PATH [--password PASSWORD] [--output-dir DIR]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--path"
+                }
+              },
+              "password": {
+                "type": "string",
+                "description": "Password.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--password"
+                }
+              },
+              "output_dir": {
+                "type": "string",
+                "description": "Output dir.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--output-dir"
+                }
+              }
+            },
+            "required": [
+              "path"
+            ]
+          },
+          "required_flags": [
+            "--path"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Extract an archive file."
+        }
+      ]
+    },
+    {
+      "family": "shell_database",
+      "domains": [
+        "database"
+      ],
+      "prefixes": [
+        "sqlite3"
+      ],
+      "agent_verbs": [
+        "execute_db_query"
+      ],
+      "commands": [
+        {
+          "name": "database.query",
+          "tokens": [
+            "execute_db_query"
+          ],
+          "syntax": "execute_db_query --db DB --query QUERY",
+          "args": {
+            "type": "object",
+            "properties": {
+              "db": {
+                "type": "string",
+                "description": "DB.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--db"
+                }
+              },
+              "query": {
+                "type": "string",
+                "description": "Query.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--query"
+                }
+              }
+            },
+            "required": [
+              "db",
+              "query"
+            ]
+          },
+          "required_flags": [
+            "--db",
+            "--query"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": false,
+          "description": "Query a database file."
+        }
+      ]
+    },
+    {
+      "family": "lock",
+      "domains": [
+        "coordination"
+      ],
+      "prefixes": [
+        "lock"
+      ],
+      "commands": [
+        {
+          "name": "lock.acquire",
+          "tokens": [
+            "lock",
+            "acquire"
+          ],
+          "syntax": "lock acquire --resource RESOURCE [--section SECTION] [--holder HOLDER]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "section": {
+                "type": "string",
+                "description": "Section.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--section"
+                }
+              },
+              "holder": {
+                "type": "string",
+                "description": "Holder.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--holder"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "lock_acquired"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Acquire an advisory lock over a named resource; fails if held by a different holder."
+        },
+        {
+          "name": "lock.release",
+          "tokens": [
+            "lock",
+            "release"
+          ],
+          "syntax": "lock release --resource RESOURCE [--section SECTION]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "section": {
+                "type": "string",
+                "description": "Section.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--section"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "lock_released"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Release an advisory lock over a named resource."
+        },
+        {
+          "name": "lock.list",
+          "tokens": [
+            "lock",
+            "list"
+          ],
+          "syntax": "lock list",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List currently held locks."
+        },
+        {
+          "name": "lock.status",
+          "tokens": [
+            "lock",
+            "status"
+          ],
+          "syntax": "lock status --resource RESOURCE [--section SECTION]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "section": {
+                "type": "string",
+                "description": "Section.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--section"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Report whether a resource is free or held, and by whom."
+        }
+      ]
+    },
+    {
+      "family": "deploy",
+      "domains": [
+        "deployment"
+      ],
+      "prefixes": [
+        "deploy"
+      ],
+      "commands": [
+        {
+          "name": "deploy.request",
+          "tokens": [
+            "deploy",
+            "request"
+          ],
+          "syntax": "deploy request --change CHANGE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "string",
+                "description": "Change.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--change"
+                }
+              }
+            },
+            "required": [
+              "change"
+            ]
+          },
+          "required_flags": [
+            "--change"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Register a deployment request for a change."
+        },
+        {
+          "name": "deploy.approve",
+          "tokens": [
+            "deploy",
+            "approve"
+          ],
+          "syntax": "deploy approve --change CHANGE --approver APPROVER",
+          "args": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "string",
+                "description": "Change.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--change"
+                }
+              },
+              "approver": {
+                "type": "string",
+                "description": "Approver.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--approver"
+                }
+              }
+            },
+            "required": [
+              "change",
+              "approver"
+            ]
+          },
+          "required_flags": [
+            "--change",
+            "--approver"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Record an approval for a deployment change."
+        },
+        {
+          "name": "deploy.gate_set",
+          "tokens": [
+            "deploy",
+            "gate-set"
+          ],
+          "syntax": "deploy gate-set --gate GATE --state ready|pending|failed|stale|expired",
+          "args": {
+            "type": "object",
+            "properties": {
+              "gate": {
+                "type": "string",
+                "description": "Gate.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--gate"
+                }
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "ready",
+                  "pending",
+                  "failed",
+                  "stale",
+                  "expired"
+                ],
+                "description": "State. One of: ready, pending, failed, stale, expired.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--state"
+                }
+              }
+            },
+            "required": [
+              "gate",
+              "state"
+            ]
+          },
+          "required_flags": [
+            "--gate",
+            "--state"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Create or update a readiness gate state."
+        },
+        {
+          "name": "deploy.execute",
+          "tokens": [
+            "deploy",
+            "execute"
+          ],
+          "syntax": "deploy execute --change CHANGE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "string",
+                "description": "Change.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--change"
+                }
+              }
+            },
+            "required": [
+              "change"
+            ]
+          },
+          "required_flags": [
+            "--change"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "deployment_executed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Execute a previously requested deployment."
+        },
+        {
+          "name": "deploy.cutover",
+          "tokens": [
+            "deploy",
+            "cutover"
+          ],
+          "syntax": "deploy cutover --change CHANGE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "string",
+                "description": "Change.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--change"
+                }
+              }
+            },
+            "required": [
+              "change"
+            ]
+          },
+          "required_flags": [
+            "--change"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "deployment_cutover"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Cut over a deployment; blocked unless every readiness gate is ready."
+        },
+        {
+          "name": "deploy.rollback",
+          "tokens": [
+            "deploy",
+            "rollback"
+          ],
+          "syntax": "deploy rollback --change CHANGE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "string",
+                "description": "Change.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--change"
+                }
+              }
+            },
+            "required": [
+              "change"
+            ]
+          },
+          "required_flags": [
+            "--change"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "deployment_rolledback"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Roll back a deployment change."
+        },
+        {
+          "name": "deploy.monitor",
+          "tokens": [
+            "deploy",
+            "monitor"
+          ],
+          "syntax": "deploy monitor --change CHANGE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "string",
+                "description": "Change.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--change"
+                }
+              }
+            },
+            "required": [
+              "change"
+            ]
+          },
+          "required_flags": [
+            "--change"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Report the current status of a deployment change."
+        },
+        {
+          "name": "deploy.status",
+          "tokens": [
+            "deploy",
+            "status"
+          ],
+          "syntax": "deploy status [--change CHANGE]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "string",
+                "description": "Change.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--change"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List readiness gates and deployment statuses."
+        }
+      ]
+    },
+    {
+      "family": "booking",
+      "domains": [
+        "coordination"
+      ],
+      "prefixes": [
+        "booking"
+      ],
+      "commands": [
+        {
+          "name": "booking.search",
+          "tokens": [
+            "booking",
+            "search"
+          ],
+          "syntax": "booking search [--resource RESOURCE] [--query QUERY]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "query": {
+                "type": "string",
+                "description": "Query.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--query"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "List resource holds and their availability (read-only)."
+        },
+        {
+          "name": "booking.hold",
+          "tokens": [
+            "booking",
+            "hold"
+          ],
+          "syntax": "booking hold --resource RESOURCE [--holder HOLDER] [--ttl SECONDS]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "holder": {
+                "type": "string",
+                "description": "Holder.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--holder"
+                }
+              },
+              "ttl": {
+                "type": "string",
+                "description": "TTL.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--ttl"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "booking_held"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Place a reversible, time-limited hold on a resource."
+        },
+        {
+          "name": "booking.confirm",
+          "tokens": [
+            "booking",
+            "confirm"
+          ],
+          "syntax": "booking confirm --resource RESOURCE [--holder HOLDER]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "holder": {
+                "type": "string",
+                "description": "Holder.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--holder"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "booking_confirmed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Confirm a hold before its time window closes; fails if the hold has expired."
+        },
+        {
+          "name": "booking.release",
+          "tokens": [
+            "booking",
+            "release"
+          ],
+          "syntax": "booking release --resource RESOURCE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "booking_released"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Release (reverse) a hold on a resource."
+        },
+        {
+          "name": "booking.extend",
+          "tokens": [
+            "booking",
+            "extend"
+          ],
+          "syntax": "booking extend --resource RESOURCE [--ttl SECONDS]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "ttl": {
+                "type": "string",
+                "description": "TTL.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--ttl"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Refresh a hold's time window before it expires."
+        },
+        {
+          "name": "booking.status",
+          "tokens": [
+            "booking",
+            "status"
+          ],
+          "syntax": "booking status [--resource RESOURCE]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show the status of resource holds (read-only)."
+        }
+      ]
+    },
+    {
+      "family": "pairing",
+      "domains": [
+        "coordination"
+      ],
+      "prefixes": [
+        "pairing"
+      ],
+      "commands": [
+        {
+          "name": "pairing.start",
+          "tokens": [
+            "pairing",
+            "start"
+          ],
+          "syntax": "pairing start --device DEVICE [--ttl SECONDS]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string",
+                "description": "Device.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--device"
+                }
+              },
+              "ttl": {
+                "type": "string",
+                "description": "TTL.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--ttl"
+                }
+              }
+            },
+            "required": [
+              "device"
+            ]
+          },
+          "required_flags": [
+            "--device"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Open a time-bounded pairing session for a device."
+        },
+        {
+          "name": "pairing.show_code",
+          "tokens": [
+            "pairing",
+            "show-code"
+          ],
+          "syntax": "pairing show-code --device DEVICE [--code CODE]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string",
+                "description": "Device.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--device"
+                }
+              },
+              "code": {
+                "type": "string",
+                "description": "Code.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--code"
+                }
+              }
+            },
+            "required": [
+              "device"
+            ]
+          },
+          "required_flags": [
+            "--device"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Reveal the pairing code for an open session; fails if the session has expired."
+        },
+        {
+          "name": "pairing.enter_code",
+          "tokens": [
+            "pairing",
+            "enter-code"
+          ],
+          "syntax": "pairing enter-code --device DEVICE [--code CODE]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string",
+                "description": "Device.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--device"
+                }
+              },
+              "code": {
+                "type": "string",
+                "description": "Code.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--code"
+                }
+              }
+            },
+            "required": [
+              "device"
+            ]
+          },
+          "required_flags": [
+            "--device"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Enter the pairing code from the peer device; fails if out of order or expired."
+        },
+        {
+          "name": "pairing.confirm",
+          "tokens": [
+            "pairing",
+            "confirm"
+          ],
+          "syntax": "pairing confirm --device DEVICE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string",
+                "description": "Device.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--device"
+                }
+              }
+            },
+            "required": [
+              "device"
+            ]
+          },
+          "required_flags": [
+            "--device"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "pairing_completed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Complete the pairing once the code is entered; fails if out of order or expired."
+        },
+        {
+          "name": "pairing.status",
+          "tokens": [
+            "pairing",
+            "status"
+          ],
+          "syntax": "pairing status [--device DEVICE]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string",
+                "description": "Device.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--device"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show the status of pairing sessions (read-only)."
+        }
+      ]
+    },
+    {
+      "family": "approval",
+      "domains": [
+        "coordination"
+      ],
+      "prefixes": [
+        "approval"
+      ],
+      "commands": [
+        {
+          "name": "approval.request",
+          "tokens": [
+            "approval",
+            "request"
+          ],
+          "syntax": "approval request --resource RESOURCE [--scope SCOPE] [--approvers ROLES]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "scope": {
+                "type": "string",
+                "description": "Scope.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--scope"
+                }
+              },
+              "approvers": {
+                "type": "string",
+                "description": "Approvers.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--approvers"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Open an access request naming the required approvers and requested scope."
+        },
+        {
+          "name": "approval.approve",
+          "tokens": [
+            "approval",
+            "approve"
+          ],
+          "syntax": "approval approve --resource RESOURCE --approver ROLE [--scope SCOPE] [--ttl SECONDS]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "approver": {
+                "type": "string",
+                "description": "Approver.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--approver"
+                }
+              },
+              "scope": {
+                "type": "string",
+                "description": "Scope.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--scope"
+                }
+              },
+              "ttl": {
+                "type": "string",
+                "description": "TTL.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--ttl"
+                }
+              }
+            },
+            "required": [
+              "resource",
+              "approver"
+            ]
+          },
+          "required_flags": [
+            "--resource",
+            "--approver"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Record one approver's approval, optionally scoped and time-limited."
+        },
+        {
+          "name": "approval.grant",
+          "tokens": [
+            "approval",
+            "grant"
+          ],
+          "syntax": "approval grant --resource RESOURCE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "approval_granted"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Grant access once every required approval is valid, unexpired, and scope-reconciled; fails otherwise."
+        },
+        {
+          "name": "approval.revoke",
+          "tokens": [
+            "approval",
+            "revoke"
+          ],
+          "syntax": "approval revoke --resource RESOURCE [--approver ROLE]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "approver": {
+                "type": "string",
+                "description": "Approver.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--approver"
+                }
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "required_flags": [
+            "--resource"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Revoke a resource's request, or one approver's approval."
+        },
+        {
+          "name": "approval.provisional",
+          "tokens": [
+            "approval",
+            "provisional"
+          ],
+          "syntax": "approval provisional --resource RESOURCE --approver ROLE [--scope SCOPE] [--ttl SECONDS]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "approver": {
+                "type": "string",
+                "description": "Approver.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--approver"
+                }
+              },
+              "scope": {
+                "type": "string",
+                "description": "Scope.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--scope"
+                }
+              },
+              "ttl": {
+                "type": "string",
+                "description": "TTL.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--ttl"
+                }
+              }
+            },
+            "required": [
+              "resource",
+              "approver"
+            ]
+          },
+          "required_flags": [
+            "--resource",
+            "--approver"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Grant a provisional (deadlock-breaking) approval for an approver."
+        },
+        {
+          "name": "approval.escalate",
+          "tokens": [
+            "approval",
+            "escalate"
+          ],
+          "syntax": "approval escalate --resource RESOURCE --to ROLE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              },
+              "to": {
+                "type": "string",
+                "description": "To.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--to"
+                }
+              }
+            },
+            "required": [
+              "resource",
+              "to"
+            ]
+          },
+          "required_flags": [
+            "--resource",
+            "--to"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "approval_escalated"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Escalate a stuck approval to a higher authority to break a circular dependency."
+        },
+        {
+          "name": "approval.status",
+          "tokens": [
+            "approval",
+            "status"
+          ],
+          "syntax": "approval status [--resource RESOURCE]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--resource"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show requests and approvals (read-only)."
+        }
+      ]
+    },
+    {
+      "family": "containment",
+      "domains": [
+        "coordination"
+      ],
+      "prefixes": [
+        "containment"
+      ],
+      "commands": [
+        {
+          "name": "containment.revoke-sessions",
+          "tokens": [
+            "containment",
+            "revoke-sessions"
+          ],
+          "syntax": "containment revoke-sessions --account ACCOUNT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "type": "string",
+                "description": "Account.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--account"
+                }
+              }
+            },
+            "required": [
+              "account"
+            ]
+          },
+          "required_flags": [
+            "--account"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "containment_action"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Revoke all active sessions for the compromised account (one of four control points)."
+        },
+        {
+          "name": "containment.disable-forwarding",
+          "tokens": [
+            "containment",
+            "disable-forwarding"
+          ],
+          "syntax": "containment disable-forwarding --account ACCOUNT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "type": "string",
+                "description": "Account.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--account"
+                }
+              }
+            },
+            "required": [
+              "account"
+            ]
+          },
+          "required_flags": [
+            "--account"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "containment_action"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Disable mail/message forwarding rules on the account (one of four control points)."
+        },
+        {
+          "name": "containment.isolate-device",
+          "tokens": [
+            "containment",
+            "isolate-device"
+          ],
+          "syntax": "containment isolate-device --device DEVICE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "device": {
+                "type": "string",
+                "description": "Device.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--device"
+                }
+              }
+            },
+            "required": [
+              "device"
+            ]
+          },
+          "required_flags": [
+            "--device"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "containment_action"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Isolate the compromised device from the network (one of four control points)."
+        },
+        {
+          "name": "containment.block-token",
+          "tokens": [
+            "containment",
+            "block-token"
+          ],
+          "syntax": "containment block-token --token TOKEN",
+          "args": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "description": "Token.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--token"
+                }
+              }
+            },
+            "required": [
+              "token"
+            ]
+          },
+          "required_flags": [
+            "--token"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "containment_action"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Revoke and block the leaked access token (one of four control points)."
+        },
+        {
+          "name": "containment.status",
+          "tokens": [
+            "containment",
+            "status"
+          ],
+          "syntax": "containment status",
+          "args": {
+            "type": "object",
+            "properties": {}
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show which control points are contained (read-only)."
+        }
+      ]
+    },
+    {
+      "family": "review",
+      "domains": [
+        "coordination"
+      ],
+      "prefixes": [
+        "review"
+      ],
+      "commands": [
+        {
+          "name": "review.assign",
+          "tokens": [
+            "review",
+            "assign"
+          ],
+          "syntax": "review assign --aspect ASPECT --reviewer ROLE",
+          "args": {
+            "type": "object",
+            "properties": {
+              "aspect": {
+                "type": "string",
+                "description": "Aspect.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--aspect"
+                }
+              },
+              "reviewer": {
+                "type": "string",
+                "description": "Reviewer.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--reviewer"
+                }
+              }
+            },
+            "required": [
+              "aspect",
+              "reviewer"
+            ]
+          },
+          "required_flags": [
+            "--aspect",
+            "--reviewer"
+          ],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Assign a review aspect (legal, privacy, security, ...) to a reviewer."
+        },
+        {
+          "name": "review.submit",
+          "tokens": [
+            "review",
+            "submit"
+          ],
+          "syntax": "review submit --aspect ASPECT --status ok|blocked [--issue TEXT]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "aspect": {
+                "type": "string",
+                "description": "Aspect.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--aspect"
+                }
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ok",
+                  "blocked"
+                ],
+                "description": "Status. One of: ok, blocked.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--status"
+                }
+              },
+              "issue": {
+                "type": "string",
+                "description": "Issue.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--issue"
+                }
+              }
+            },
+            "required": [
+              "aspect",
+              "status"
+            ]
+          },
+          "required_flags": [
+            "--aspect",
+            "--status"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "review_submitted"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Submit one aspect's verdict; a block carries its blocking issue."
+        },
+        {
+          "name": "review.sign",
+          "tokens": [
+            "review",
+            "sign"
+          ],
+          "syntax": "review sign --document DOCUMENT",
+          "args": {
+            "type": "object",
+            "properties": {
+              "document": {
+                "type": "string",
+                "description": "Document.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--document"
+                }
+              }
+            },
+            "required": [
+              "document"
+            ]
+          },
+          "required_flags": [
+            "--document"
+          ],
+          "required_positionals": 0,
+          "state_effects": [
+            "document_signed"
+          ],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Sign the document; blocked unless every aspect is ok with no outstanding blockers."
+        },
+        {
+          "name": "review.status",
+          "tokens": [
+            "review",
+            "status"
+          ],
+          "syntax": "review status [--document DOCUMENT]",
+          "args": {
+            "type": "object",
+            "properties": {
+              "document": {
+                "type": "string",
+                "description": "Document.",
+                "x_cli": {
+                  "kind": "flag",
+                  "flag": "--document"
+                }
+              }
+            }
+          },
+          "required_flags": [],
+          "required_positionals": 0,
+          "state_effects": [],
+          "modes": [
+            "mock",
+            "multi",
+            "real",
+            "hybrid"
+          ],
+          "safe_for_gt": true,
+          "description": "Show aspects, verdicts, and sign state (read-only)."
+        }
+      ]
+    }
+  ]
+}

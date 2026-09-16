@@ -1,0 +1,1194 @@
+<!--
+Copyright 2026 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #f9fafb;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    html.dark, html.dark body {
+      background-color: #0b0f19;
+    }
+    /* CRT Scanlines Overlay */
+    .crt-scanlines {
+      position: relative;
+    }
+    .crt-scanlines::after {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      z-index: 9999;
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+    }
+    /* Background dot/grid textures */
+    .bg-dots-light {
+      background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    .bg-dots-dark {
+      background-image: radial-gradient(#334155 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    .bg-grid-light {
+      background-image: linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .bg-grid-dark {
+      background-image: linear-gradient(to right, #334155 1px, transparent 1px), linear-gradient(to bottom, #334155 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .bg-checkerboard {
+      background-color: #ffffff;
+      background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08)),
+                        linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, #ffffff 25%, #ffffff 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08));
+      background-size: 2px 2px;
+      background-position: 0 0, 1px 1px;
+    }
+    .dark .bg-checkerboard {
+      background-color: #000000;
+      background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.12) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.12) 75%, rgba(255, 255, 255, 0.12)),
+                        linear-gradient(45deg, rgba(255, 255, 255, 0.12) 25%, #000000 25%, #000000 75%, rgba(255, 255, 255, 0.12) 75%, rgba(255, 255, 255, 0.12));
+      background-size: 2px 2px;
+      background-position: 0 0, 1px 1px;
+    }
+    .bg-blueprint {
+      background-color: #000b1e;
+      background-image: linear-gradient(rgba(0, 240, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    .bg-mesh-3d {
+      background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
+      background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
+                        radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%),
+                        radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%),
+                        radial-gradient(at 0% 100%, hsla(197,52%,35%,1) 0, transparent 50%),
+                        radial-gradient(at 100% 100%, hsla(272,35%,25%,1) 0, transparent 50%);
+    }
+  </style>
+</head>
+<body>
+  <!-- Layout 1: DevOps Dashboard Console -->
+  <div id="devops-dashboard-layout" class="hidden w-full h-full bg-slate-50 dark:bg-slate-950 flex flex-col" style="box-sizing: border-box;">
+     <!-- Header Bar -->
+     <header class="h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 shrink-0">
+        <div class="flex items-center space-x-3">
+           <span class="text-base font-bold text-slate-800 dark:text-slate-100 tracking-tight" id="dash-system-name">System Control Console</span>
+           <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-2xs font-semibold rounded-full" id="dash-system-status">Healthy</span>
+        </div>
+        <div class="flex items-center space-x-4">
+           <span class="text-2xs text-slate-400 dark:text-slate-500" id="dash-timestamp"></span>
+           <div id="dash-user-avatar" class="h-8 w-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">Ops</div>
+        </div>
+     </header>
+     <!-- Vercel Top Tab Sub-navigation (Hidden by default) -->
+     <div id="vercel-top-nav" class="hidden h-12 bg-white dark:bg-[#000000] border-b border-slate-200 dark:border-[#333333] flex items-center px-10 space-x-6 shrink-0 text-sm font-medium">
+        <span class="text-black dark:text-white border-b-2 border-black dark:border-white h-full flex items-center px-1">Overview</span>
+        <span class="text-slate-500 hover:text-black dark:hover:text-white h-full flex items-center px-1 cursor-pointer">Deployments</span>
+        <span class="text-slate-500 hover:text-black dark:hover:text-white h-full flex items-center px-1 cursor-pointer">Integrations</span>
+        <span class="text-slate-500 hover:text-black dark:hover:text-white h-full flex items-center px-1 cursor-pointer">Usage</span>
+        <span class="text-slate-500 hover:text-black dark:hover:text-white h-full flex items-center px-1 cursor-pointer">Settings</span>
+     </div>
+     <div class="flex flex-1 min-h-0" id="dash-main-container">
+        <!-- Sidebar -->
+        <aside class="w-56 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col p-4 space-y-4 shrink-0">
+           <div class="space-y-1 shrink-0" id="dash-sidebar-menu">
+              <div id="menu-dash" class="flex items-center space-x-2 p-2 rounded-lg text-xs font-semibold">Dashboard</div>
+              <div class="flex items-center space-x-2 p-2 rounded-lg text-xs text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50">Terminal</div>
+              <div class="flex items-center space-x-2 p-2 rounded-lg text-xs text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50">Alerts</div>
+           </div>
+           <span class="text-2xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Microservices Status</span>
+           <nav class="flex-grow space-y-1.5 overflow-y-auto" id="dash-sidebar-services">
+              <!-- Dynamically populated services list -->
+           </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="flex-1 p-5 overflow-y-auto flex flex-col space-y-5">
+           <!-- Top Metric Cards -->
+           <div class="grid grid-cols-3 gap-5 shrink-0" id="dash-metric-cards">
+              <!-- Dynamically populated sparkline cards -->
+           </div>
+           <!-- Core Chart Panel -->
+           <div class="flex-grow bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between" style="min-height: 0;">
+              <div class="shrink-0">
+                 <h2 id="dash-chart-title" class="text-base font-bold text-slate-800 dark:text-slate-100 tracking-tight"></h2>
+                 <p id="dash-chart-subtitle" class="text-2xs text-slate-400 dark:text-slate-500 mt-0.5 mb-3"></p>
+              </div>
+              <div class="relative flex-grow w-full" style="min-height: 0;">
+                 <canvas id="dash-chart-canvas"></canvas>
+              </div>
+           </div>
+        </main>
+     </div>
+  </div>
+
+  <!-- Layout 2: Single Chart Viewport (Default) -->
+  <div id="single-chart-layout" class="w-full h-full bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-800 flex flex-col justify-between" style="box-sizing: border-box; padding: 32px;">
+    <div>
+      <h2 id="chart-title" class="text-2xl font-bold text-gray-800 dark:text-slate-100 tracking-tight"></h2>
+      <p id="chart-subtitle" class="text-sm text-gray-500 dark:text-slate-400 mt-1 mb-6"></p>
+    </div>
+    <div class="relative flex-grow w-full" style="min-height: 0;">
+      <canvas id="chart-canvas"></canvas>
+    </div>
+  </div>
+
+  <script>
+    window.CHART_SPEC = {"title": "Database Connection Pool Status", "subtitle": "Live telemetry node - visual_style: bloomberg_terminal", "chart_type": "multi_line_chart", "series_names": ["Active Connections", "Queue Depth"], "rows": [{"label": "10:45", "values": [25, 0], "Active Connections": 25, "Queue Depth": 0}, {"label": "10:47", "values": [40, 0], "Active Connections": 40, "Queue Depth": 0}, {"label": "10:49", "values": [85, 5], "Active Connections": 85, "Queue Depth": 5}, {"label": "10:51", "values": [100, 45], "Active Connections": 100, "Queue Depth": 45}, {"label": "10:53", "values": [100, 95], "Active Connections": 100, "Queue Depth": 95}, {"label": "10:55", "values": [100, 150], "Active Connections": 100, "Queue Depth": 150}, {"label": "10:57", "values": [100, 150], "Active Connections": 100, "Queue Depth": 150}, {"label": "10:59", "values": [100, 150], "Active Connections": 100, "Queue Depth": 150}], "dashboard_data": {"system_name": "Bloomberg Terminal Telemetry", "cluster_region": "us-central1-a", "operator_email": "sre-alerts@ops.example.com", "node_hostname": "node-prod-bloomberg_terminal-01.internal", "services": [{"name": "Auth API Gateway", "status": "healthy", "details": "latency 12ms"}, {"name": "Session Cache Sync", "status": "healthy", "details": "hit_rate 98%"}, {"name": "MySQL Core Shard 01", "status": "critical", "details": "pool exhausted"}, {"name": "Redis Invalidate PubSub", "status": "healthy", "details": "idle"}], "metrics": [{"name": "Node Latency", "value": "18.4 ms", "sparkline": [10, 15, 25, 12, 18]}, {"name": "CPU Workload", "value": "78%", "sparkline": [40, 55, 88, 60, 78]}, {"name": "Memory Buffer", "value": "64.2 GB", "sparkline": [64, 64, 64, 64, 64]}, {"name": "Active Channels", "value": "249/s", "sparkline": [120, 200, 310, 220, 249]}]}, "layout": "devops_dashboard", "custom_overrides": {"styling": {"theme": "dark", "primary_color": "amber", "visual_style": "bloomberg_terminal", "style_details": {"font_family": "monospace", "font_size_scale": "compact", "border_style": "solid_thin", "border_radius": "none", "shadow_type": "none", "header_style": "solid", "display_effect": "none", "divider_style": "solid", "background_texture": "grid_lines", "custom_css_rules": ["Ultra-dense monospace data grid", "Amber/green tickers on black", "Thin ruled column separators"]}}}};
+    // window.CHART_SPEC = { ... }
+
+    const spec = window.CHART_SPEC || {
+      title: "API Gateway Traffic Status",
+      subtitle: "Hourly traffic breakdown showing external ingress vs loopback checks",
+      chart_type: "multi_line_chart",
+      series_names: ["External Ingress", "Internal Healthchecks"],
+      data: [
+        { label: "10:00", values: [1200, 20] },
+        { label: "10:01", values: [1150, 20] },
+        { label: "10:02", values: [1210, 20] },
+        { label: "10:03", values: [1180, 20] },
+        { label: "10:04", values: [1190, 20] },
+        { label: "10:05", values: [0, 20] },
+        { label: "10:06", values: [0, 20] }
+      ]
+    };
+ 
+    const styling = spec.custom_overrides?.styling || {};
+    const primaryColor = styling.primary_color || 'blue';
+    const isDark = styling.theme === 'dark';
+    const styleDetails = styling.style_details || {};
+    const visualStyle = styling.visual_style || 'modern_clean';
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    }
+
+    const isDashboard = spec.layout === 'devops_dashboard';
+ 
+    if (isDashboard) {
+      document.getElementById('single-chart-layout').classList.add('hidden');
+      document.getElementById('devops-dashboard-layout').classList.remove('hidden');
+ 
+      const dashData = spec.dashboard_data || {};
+      document.getElementById('dash-chart-title').innerText = spec.title || '';
+      document.getElementById('dash-chart-subtitle').innerText = spec.subtitle || '';
+      document.getElementById('dash-system-name').innerText = dashData.system_name || 'System Control Console';
+      document.getElementById('dash-timestamp').innerText = dashData.timestamp || '';
+ 
+      const hasWarning = (dashData.services || []).some(s => s.status !== 'healthy');
+      const statusBadge = document.getElementById('dash-system-status');
+      if (hasWarning) {
+        statusBadge.innerText = 'Degraded';
+        statusBadge.className = 'px-2 py-0.5 bg-amber-100 text-amber-800 text-2xs font-semibold rounded-full';
+      } else {
+        statusBadge.innerText = 'Healthy';
+        statusBadge.className = 'px-2 py-0.5 bg-emerald-100 text-emerald-800 text-2xs font-semibold rounded-full';
+      }
+
+      // Apply dynamic colors to avatar and sidebar menu
+      const tailwindBgMap = {
+        blue: 'bg-blue-600',
+        emerald: 'bg-emerald-600',
+        amber: 'bg-amber-600',
+        rose: 'bg-rose-600',
+        purple: 'bg-purple-600',
+        indigo: 'bg-indigo-600',
+        cyan: 'bg-cyan-600',
+        teal: 'bg-teal-600',
+        orange: 'bg-orange-600',
+        fuchsia: 'bg-fuchsia-600',
+        pink: 'bg-pink-600',
+        violet: 'bg-violet-600',
+      };
+      const activeBgClass = tailwindBgMap[primaryColor] || 'bg-blue-600';
+      const avatar = document.getElementById('dash-user-avatar');
+      if (avatar) {
+        avatar.className = `h-8 w-8 rounded-full ${activeBgClass} text-white flex items-center justify-center font-bold text-xs`;
+      }
+
+      const activeTextBgMap = {
+        blue: 'bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400',
+        emerald: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400',
+        amber: 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
+        rose: 'bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400',
+        purple: 'bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400',
+        indigo: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400',
+        cyan: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/30 dark:text-cyan-400',
+        teal: 'bg-teal-50 text-teal-700 dark:bg-teal-950/30 dark:text-teal-400',
+        orange: 'bg-orange-50 text-orange-700 dark:bg-orange-950/30 dark:text-orange-400',
+        fuchsia: 'bg-fuchsia-50 text-fuchsia-700 dark:bg-fuchsia-950/30 dark:text-fuchsia-400',
+        pink: 'bg-pink-50 text-pink-700 dark:bg-pink-950/30 dark:text-pink-400',
+        violet: 'bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-400',
+      };
+      const activeMenuClass = activeTextBgMap[primaryColor] || activeTextBgMap.blue;
+      const dashMenu = document.getElementById('menu-dash');
+      if (dashMenu) {
+        dashMenu.className = `flex items-center space-x-2 p-2 rounded-lg text-xs font-semibold ${activeMenuClass}`;
+      }
+ 
+      const servicesNav = document.getElementById('dash-sidebar-services');
+      servicesNav.innerHTML = '';
+      (dashData.services || []).forEach(srv => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-xs';
+ 
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'font-medium text-slate-700 dark:text-slate-300';
+        nameSpan.innerText = srv.name;
+ 
+        const badge = document.createElement('span');
+        if (srv.status === 'healthy') {
+          badge.className = 'h-2 w-2 rounded-full bg-emerald-500 shrink-0';
+        } else if (srv.status === 'warning') {
+          badge.className = 'h-2 w-2 rounded-full bg-amber-500 animate-pulse shrink-0';
+        } else {
+          badge.className = 'h-2 w-2 rounded-full bg-rose-500 animate-ping shrink-0';
+        }
+ 
+        const leftWrap = document.createElement('div');
+        leftWrap.className = 'flex items-center space-x-2';
+        leftWrap.appendChild(badge);
+        leftWrap.appendChild(nameSpan);
+ 
+        const detailsSpan = document.createElement('span');
+        detailsSpan.className = 'text-3xs text-slate-400 dark:text-slate-500';
+        detailsSpan.innerText = srv.details || '';
+ 
+        item.appendChild(leftWrap);
+        item.appendChild(detailsSpan);
+        servicesNav.appendChild(item);
+      });
+ 
+      const cardsGrid = document.getElementById('dash-metric-cards');
+      cardsGrid.innerHTML = '';
+      (dashData.metrics || []).forEach((met, idx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs';
+ 
+        const textDiv = document.createElement('div');
+        const nameP = document.createElement('p');
+        nameP.className = 'text-3xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider';
+        nameP.innerText = met.name;
+ 
+        const valP = document.createElement('p');
+        valP.className = 'text-base font-extrabold text-slate-800 dark:text-slate-100 mt-0.5';
+        valP.innerText = met.value;
+ 
+        textDiv.appendChild(nameP);
+        textDiv.appendChild(valP);
+ 
+        const sparkDiv = document.createElement('div');
+        sparkDiv.className = 'w-24 h-10 relative';
+        const canvas = document.createElement('canvas');
+        canvas.id = `sparkline-canvas-${idx}`;
+        sparkDiv.appendChild(canvas);
+
+        card.appendChild(textDiv);
+        card.appendChild(sparkDiv);
+        cardsGrid.appendChild(card);
+      });
+
+      // Apply Visual Style & Micro-Style (style_details) specifications
+      
+      
+      // 1. Font Family & Size Scale
+      const fontFamily = styleDetails.font_family || (visualStyle === 'terminal_tui' || visualStyle === 'retro_90s' ? 'monospace' : 'sans-serif-modern');
+      if (fontFamily === 'monospace' || fontFamily === 'pixel') {
+        document.body.classList.add('font-mono');
+      } else if (fontFamily === 'serif') {
+        document.body.style.fontFamily = 'Georgia, serif';
+      } else if (fontFamily === 'sans-serif-retro') {
+        document.body.style.fontFamily = 'Arial, sans-serif';
+      }
+      
+      const fontScale = styleDetails.font_size_scale || (visualStyle === 'enterprise_legacy' ? 'compact' : 'default');
+      if (fontScale === 'compact') {
+        document.body.style.fontSize = '11px';
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.classList.replace('p-6', 'p-2');
+          el.classList.replace('p-4', 'p-2');
+        });
+      } else if (fontScale === 'coarse') {
+        document.body.style.fontSize = '15px';
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.classList.replace('p-4', 'p-6');
+        });
+      }
+
+      // 2. Background Texture
+      const texture = styleDetails.background_texture || (visualStyle === 'flat_minimalist' ? 'solid' : 'solid');
+      const mainLayout = document.getElementById('devops-dashboard-layout');
+      if (mainLayout) {
+        if (texture === 'dots') {
+          mainLayout.classList.add(isDark ? 'bg-dots-dark' : 'bg-dots-light');
+        } else if (texture === 'grid_lines') {
+          mainLayout.classList.add(isDark ? 'bg-grid-dark' : 'bg-grid-light');
+        }
+      }
+
+      // 3. Borders & Corners
+      const borderRadius = styleDetails.border_radius || (visualStyle === 'retro_90s' || visualStyle === 'flat_minimalist' || visualStyle === 'enterprise_legacy' ? 'none' : 'rounded-lg');
+      if (borderRadius === 'none') {
+        document.querySelectorAll('.rounded-xl, .rounded-lg, .rounded-full, .rounded-md, .rounded-2xl').forEach(el => {
+          el.classList.remove('rounded-xl', 'rounded-lg', 'rounded-full', 'rounded-md', 'rounded-2xl');
+          el.classList.add('rounded-none');
+        });
+      } else if (borderRadius === 'rounded-sm') {
+        document.querySelectorAll('.rounded-xl, .rounded-lg, .rounded-full, .rounded-md, .rounded-2xl').forEach(el => {
+          el.classList.remove('rounded-xl', 'rounded-lg', 'rounded-full', 'rounded-md', 'rounded-2xl');
+          el.classList.add('rounded-sm');
+        });
+      }
+
+      const borderStyle = styleDetails.border_style || (visualStyle === 'retro_90s' ? 'beveled_outset' : visualStyle === 'flat_minimalist' ? 'solid_thick' : 'solid_thin');
+      if (borderStyle === 'beveled_outset') {
+        if (mainLayout) {
+          mainLayout.style.backgroundColor = '#d4d0c8';
+          mainLayout.style.border = '4px solid';
+          mainLayout.style.borderTopColor = '#fff';
+          mainLayout.style.borderLeftColor = '#fff';
+          mainLayout.style.borderBottomColor = '#808080';
+          mainLayout.style.borderRightColor = '#808080';
+        }
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.style.backgroundColor = '#d4d0c8';
+          el.style.border = '2px solid';
+          el.style.borderTopColor = '#808080';
+          el.style.borderLeftColor = '#808080';
+          el.style.borderBottomColor = '#fff';
+          el.style.borderRightColor = '#fff';
+        });
+        const activeTab = document.getElementById('menu-dash');
+        if (activeTab) {
+          activeTab.style.border = '2px solid';
+          activeTab.style.borderTopColor = '#fff';
+          activeTab.style.borderLeftColor = '#fff';
+          activeTab.style.borderBottomColor = '#808080';
+          activeTab.style.borderRightColor = '#808080';
+          activeTab.className = activeTab.className.replace(/bg-\w+-50|dark:bg-\w+-\d+\/\d+/g, 'bg-[#d4d0c8]');
+        }
+      } else if (borderStyle === 'solid_thick') {
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.className = el.className.replace(/border-slate-\d+|border-gray-\d+/g, 'border-slate-900 dark:border-slate-100');
+          el.style.borderWidth = '2px';
+        });
+      } else if (borderStyle === 'none') {
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.style.border = 'none';
+        });
+      }
+
+      // 4. Shadows & Glows
+      const shadowType = styleDetails.shadow_type || (visualStyle === 'modern_clean' ? 'soft-modern' : 'none');
+      if (shadowType === 'none') {
+        document.querySelectorAll('.shadow-2xs, .shadow-md, .shadow-lg, .shadow-sm').forEach(el => {
+          el.classList.remove('shadow-2xs', 'shadow-md', 'shadow-lg', 'shadow-sm');
+          el.classList.add('shadow-none');
+        });
+      } else if (shadowType === 'neon-glow') {
+        // Map primary brand color to neon rgb channels
+        const rgbMap = {
+          blue: '34,211,238',
+          emerald: '16,185,129',
+          amber: '245,158,11',
+          rose: '244,63,94',
+          purple: '217,70,239',
+          indigo: '99,102,241',
+          cyan: '6,182,212',
+          teal: '20,184,166',
+          orange: '249,115,22',
+          fuchsia: '217,70,239',
+          pink: '236,72,153',
+          violet: '139,92,246'
+        };
+        const rgb = rgbMap[primaryColor] || '59,130,246';
+        document.querySelectorAll('main > div').forEach(el => {
+          el.style.boxShadow = `0 0 15px rgba(${rgb}, 0.25)`;
+        });
+      }
+
+      // 5. Header Style
+      const headerStyle = styleDetails.header_style || (visualStyle === 'retro_90s' ? 'classic-title-bar' : visualStyle === 'enterprise_legacy' ? 'gradient' : 'solid');
+      const header = document.querySelector('header');
+      if (header) {
+        if (headerStyle === 'classic-title-bar') {
+          header.className = `h-10 text-white flex items-center justify-between px-4 shrink-0 font-bold bg-${primaryColor}-800`;
+          header.style.backgroundColor = '';
+        } else if (headerStyle === 'gradient') {
+          header.className = `h-12 bg-gradient-to-b from-${primaryColor}-100 to-${primaryColor}-200 border-b border-${primaryColor}-300 flex items-center justify-between px-6 shrink-0 text-${primaryColor}-900`;
+          header.style.backgroundColor = '';
+        } else if (headerStyle === 'glossy') {
+          header.className = `h-12 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 shrink-0`;
+        }
+      }
+
+      // 6. Display Effects
+      const displayEffect = styleDetails.display_effect || (visualStyle === 'terminal_tui' ? 'crt_scanlines' : 'none');
+      if (displayEffect === 'crt_scanlines') {
+        document.body.classList.add('crt-scanlines');
+      }
+
+      // 7. Divider/Outline Styles
+      const dividerStyle = styleDetails.divider_style || (visualStyle === 'terminal_tui' ? 'ascii' : 'solid');
+      if (dividerStyle === 'ascii') {
+        document.querySelectorAll('hr, border').forEach(el => {
+          el.style.borderStyle = 'dashed';
+        });
+      } else if (dividerStyle === 'dashed') {
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.style.borderStyle = 'dashed';
+        });
+      } else if (dividerStyle === 'dotted') {
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.style.borderStyle = 'dotted';
+        });
+      } else if (dividerStyle === 'double') {
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.style.borderStyle = 'double';
+          el.style.borderWidth = '4px';
+        });
+      }
+
+      // Apply TUI neon text coloring if visualStyle is terminal_tui
+      if (visualStyle === 'terminal_tui') {
+        document.querySelectorAll('#devops-dashboard-layout, main, aside, header, main > div').forEach(el => {
+          el.className = el.className.replace(/bg-\w+-\d+|bg-white/g, 'bg-black');
+          el.style.backgroundColor = '#000000';
+          el.style.borderColor = '#1f2937';
+        });
+        const neonColorMap = {
+          blue: '#22d3ee',
+          emerald: '#10b981',
+          amber: '#f59e0b',
+          rose: '#f43f5e',
+          purple: '#d946ef',
+          indigo: '#818cf8',
+          cyan: '#06b6d4',
+          teal: '#2dd4bf',
+          orange: '#ff7849',
+          fuchsia: '#f472b6',
+          pink: '#f472b6',
+          violet: '#a78bfa'
+        };
+        const activeNeonColor = neonColorMap[primaryColor] || '#10b981';
+        document.querySelectorAll('span, p, h2, h1, div, aside, header, nav, main').forEach(el => {
+          if (el.children.length === 0 || el.innerText) {
+            el.className = el.className.replace(/text-slate-\d+|text-gray-\d+/g, '');
+            el.style.color = activeNeonColor;
+          }
+        });
+      } else if (visualStyle === 'vercel_minimalist') {
+        document.body.classList.add('font-mono');
+        const canvasBg = isDark ? '#000000' : '#ffffff';
+        const borderColor = isDark ? '#333333' : '#eaeaea';
+        
+        if (mainLayout) {
+          mainLayout.style.backgroundColor = canvasBg;
+        }
+        document.querySelectorAll('.rounded-xl, .rounded-lg, .rounded-full, .rounded-md, .rounded-2xl').forEach(el => {
+          el.classList.remove('rounded-xl', 'rounded-lg', 'rounded-full', 'rounded-md', 'rounded-2xl');
+          el.classList.add('rounded-none');
+        });
+        document.querySelectorAll('.shadow-2xs, .shadow-md, .shadow-lg, .shadow-sm').forEach(el => {
+          el.classList.remove('shadow-2xs', 'shadow-md', 'shadow-lg', 'shadow-sm');
+          el.classList.add('shadow-none');
+        });
+        document.querySelectorAll('main > div, header, aside').forEach(el => {
+          el.style.backgroundColor = canvasBg;
+          el.style.borderColor = borderColor;
+          el.style.borderWidth = '1px';
+        });
+        
+        // Hide sidebar and show vercel top navigation
+        const sidebar = document.querySelector('aside');
+        if (sidebar) sidebar.classList.add('hidden');
+        const vercelNav = document.getElementById('vercel-top-nav');
+        if (vercelNav) vercelNav.classList.remove('hidden');
+        
+        // Center the main content max-w-6xl
+        const main = document.querySelector('main');
+        if (main) {
+          main.className = 'flex-1 p-8 overflow-y-auto flex flex-col space-y-6 max-w-6xl mx-auto w-full';
+        }
+        
+        const header = document.querySelector('header');
+        if (header) {
+          header.className = 'h-14 flex items-center justify-between px-10 shrink-0 border-b';
+          header.style.backgroundColor = canvasBg;
+          header.style.borderColor = borderColor;
+          
+          const systemName = document.getElementById('dash-system-name');
+          if (systemName) {
+            // The project slug must follow the scenario's own system name so the
+            // Vercel chrome does not stamp a fixed product brand onto every chart.
+            // Sanitized to [a-z0-9-], so it is safe to interpolate into innerHTML.
+            const projectSlug = (dashData.system_name || '')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .split('-')
+              .filter(Boolean)
+              .slice(0, 3)
+              .join('-') || 'ops-console';
+            systemName.innerHTML = `
+              <div class="flex items-center space-x-3 text-sm font-bold text-black dark:text-white">
+                <svg class="h-4 w-4 fill-current" viewBox="0 0 75 65"><path d="M37.5 0 L75 65 L0 65 Z"/></svg>
+                <span>Vercel Projects</span>
+                <span class="text-slate-300 dark:text-slate-700">/</span>
+                <span class="font-normal text-slate-500 hover:text-black dark:hover:text-white cursor-pointer">${projectSlug}</span>
+              </div>
+            `;
+          }
+        }
+      } else if (visualStyle === 'apple_developer') {
+        document.body.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif';
+        const cardBg = isDark ? 'rgba(30, 41, 59, 0.7)' : 'rgba(255, 255, 255, 0.7)';
+        const borderColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)';
+        
+        document.querySelectorAll('main > div, aside').forEach(el => {
+          el.classList.remove('rounded-xl', 'rounded-lg', 'rounded-md', 'rounded-none', 'rounded-2xl', 'rounded-3xl');
+          el.classList.add('rounded-2xl');
+          el.style.backgroundColor = cardBg;
+          el.style.borderColor = borderColor;
+          el.style.borderWidth = '1px';
+          el.style.backdropFilter = 'blur(16px)';
+        });
+        
+        const header = document.querySelector('header');
+        if (header) {
+          header.className = 'h-14 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b flex items-center justify-between px-6 shrink-0';
+          header.style.borderColor = borderColor;
+          
+          let trafficLights = document.getElementById('macos-traffic-lights');
+          if (!trafficLights) {
+            trafficLights = document.createElement('div');
+            trafficLights.id = 'macos-traffic-lights';
+            trafficLights.className = 'flex items-center space-x-1.5 mr-4 shrink-0';
+            trafficLights.innerHTML = `
+              <div class="w-3.5 h-3.5 rounded-full bg-[#ff5f56] border border-[#e0443e]"></div>
+              <div class="w-3.5 h-3.5 rounded-full bg-[#ffbd2e] border border-[#dea123]"></div>
+              <div class="w-3.5 h-3.5 rounded-full bg-[#27c93f] border border-[#1aab29]"></div>
+            `;
+            header.insertBefore(trafficLights, header.firstChild);
+          }
+        }
+      } else if (visualStyle === 'datadog_dashboard') {
+        const header = document.querySelector('header');
+        if (header) {
+          header.className = 'h-14 border-b flex items-center justify-between px-6 shrink-0 text-white';
+          header.style.backgroundColor = '#632ca6';
+          
+          const systemName = document.getElementById('dash-system-name');
+          if (systemName) {
+            systemName.innerHTML = `
+              <div class="flex items-center space-x-3 text-sm font-bold">
+                <span class="bg-white/20 p-1.5 rounded-lg text-white">DD</span>
+                <span>Datadog Dashboard Telemetry</span>
+              </div>
+            `;
+          }
+        }
+        
+        // Hide sidebar
+        const sidebar = document.querySelector('aside');
+        if (sidebar) sidebar.classList.add('hidden');
+        
+        // Fullwidth main content
+        const main = document.querySelector('main');
+        if (main) {
+          main.className = 'flex-1 p-6 overflow-y-auto flex flex-col space-y-6 w-full';
+        }
+
+      } else if (visualStyle === 'neo_brutalism') {
+        document.body.style.fontFamily = 'Impact, Arial Black, sans-serif';
+        const brutalYellow = '#feeb1a';
+        const brutalOrange = '#ff7b00';
+        if (mainLayout) {
+          mainLayout.style.backgroundColor = brutalYellow;
+        }
+        document.querySelectorAll('main > div, aside, header').forEach(el => {
+          el.className = el.className.replace(/bg-white|bg-slate-\d+/g, 'bg-white');
+          el.style.border = '4px solid #000000';
+          el.style.borderRadius = '0px';
+          el.style.boxShadow = '6px 6px 0px 0px #000000';
+        });
+        const badge = document.getElementById('dash-system-status');
+        if (badge) {
+          badge.className = 'px-3 py-1 bg-black text-white text-xs font-black uppercase rounded-none border-2 border-black';
+          badge.style.boxShadow = 'none';
+        }
+        const activeTab = document.getElementById('menu-dash');
+        if (activeTab) {
+          activeTab.className = 'flex items-center space-x-2.5 p-3.5 border-4 border-black font-extrabold uppercase rounded-none bg-black text-white';
+          activeTab.style.boxShadow = 'none';
+        }
+      } else if (visualStyle === 'glassmorphism_3d') {
+        document.body.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        if (mainLayout) {
+          mainLayout.className = mainLayout.className.replace(/bg-\w+-\d+|bg-slate-\d+|bg-slate-50|bg-gray-\d+/g, '');
+          mainLayout.classList.add('bg-mesh-3d');
+        }
+        const glassBg = isDark ? 'rgba(15, 23, 42, 0.75)' : 'rgba(255, 255, 255, 0.72)';
+        const glassBorder = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)';
+        
+        document.querySelectorAll('main > div, aside, header').forEach(el => {
+          el.className = el.className.replace(/bg-white|bg-slate-\d+|bg-slate-50|bg-gray-\d+/g, '');
+          el.style.backgroundColor = glassBg;
+          el.style.borderColor = glassBorder;
+          el.style.borderWidth = '1px';
+          el.style.backdropFilter = 'blur(20px)';
+          el.style.webkitBackdropFilter = 'blur(20px)';
+          el.classList.remove('rounded-xl', 'rounded-lg', 'rounded-md', 'rounded-none');
+          el.classList.add('rounded-2xl');
+          el.style.boxShadow = '0 8px 32px 0 rgba(31, 38, 135, 0.15)';
+        });
+      } else if (visualStyle === 'classic_mac_80s') {
+        document.body.style.fontFamily = 'monospace';
+        if (mainLayout) {
+          mainLayout.className = mainLayout.className.replace(/bg-\w+-\d+|bg-slate-\d+/g, '');
+          mainLayout.classList.add('bg-checkerboard');
+        }
+        
+        // System Menu Bar (top header)
+        const header = document.querySelector('header');
+        if (header) {
+          header.className = header.className.replace(/bg-white|bg-slate-\d+/g, 'bg-white text-black');
+          header.style.border = 'none';
+          header.style.borderBottom = '1.5px solid #000000';
+          header.style.borderRadius = '0px';
+          header.style.boxShadow = 'none';
+        }
+        
+        // Application Windows (aside, main panels)
+        document.querySelectorAll('main > div, aside').forEach(el => {
+          el.className = el.className.replace(/bg-white|bg-slate-\d+/g, 'bg-white text-black');
+          el.style.border = '1px solid #000000';
+          el.style.borderRadius = '0px';
+          el.style.boxShadow = '0 0 0 1px #ffffff, 0 0 0 2.5px #000000';
+        });
+        
+        document.querySelectorAll('span, p, h2, h1, div, aside, header, nav, main').forEach(el => {
+          if (el.children.length === 0 || el.innerText) {
+            el.className = el.className.replace(/text-slate-\d+|text-gray-\d+|text-white/g, '');
+            el.style.color = '#000000';
+            el.classList.add('text-black');
+          }
+        });
+        const badge = document.getElementById('dash-system-status');
+        if (badge) {
+          badge.className = 'px-2 py-0.5 border border-black text-black text-3xs font-mono uppercase font-bold rounded-none bg-white';
+          badge.style.boxShadow = 'none';
+        }
+        const activeTab = document.getElementById('menu-dash');
+        if (activeTab) {
+          activeTab.className = 'flex items-center space-x-2.5 p-2 font-extrabold uppercase rounded-none bg-black text-white';
+          activeTab.style.border = 'none';
+          activeTab.style.boxShadow = 'none';
+        }
+      }
+
+    } else {
+      document.getElementById('chart-title').innerText = spec.title || '';
+      document.getElementById('chart-subtitle').innerText = spec.subtitle || '';
+    }
+ 
+    const colorMap = {
+      blue: {
+        border: 'rgba(59, 130, 246, 1)',
+        fill: 'rgba(59, 130, 246, 0.08)'
+      },
+      emerald: {
+        border: 'rgba(16, 185, 129, 1)',
+        fill: 'rgba(16, 185, 129, 0.08)'
+      },
+      amber: {
+        border: 'rgba(245, 158, 11, 1)',
+        fill: 'rgba(245, 158, 11, 0.08)'
+      },
+      rose: {
+        border: 'rgba(244, 63, 94, 1)',
+        fill: 'rgba(244, 63, 94, 0.08)'
+      },
+      purple: {
+        border: 'rgba(168, 85, 247, 1)',
+        fill: 'rgba(168, 85, 247, 0.08)'
+      },
+      indigo: {
+        border: 'rgba(99, 102, 241, 1)',
+        fill: 'rgba(99, 102, 241, 0.08)'
+      },
+      cyan: {
+        border: 'rgba(6, 182, 212, 1)',
+        fill: 'rgba(6, 182, 212, 0.08)'
+      },
+      teal: {
+        border: 'rgba(20, 184, 166, 1)',
+        fill: 'rgba(20, 184, 166, 0.08)'
+      },
+      orange: {
+        border: 'rgba(249, 115, 22, 1)',
+        fill: 'rgba(249, 115, 22, 0.08)'
+      },
+      fuchsia: {
+        border: 'rgba(217, 70, 239, 1)',
+        fill: 'rgba(217, 70, 239, 0.08)'
+      },
+      pink: {
+        border: 'rgba(236, 72, 153, 1)',
+        fill: 'rgba(236, 72, 153, 0.08)'
+      },
+      violet: {
+        border: 'rgba(139, 92, 246, 1)',
+        fill: 'rgba(139, 92, 246, 0.08)'
+      }
+    };
+
+    const activeColor = colorMap[primaryColor] || colorMap.blue;
+
+    const colors = [activeColor.border];
+    const fills = [activeColor.fill];
+
+    for (const [colName, val] of Object.entries(colorMap)) {
+      if (colName !== primaryColor) {
+        colors.push(val.border);
+        fills.push(val.fill);
+      }
+    }
+
+    const canvasId = isDashboard ? 'dash-chart-canvas' : 'chart-canvas';
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    const cType = spec.chart_type || 'bar_chart';
+    const dataObj = spec.data || spec.rows || [];
+
+    // Fuzzy matching helpers for custom generated keys
+    function normalizeKey(str) {
+      return (str || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    function parseGanttTime(val) {
+      if (typeof val === 'number') return val;
+      if (typeof val === 'string') {
+        const parts = val.split(':');
+        if (parts.length >= 2) {
+          const hh = parseInt(parts[0], 10);
+          const mm = parseInt(parts[1], 10);
+          if (!isNaN(hh) && !isNaN(mm)) {
+            return hh * 60 + mm;
+          }
+        }
+        const num = Number(val);
+        if (!isNaN(num)) return num;
+      }
+      return 0;
+    }
+
+
+    function getLabel(r) {
+      if (r.label !== undefined) return r.label;
+      const labelKeys = ['timestamp', 'time', 'date', 'interval', 'period', 'label'];
+      for (const k of labelKeys) {
+        const found = Object.keys(r).find(key => key.toLowerCase() === k);
+        if (found !== undefined) return r[found];
+      }
+      for (const [key, value] of Object.entries(r)) {
+        if (typeof value === 'string') return value;
+      }
+      const keys = Object.keys(r);
+      return keys.length > 0 ? r[keys[0]] : '';
+    }
+
+    function getValue(r, labelKey) {
+      if (r.value !== undefined) return Number(r.value);
+      for (const [key, value] of Object.entries(r)) {
+        if (key !== labelKey && !isNaN(Number(value))) {
+          return Number(value);
+        }
+      }
+      return 0;
+    }
+
+    function getSeriesValue(r, seriesName, seriesIndex) {
+      const normSeries = normalizeKey(seriesName);
+      for (const [key, value] of Object.entries(r)) {
+        if (normalizeKey(key) === normSeries) {
+          return Number(value);
+        }
+      }
+      if (Array.isArray(r.values) && r.values[seriesIndex] !== undefined) {
+        return Number(r.values[seriesIndex]);
+      }
+      const numericVals = Object.entries(r)
+        .filter(([key, value]) => typeof value === 'number' || !isNaN(Number(value)))
+        .map(([key, value]) => Number(value));
+      if (numericVals[seriesIndex] !== undefined) {
+        return numericVals[seriesIndex];
+      }
+      return 0;
+    }
+
+    let config = {
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false, // CRITICAL: Disable animation for headless Chrome capture
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              usePointStyle: true,
+              padding: 15,
+              color: isDark ? '#f1f5f9' : '#1e293b',
+              font: { size: 12, weight: '500' }
+            }
+          }
+        },
+        scales: {
+          x: { 
+            grid: { color: isDark ? 'rgba(255, 255, 255, 0.08)' : '#f3f4f6' }, 
+            ticks: { 
+              color: isDark ? '#94a3b8' : '#64748b',
+              font: { size: 10 } 
+            } 
+          },
+          y: { 
+            grid: { color: isDark ? 'rgba(255, 255, 255, 0.08)' : '#f3f4f6' }, 
+            ticks: { 
+              color: isDark ? '#94a3b8' : '#64748b',
+              font: { size: 10 } 
+            } 
+          }
+        }
+      }
+    };
+
+    if (!Array.isArray(dataObj) && dataObj.labels && dataObj.datasets) {
+      // Native Chart.js format parsed directly!
+      config.data = dataObj;
+      if (cType.startsWith('line') || cType === 'multi_line_chart') {
+        config.type = 'line';
+      } else if (cType === 'pie' || cType === 'pie_chart') {
+        config.type = 'pie';
+        config.options.scales.x.display = false;
+        config.options.scales.y.display = false;
+      } else {
+        config.type = 'bar';
+      }
+      // Apply clean defaults to datasets if styling is missing
+      config.data.datasets.forEach((ds, k) => {
+        if (!ds.borderColor) ds.borderColor = colors[k % colors.length];
+        if (!ds.backgroundColor) {
+          if (config.type === 'line') {
+            ds.backgroundColor = fills[k % fills.length];
+            ds.fill = true;
+            ds.tension = 0.3;
+          } else {
+            ds.backgroundColor = colors[k % colors.length].replace(', 1)', ', 0.85)');
+          }
+        }
+        if (config.type === 'line') {
+          ds.pointBackgroundColor = ds.borderColor;
+          ds.pointBorderColor = '#fff';
+          ds.pointBorderWidth = 1.5;
+          ds.pointRadius = 4;
+        }
+      });
+      if (config.data.datasets.length === 1 && config.type !== 'pie') {
+        config.options.plugins.legend.display = false;
+      }
+    } else {
+      // Custom rows schema format
+      const rows = dataObj;
+      if (cType === 'bar_chart') {
+        const labelKey = Object.keys(rows[0] || {}).find(k => getLabel(rows[0]) === rows[0][k]);
+        config.type = 'bar';
+        config.data = {
+          labels: rows.map(r => getLabel(r)),
+          datasets: [{
+            data: rows.map(r => getValue(r, labelKey)),
+            backgroundColor: 'rgba(59, 130, 246, 0.85)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 1.5,
+            borderRadius: 6
+          }]
+        };
+        config.options.plugins.legend.display = false;
+
+      } else if (cType === 'line_chart' || cType === 'line') {
+        const labelKey = Object.keys(rows[0] || {}).find(k => getLabel(rows[0]) === rows[0][k]);
+        config.type = 'line';
+        config.data = {
+          labels: rows.map(r => getLabel(r)),
+          datasets: [{
+            data: rows.map(r => getValue(r, labelKey)),
+            borderColor: colors[1],
+            backgroundColor: fills[1],
+            borderWidth: 3,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: colors[1],
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7
+          }]
+        };
+        config.options.plugins.legend.display = false;
+
+      } else if (cType === 'multi_line_chart') {
+        config.type = 'line';
+        const seriesNames = spec.series_names || ["Series 1", "Series 2"];
+        const datasets = seriesNames.map((name, k) => {
+          return {
+            label: name,
+            data: rows.map(r => getSeriesValue(r, name, k)),
+            borderColor: colors[k % colors.length],
+            backgroundColor: fills[k % fills.length],
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: colors[k % colors.length],
+            pointBorderColor: '#fff',
+            pointBorderWidth: 1.5,
+            pointRadius: 4
+          };
+        });
+        config.data = {
+          labels: rows.map(r => getLabel(r)),
+          datasets: datasets
+        };
+
+      } else if (cType === 'grouped_bar_chart') {
+        config.type = 'bar';
+        const seriesNames = spec.series_names || ["Series 1", "Series 2"];
+        const datasets = seriesNames.map((name, k) => {
+          return {
+            label: name,
+            data: rows.map(r => getSeriesValue(r, name, k)),
+            backgroundColor: colors[k % colors.length].replace(', 1)', ', 0.85)'),
+            borderColor: colors[k % colors.length],
+            borderWidth: 1.5,
+            borderRadius: 4
+          };
+        });
+        config.data = {
+          labels: rows.map(r => getLabel(r)),
+          datasets: datasets
+        };
+
+      } else if (cType === 'stacked_bar_chart') {
+        config.type = 'bar';
+        const seriesNames = spec.series_names || ["Series 1", "Series 2"];
+        const datasets = seriesNames.map((name, k) => {
+          return {
+            label: name,
+            data: rows.map(r => getSeriesValue(r, name, k)),
+            backgroundColor: colors[k % colors.length].replace(', 1)', ', 0.85)'),
+            borderColor: colors[k % colors.length],
+            borderWidth: 1
+          };
+        });
+        config.data = {
+          labels: rows.map(r => getLabel(r)),
+          datasets: datasets
+        };
+        config.options.scales.x.stacked = true;
+        config.options.scales.y.stacked = true;
+
+      } else if (cType === 'pie_chart' || cType === 'pie') {
+        const labelKey = Object.keys(rows[0] || {}).find(k => getLabel(rows[0]) === rows[0][k]);
+        config.type = 'pie';
+        config.data = {
+          labels: rows.map(r => getLabel(r)),
+          datasets: [{
+            data: rows.map(r => getValue(r, labelKey)),
+            backgroundColor: colors.slice(0, rows.length),
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        };
+        config.options.scales.x.display = false;
+        config.options.scales.y.display = false;
+
+      } else if (cType === 'scatter_plot') {
+        config.type = 'scatter';
+        config.data = {
+          datasets: [{
+            data: rows.map((r, idx) => {
+              const xKey = Object.keys(r).find(key => key.toLowerCase() === 'x');
+              const yKey = Object.keys(r).find(key => key.toLowerCase() === 'y');
+              return {
+                x: Number(xKey !== undefined ? r[xKey] : idx),
+                y: Number(yKey !== undefined ? r[yKey] : getValue(r, ''))
+              };
+            }),
+            backgroundColor: colors[0],
+            borderColor: '#fff',
+            borderWidth: 1.5,
+            pointRadius: 6
+          }]
+        };
+        config.options.plugins.legend.display = false;
+        if (spec.x_label) config.options.scales.x.title = { display: true, text: spec.x_label };
+        if (spec.y_label) config.options.scales.y.title = { display: true, text: spec.y_label };
+
+      } else if (cType === 'gantt_chart') {
+        config.type = 'bar';
+        config.data = {
+          labels: rows.map(r => getLabel(r)),
+          datasets: [{
+            data: rows.map(r => {
+              const startKey = Object.keys(r).find(key => key.toLowerCase().includes('start'));
+              const endKey = Object.keys(r).find(key => key.toLowerCase().includes('end'));
+              const durKey = Object.keys(r).find(key => key.toLowerCase().includes('dur'));
+              let start = 0;
+              if (startKey !== undefined) {
+                start = parseGanttTime(r[startKey]);
+              } else {
+                const timeKey = Object.keys(r).find(k => {
+                  const nk = k.toLowerCase();
+                  return nk === 'time' || nk === 'timestamp' || nk === 'date';
+                });
+                if (timeKey !== undefined) {
+                  start = parseGanttTime(r[timeKey]);
+                }
+              }
+              let duration = 5;
+              if (durKey !== undefined) {
+                duration = Number(r[durKey]);
+                if (isNaN(duration)) duration = 5;
+              } else if (endKey !== undefined) {
+                const end = parseGanttTime(r[endKey]);
+                duration = end - start;
+              }
+              return [start, start + duration];
+            }),
+            backgroundColor: colors.slice(0, rows.length).map(c => c.replace(', 1)', ', 0.8)')),
+            borderColor: colors.slice(0, rows.length),
+            borderWidth: 1.5,
+            borderRadius: 4
+          }]
+        };
+        config.options.indexAxis = 'y';
+        config.options.plugins.legend.display = false;
+        config.options.scales.x.title = { display: true, text: 'Time' };
+        config.options.scales.x.ticks = {
+          font: { size: 10 },
+          callback: function(value) {
+            if (value >= 120 && value <= 1440) {
+              const hh = Math.floor(value / 60);
+              const mm = Math.floor(value % 60);
+              return `${hh.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')}`;
+            }
+            return value;
+          }
+        };
+
+      } else {
+        // Fallback text list rendering
+        config.type = 'bar';
+        config.data = { labels: [], datasets: [] };
+        config.options.scales.x.display = false;
+        config.options.scales.y.display = false;
+        const container = document.createElement('div');
+        container.className = 'w-full flex-grow flex flex-col justify-center items-center text-center p-4 border border-dashed border-gray-300 rounded-lg bg-gray-50';
+        rows.forEach(item => {
+          const p = document.createElement('p');
+          p.className = 'text-sm text-gray-700 font-medium my-1';
+          p.innerText = item.label || item.value || String(item);
+          container.appendChild(p);
+        });
+        document.getElementById('chart-canvas').replaceWith(container);
+      }
+    }
+
+    if (visualStyle === 'classic_mac_80s') {
+      if (config.options && config.options.scales) {
+        if (config.options.scales.x) {
+          config.options.scales.x.grid = { color: '#000000', borderWidth: 1 };
+          config.options.scales.x.ticks = { color: '#000000' };
+        }
+        if (config.options.scales.y) {
+          config.options.scales.y.grid = { color: '#000000', borderWidth: 1 };
+          config.options.scales.y.ticks = { color: '#000000' };
+        }
+      }
+      if (config.options && config.options.plugins && config.options.plugins.legend && config.options.plugins.legend.labels) {
+        config.options.plugins.legend.labels.color = '#000000';
+      }
+      if (config.data && config.data.datasets) {
+        config.data.datasets.forEach((ds, k) => {
+          ds.borderColor = '#000000';
+          ds.backgroundColor = 'transparent';
+          ds.borderWidth = 2.5;
+          ds.pointBackgroundColor = '#ffffff';
+          ds.pointBorderColor = '#000000';
+          ds.pointBorderWidth = 2;
+          ds.pointRadius = 5;
+          if (k > 0) {
+            ds.borderDash = [6, 4];
+          }
+        });
+      }
+    }
+
+    if (config.type) {
+      new Chart(ctx, config);
+    }
+    if (isDashboard && spec.dashboard_data && spec.dashboard_data.metrics) {
+      spec.dashboard_data.metrics.forEach((met, idx) => {
+        const sparkCtx = document.getElementById(`sparkline-canvas-${idx}`).getContext('2d');
+        new Chart(sparkCtx, {
+          type: 'line',
+          data: {
+            labels: met.sparkline.map((_, i) => i),
+            datasets: [{
+              data: met.sparkline,
+              borderColor: visualStyle === 'classic_mac_80s' ? '#000000' : (met.status !== 'healthy' ? 'rgba(239, 68, 68, 1)' : 'rgba(59, 130, 246, 1)'),
+              borderWidth: visualStyle === 'classic_mac_80s' ? 2 : 1.5,
+              fill: false,
+              pointRadius: 0,
+              tension: 0.2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: { x: { display: false }, y: { display: false } },
+            plugins: { legend: { display: false } }
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>

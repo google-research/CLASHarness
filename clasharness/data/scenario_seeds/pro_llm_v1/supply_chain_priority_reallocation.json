@@ -1,0 +1,14 @@
+{
+  "slug": "supply_chain_priority_reallocation",
+  "domain": "supply_chain",
+  "title": "Supply Chain Priority Reallocation",
+  "target_rounds": 24,
+  "core_conflict": "An old supplier schedule says the shipment is ready, while newer carrier and warehouse evidence show a partial shortage requiring priority reallocation.",
+  "participants": ["Bailey", "Rowan", "Jules", "Kai"],
+  "required_constraints": [
+    "include contradictory supplier schedules, carrier notes, and warehouse evidence",
+    "include workspace files, logistics emails, task-board allocation blockers, and delivery calendar windows",
+    "include dynamic updates that change shortage count, ETA, or allocation priority after early rounds",
+    "emphasize priority updates, task-board repair, and conflicting ETA reconciliation"
+  ]
+}

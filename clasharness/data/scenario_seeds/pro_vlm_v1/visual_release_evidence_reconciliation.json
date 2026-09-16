@@ -1,0 +1,45 @@
+{
+  "slug": "visual_release_evidence_reconciliation",
+  "domain": "multimodal release operations",
+  "title": "Visual Release Evidence Reconciliation",
+  "target_rounds": 24,
+  "core_conflict": "A stale text launch summary says the release can proceed, but current visual boards, table screenshots, and owner-rich-text evidence show unresolved blockers and later updates that require cross-modal review.",
+  "participants": [
+    "Avery Release Lead",
+    "Blair Safety Owner",
+    "Casey Compliance Reviewer",
+    "Devon Operations Coordinator"
+  ],
+  "required_constraints": [
+    "include contradictory stale text and current visual evidence",
+    "include at least one dynamic visual update after early rounds",
+    "use mixed substrates: file, email, tasks, calendar, and asset",
+    "score deterministic evidence anchors, not VLM judge outputs",
+    "use mixed actions rather than report-only tasks"
+  ],
+  "allowed_tool_families": [
+    "file",
+    "email",
+    "tasks",
+    "calendar",
+    "asset"
+  ],
+  "modalities": [
+    "image",
+    "chart",
+    "table_screenshot",
+    "document_image",
+    "rich_text",
+    "natural_image"
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image"
+  }
+}

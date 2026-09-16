@@ -1,0 +1,30 @@
+{
+  "output_dir": "clasharness/data/datasets/benchmark_slices",
+  "slices": {
+    "baseline_core": {
+      "count": 182,
+      "file": "clasharness/data/datasets/benchmark_slices/baseline_core.txt",
+      "experimental": false
+    },
+    "branch_challenge": {
+      "count": 0,
+      "file": "clasharness/data/datasets/benchmark_slices/branch_challenge.txt",
+      "experimental": true
+    },
+    "challenge": {
+      "count": 402,
+      "file": "clasharness/data/datasets/benchmark_slices/challenge.txt",
+      "experimental": false
+    },
+    "complex_realistic": {
+      "count": 160,
+      "file": "clasharness/data/datasets/benchmark_slices/complex_realistic.txt",
+      "experimental": false
+    },
+    "online_strict": {
+      "count": 170,
+      "file": "clasharness/data/datasets/benchmark_slices/online_strict.txt",
+      "experimental": false
+    }
+  }
+}

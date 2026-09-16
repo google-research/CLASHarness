@@ -1,0 +1,532 @@
+# =============================================================================
+# conflict_vlm_v1 - dataset generation + cross-vendor eval commands
+# =============================================================================
+#
+# WHY EVERY EVAL COMMAND PINS AN IMAGE SIZE
+# -----------------------------------------
+# The three max-image-edge flags have ASYMMETRIC defaults, so "no flag" does
+# NOT mean "no resizing":
+#
+#     --anthropic-max-image-edge   default "auto"  -> sends originals
+#     --gemini-max-image-edge      default high    -> sends originals
+#     --openai-max-image-edge      default 1920    -> DOWNSCALES
+#
+# That silently handicapped every OpenAI run: measured on
+# eval_results/data_3_5_flash (n=5509 images, R^2 >= 0.9997),
+#
+#     OpenAI  sent 1920x1080 (2.07 MP) -> 2042.6 tok/image
+#     Claude  sent 3840x2160, server downscaled to 2576x1449 (3.73 MP)
+#                                      -> 4786.6 tok/image
+#     Gemini  sent 3840x2160, server resampled to a fixed token budget
+#                                      -> 1100.6 tok/image
+#
+# i.e. OpenAI saw 55% of Claude's pixels purely because of a default nobody
+# chose. Both numbers match the vendors' published patch formulas exactly:
+#   Anthropic ceil(w/28)*ceil(h/28): 92*52   = 4784  (docs: "2576x1449, 4784")
+#   OpenAI    ceil(w/32)*ceil(h/32): 60*34   = 2040
+#
+# ALIGNMENT TARGET = 2576 px long edge. That is Claude 4.7+'s own high-res
+# ceiling, so it is the largest size all vendors will honour without a further
+# server-side downscale. At 2576x1449 OpenAI costs 81*46 = 3726 tok/image
+# (+83% vs 1920); images are ~81% of all prompt tokens, so budget ~1.67x on
+# OpenAI runs.
+#
+# GEMINI IS DIFFERENT - RESIZING CANNOT ALIGN IT.
+# Gemini resamples every image to a FIXED per-image token budget server-side,
+# so --gemini-max-image-edge is a no-op for model-visible detail (8.29 MP and
+# 1.08 MP both measured ~1100 tok). The only knob that changes what Gemini sees
+# is --gemini-media-resolution: low=280, high=560, high=1120 (the default),
+# ultra_high=2240 tok/image. We pin ultra_high to get Gemini as close to the
+# other two as the API allows. The edge flag is still set, purely to cut
+# upload bytes / latency.
+#
+# NOTE (Anthropic, >20 images per request): the vendor docs say requests with
+# more than 20 image blocks get a stricter per-image dimension limit and
+# recommend <= 2000 px. Some tasks here carry up to 23 images. Empirically this
+# did not bite on Vertex (token cost stayed exactly 4784/image across 1-23
+# images), but if you ever see an invalid_request_error mentioning
+# "many-image requests", drop the Anthropic edge to 2000.
+# =============================================================================
+
+# =============================================================================
+# ENVIRONMENT
+# =============================================================================
+# The four values below are the only workstation-specific things in this file.
+# Set them once and every command further down runs unchanged.
+#
+#   VENV       virtualenv holding the dependencies. docs/quickstart.md has the
+#              create-and-install steps; the package does not need `pip install`
+#              because both entry points bootstrap sys.path themselves.
+#   REPO       this repository's checkout (the directory holding pyproject.toml).
+#   TASK_DATA  where generation writes compiled task data and evaluation reads
+#              it back -- the same path is passed to both, so it must match.
+#   WORK_ROOT  output tree for generated scenarios and eval_results. Kept
+#              outside REPO on purpose: it grows to tens of GB and must never
+#              be checked in.
+#
+# Keep all four free of spaces -- the commands below reference them unquoted.
+# GEMINI_ENV points at a file that exports the provider API keys (see
+# docs/quickstart.md for which key each provider needs). Never check it in.
+# =============================================================================
+VENV=~/Code/multi-agent
+REPO=/path/to/clash-harness
+TASK_DATA=~/Data/multiagent_conflict_data_Gemini_Sonnet_5
+WORK_ROOT=~/clash-harness-data
+GEMINI_ENV=~/.config/gemini_env.sh
+
+source "$VENV/bin/activate"
+cd "$REPO"
+source "$GEMINI_ENV"
+
+
+# =============================================================================
+# 1. DATASET GENERATION
+# =============================================================================
+# NOTE: --seed_name takes a COMMA-SEPARATED list (type=_parse_list). Repeating
+# the flag does NOT accumulate - the last occurrence wins. Omit it entirely to
+# generate every seed.
+
+python3 scripts/generate_conflict_vlm_scenarios.py \
+  --provider=vertex-anthropic \
+  --model=claude-sonnet-5 \
+  --max_output_tokens=65536 \
+  --image_provider=vertex \
+  --chart_provider=template \
+  --google_model=gemini-3-pro-image \
+  --target_rounds=10 \
+  --retries=30 \
+  --num_render_workers=4 \
+  --num_generation_workers=4 \
+  --temperature=0.4 \
+  --num_versions=3 \
+  --num_workers=20 \
+  --auditor_max_iterations=5 \
+  --vertex_location=global \
+  --image_vertex_location=global \
+  --output_data_dir=$TASK_DATA \
+  --output_dir=$WORK_ROOT/data/scenarios/conflict_vlm_sonnet_5 \
+  --clean
+
+# Seed subsets (pick ONE line and append it to the command above):
+#   --seed_name=it_deployment_gate
+#   --seed_name=employee_onboarding_workflow,it_deployment_gate
+#   --seed_name=access_request_approval,collaborative_contract_review,coordinated_containment,deadlock_multi_approval,multi_party_access_permit,multi_tab_slot_monitoring
+#   --seed_name=warehouse_robotics_safety_halt,multi_totalice_pairing,multi_party_access_permit,payment_chargeback_dispute,satellite_ground_station_handover
+
+
+# =============================================================================
+# 2. EVAL - shared settings
+# =============================================================================
+# --task-data-dir: use the PERSISTENT copy. The old /tmp/multiagent_conflict_data_v8_Gemini_3_6_flash
+#   path in this file no longer exists (/tmp was cleared), so every command here
+#   used to fail immediately.
+# --llm-tool-mode native: stated explicitly even though it is the default. The
+#   published data_3_5_flash results were produced with native (verified from
+#   each run's run_config), while the Claude commands in the old version of this
+#   file said `text` - they did NOT reproduce the published numbers.
+# --capture-log: required to emit log/*.interactions.jsonl, which is the only
+#   way to verify after the fact what was actually sent.
+#
+# Out-dirs sit in eval_results/data_3_5_flash/aligned_setting_high/, as a sibling of
+# the existing eval_results/data_3_5_flash/default_provider_setting/ (which was
+# OpenAI@1920 / Claude@auto / Gemini@default budget, i.e. whatever each flag
+# defaulted to). Same dataset, same layout <Vendor>/<model>/r01 - the only
+# difference is the image settings, so the two trees are directly comparable.
+# Do not mix them into one series.
+
+
+# =============================================================================
+# 3. GEMINI
+# =============================================================================
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider gemini \
+    --model gemini-3.7-flash \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir ~/Data/multiagent_conflict_data_v8_Gemini_3_6_flash \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_3_6_flash_v8/aligned_setting_high/Gemini/3_7_flash/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --gemini-max-image-edge 2576 \
+    --gemini-media-resolution ultra_high \
+    --llm-reasoning-effort high
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider gemini \
+    --model gemini-3.6-flash \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/Gemini/3_6_flash/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --gemini-max-image-edge 2576 \
+    --gemini-media-resolution ultra_high \
+    --llm-reasoning-effort high
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider gemini \
+    --model gemini-3.5-flash \
+    --vertex-location global \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/Gemini/3_5_flash/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --gemini-max-image-edge 2576 \
+    --gemini-media-resolution ultra_high \
+    --llm-reasoning-effort high
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider gemini \
+    --model gemini-3.1-pro-preview \
+    --vertex-location global \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/Gemini/3_1_pro/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --gemini-max-image-edge 2576 \
+    --gemini-media-resolution ultra_high \
+    --llm-reasoning-effort high
+
+
+# =============================================================================
+# 4. CLAUDE (vertex-anthropic)
+# =============================================================================
+# 2576 is what the server already picks for a 4K input, so pinning it does not
+# change what the model sees - it just cuts upload bytes ~75% and keeps the
+# request clear of the 28MB byte-budget downscale ladder (which is silent).
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider vertex-anthropic \
+    --model claude-opus-4-8 \
+    --vertex-location global \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/Claude/opus_4_8/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --anthropic-max-image-edge 2576 \
+    --llm-reasoning-effort high
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider vertex-anthropic \
+    --model claude-sonnet-5 \
+    --vertex-location global \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/Claude/sonnet_5/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --anthropic-max-image-edge 2576 \
+    --llm-reasoning-effort high
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider vertex-anthropic \
+    --model claude-opus-5 \
+    --vertex-location global \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/Claude/opus_5/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --anthropic-max-image-edge 2576 \
+    --llm-reasoning-effort high
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider vertex-anthropic \
+    --model anthropic-claude-sonnet-4-6 \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/Claude/sonnet_4_6/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --anthropic-max-image-edge 2576 \
+    --llm-reasoning-effort high
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider vertex-anthropic \
+    --model claude-fable-5 \
+    --vertex-location us \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/Claude/fable_5/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --anthropic-max-image-edge 2576 \
+    --llm-reasoning-effort high
+
+
+# =============================================================================
+# 5. GROK (vertex-xai) - DISABLED, NOT COMPARABLE
+# =============================================================================
+# Grok does NOT thread reasoning across steps, so it cannot be compared with the
+# other three on this dataset.
+#
+# ``_openai_reasoning_enabled()`` requires ``_openai_prefers_responses_api()``,
+# which returns True only for provider ``bedrock-gpt`` or a model id starting
+# with ``gpt-``. ``vertex-xai`` / ``grok-4.20-reasoning`` matches neither, so it
+# falls back to Chat Completions - which has no encrypted-reasoning replay at
+# all. Verified by constructing the agent: openai_reasoning=False,
+# responses_api=False.
+#
+# Every other model here keeps its chain of thought continuous across the 20
+# steps of an episode (Gemini thought_signature / Claude thinking blocks / GPT
+# encrypted reasoning items). Grok would be the only one starting each step
+# cold, which confounds any cross-vendor read.
+#
+# Re-enable only after confirming vertex-xai serves /responses and teaching
+# _openai_prefers_responses_api about it.
+#
+# python3 examples/train_and_eval.py \
+#     --agent llm \
+#     --llm-provider vertex-xai \
+#     --model grok-4.20-reasoning \
+#     --vertex-location us \
+#     --llm-judge-model gemini-3.6-flash \
+#     --llm-judge-provider gemini \
+#     --llm-max-tokens 32768 \
+#     --split total \
+#     --task-data-dir $TASK_DATA \
+#     --collect-data \
+#     --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/XAI/grok_4_20/r01 \
+#     --llm-timeout-s 180 \
+#     --parallel-workers 10 \
+#     --llm-request-retries 20 \
+#     --max-steps 20 \
+#     --clean-out-dir \
+#     --verbose \
+#     --capture-log \
+#     --no-compact-fallback \
+#     --llm-tool-mode native \
+#     --openai-max-image-edge 2576
+
+
+# =============================================================================
+# 6. OPENAI (bedrock-gpt)
+# =============================================================================
+# Bedrock proxy only - never the public OpenAI API.
+# This is the group whose numbers change: 1920 -> 2576 means 2040 -> 3726
+# tok/image, ~1.67x total prompt tokens for the run.
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider bedrock-gpt \
+    --model openai.gpt-5.6-sol \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/OpenAI/5_6_sol/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --openai-max-image-edge 2576 \
+    --llm-reasoning-effort high \
+    --retry-provider-failures-only
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider bedrock-gpt \
+    --model openai.gpt-5.5 \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/OpenAI/5_5/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --openai-max-image-edge 2576 \
+    --llm-reasoning-effort high
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider bedrock-gpt \
+    --model openai.gpt-5.6-luna \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/OpenAI/5_6_luna/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --clean-out-dir \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --openai-max-image-edge 2576 \
+    --llm-reasoning-effort high \
+    --retry-provider-failures-only
+
+python3 examples/train_and_eval.py \
+    --agent llm \
+    --llm-provider bedrock-gpt \
+    --model openai.gpt-5.6-terra \
+    --llm-judge-model gemini-3.6-flash \
+    --llm-judge-provider gemini \
+    --llm-max-tokens 32768 \
+    --split total \
+    --task-data-dir $TASK_DATA \
+    --collect-data \
+    --out-dir $WORK_ROOT/eval_results/data_sonnet_5/aligned_setting_high/OpenAI/5_6_terra/r01 \
+    --llm-timeout-s 180 \
+    --parallel-workers 20 \
+    --llm-request-retries 20 \
+    --max-steps 20 \
+    --verbose \
+    --capture-log \
+    --no-compact-fallback \
+    --llm-tool-mode native \
+    --openai-max-image-edge 2576 \
+    --llm-reasoning-effort high \
+    --retry-provider-failures-only
+    --clean-out-dir 
+
+# =============================================================================
+# 7. VARIATIONS
+# =============================================================================
+# Resume a partially-finished run instead of starting over: replace
+#   --clean-out-dir
+# with
+#   --retry-provider-failures-only
+# (Do NOT pass both. The old version of this file had a broken line
+# continuation that left --clean-out-dir dangling as a separate shell command.)
+#
+# Restrict to a couple of scenarios while debugging - append to any eval
+# command above. Unlike --seed_name, --scenario-slug IS repeatable:
+#   --scenario-slug=employee_onboarding_workflow \
+#   --scenario-slug=it_deployment_gate
+#
+# Effort alignment (separate ablation): Anthropic defaults to high, gpt-5.x on
+# Bedrock defaults to high. Pin both ends explicitly with
+#   --llm-reasoning-effort high     (or high)

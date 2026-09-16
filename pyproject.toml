@@ -1,0 +1,125 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+[build-system]
+requires = ["setuptools>=77"]  # >=77 for the PEP 639 `license` / `license-files` keys
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clasharness"
+version = "0.1.0"
+description = "CLASHarness: Generating Controllable and Verifiable Multi-Agent Conflict Scenarios in Computer Use"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+keywords = ["benchmark", "agents", "multi-agent", "coordination", "conflict", "evaluation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/google-research/CLASHarness"
+Repository = "https://github.com/google-research/CLASHarness.git"
+Documentation = "https://github.com/google-research/CLASHarness#documentation"
+dependencies = [
+    # Model providers.
+    # Both anthropic SDK majors work: 1.x dropped `temperature` from the
+    # `messages.create()` signature, so the client probes the signature at
+    # runtime and routes sampling params through `extra_body` when needed.
+    # The JSON sent on the wire is identical either way.
+    "anthropic>=0.40.0",
+    "google-genai>=1.0.0",
+    # Google API access used by calendar/tasks skills
+    "google-api-python-client>=2.130.0",
+    "google-auth>=2.29.0",
+    "google-auth-oauthlib>=1.2.0",
+    # Visual asset generation and rendering
+    "Pillow>=9.0",
+    "matplotlib>=3.7.0",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+google = [
+    "google-api-python-client>=2.130.0",
+    "google-auth>=2.29.0",
+    "google-auth-oauthlib>=1.2.0",
+]
+
+# Pinning `testpaths` makes a bare `pytest` and `pytest tests` behave identically
+# -- 2941 passed, 2 skipped, 497 subtests passed -- rather than depending on what
+# else happens to sit in the working directory. Without it, pytest walks the whole
+# root looking for `test_*.py` / `*_test.py`, so any scratch script a user drops
+# beside the sources joins collection and can abort it at import time.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+# Packages are listed explicitly rather than auto-discovered. Globbed discovery
+# (`packages.find` with `include = ["clasharness*"]`) would also match
+# `clasharness.data`, whose `scenarios/` subtree holds the generated corpus and
+# is far too large to walk at build time. An explicit list also avoids depending
+# on the `namespaces` default, which matters because `train_eval` is a PEP 420
+# package with no `__init__.py`.
+# Keep this list in sync when adding or removing a package directory.
+[tool.setuptools]
+packages = [
+    "clasharness",
+    "clasharness.backend",
+    "clasharness.core",
+    "clasharness.evaluation",
+    "clasharness.evaluation.checkers",
+    "clasharness.scenario",
+    "clasharness.scenario.plugins",
+    "clasharness.skills",
+    "clasharness.skills.adapters",
+    "clasharness.skills.contrib",
+    "clasharness.skills.impl",
+    "clasharness.tasks",
+    "clasharness.tasks.generators",
+    "clasharness.tools",
+    "clasharness.utils",
+    "train_eval",
+]
+
+# Non-Python files the package reads at runtime. Without this they are absent
+# from the wheel and the sdist, which an editable install hides: `pip install
+# -e .` resolves them off the checkout and everything passes, then a real
+# install fails on the first seed load. Patterns are deliberately narrow rather
+# than `**/*.json` -- the generator writes its output under
+# `clasharness/data/scenarios/`, which reaches tens of GB and must never be
+# swept into a distribution. Keep in sync when adding a data directory.
+[tool.setuptools.package-data]
+clasharness = [
+    "data/base_configs/*/*.json",
+    "data/datasets/*.json",
+    "data/datasets/*.txt",
+    "data/datasets/*/*.json",
+    "data/datasets/*/*.txt",
+    "data/scenario_seeds/*/*.json",
+    "data/style_gallery/*.html",
+    "data/tasks/*/*.json",
+    "scenario/templates/*.html",
+    "scenario/templates/*/*.js",
+    "specs/*.json",
+]

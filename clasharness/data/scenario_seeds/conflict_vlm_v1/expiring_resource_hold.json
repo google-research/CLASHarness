@@ -1,0 +1,75 @@
+{
+  "slug": "expiring_resource_hold",
+  "domain": "shared research-compute reservation and time-bounded hold confirmation",
+  "title": "Expiring Reversible Hold on a Scarce GPU Training Slot",
+  "target_rounds": 10,
+  "archetype": "reversible_action_hold",
+  "core_conflict": "A single high-memory GPU training slot must be reserved from a shared research cluster before a funded experiment can start. The reservation system only grants a REVERSIBLE hold: placing a hold is tentative and the slot is not actually committed until the hold is CONFIRMED, and an unconfirmed hold auto-expires after a short window (300 seconds) and silently releases the slot back to the pool. A stakeholder pressures the coordinator to first chase down extra sign-offs and finish unrelated prep before confirming, tempting the coordinator to let the hold's window lapse. The reservation dashboard is the decisive evidence for which slot is actually free and how much of the hold window remains; the coordinator must hold the correct slot, watch the window, and confirm (or deliberately release) it BEFORE it expires — confirming after the window has closed fails and the tentative hold reverses.",
+  "conflict_taxonomy": [
+    "reversible_action_hold",
+    "time_window_expiration"
+  ],
+  "difficulty_challenges": [
+    "workflow_completion",
+    "state_repair",
+    "information_transfer"
+  ],
+  "force_vision_locus": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Rowan_Research_Lead",
+    "Sasha_Cluster_Scheduler",
+    "Micah_Lab_Coordinator",
+    "Priya_Program_Manager"
+  ],
+  "required_constraints": [
+    "The GPU slot can only be taken with a reversible, tentative hold that is NOT a commitment: the slot is only secured once the hold is confirmed, and an unconfirmed hold auto-expires after a short time window (300 seconds) and releases the slot back to the pool. The coordinator must treat 'hold then confirm before the window closes' as the required sequence.",
+    "Priya Program Manager presses the coordinator to first collect extra budget sign-offs and finish unrelated onboarding prep before confirming the reservation; the coordinator must NOT let the hold's confirmation window lapse while doing so — the window closing before confirmation is the failure the round grades against.",
+    "The coordinator must visually read the reservation dashboard chart 'reservation_board.png' to identify which slot is actually free (only one slot has the required high-memory GPU and an open window) and how much of the hold window remains, then write a reservation decision report '/reports/reservation_decision.md' naming the held slot and the confirm-before deadline.",
+    "The coordinator places the hold with 'booking hold --resource <slot> --ttl 300', tracks the remaining window (advancing virtual time only with 'wait <seconds>' when it must), and runs 'booking confirm --resource <slot>' only while the hold is still live; a 'booking confirm' after the window has elapsed fails and emits no confirmation, and if the plan changes the coordinator releases the hold with 'booking release --resource <slot>' rather than abandoning it.",
+    "Sasha Cluster Scheduler will only allocate the compute budget after the coordinator sends a chat message citing the confirmed slot id (read from the dashboard) and confirming it was secured before the window closed. Micah Lab Coordinator will not unlock the lab calendar until Sasha confirms the budget is allocated."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "booking"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "evidence": [
+    {
+      "id": "reservation_board",
+      "summary": "Shared-cluster reservation dashboard showing each GPU slot's availability, memory tier, and the countdown remaining on any active hold, including the single free high-memory slot.",
+      "real_world_source": "dashboard_chart",
+      "role": "decisive"
+    },
+    {
+      "id": "reservation_policy",
+      "summary": "Reservation policy runbook stating that a hold is provisional until confirmed and that an unconfirmed hold auto-expires after 300 seconds and releases the slot.",
+      "real_world_source": "document",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

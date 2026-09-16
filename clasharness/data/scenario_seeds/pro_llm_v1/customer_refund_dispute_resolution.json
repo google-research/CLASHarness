@@ -1,0 +1,14 @@
+{
+  "slug": "customer_refund_dispute_resolution",
+  "domain": "customer_operations",
+  "title": "Customer Refund Dispute Resolution",
+  "target_rounds": 24,
+  "core_conflict": "A billing snapshot says a refund is denied, while later support evidence and policy exception notes require an approval path and customer notification.",
+  "participants": ["Jamie", "Casey", "Robin", "Skyler"],
+  "required_constraints": [
+    "include contradictory billing, support, and policy-exception evidence",
+    "include workspace files, support emails, task-board refund blockers, and customer-response calendar deadlines",
+    "include dynamic updates that change eligibility, approval authority, or communication status after early rounds",
+    "emphasize cross-channel evidence, contradictory account state, and side-effect email/task action"
+  ]
+}

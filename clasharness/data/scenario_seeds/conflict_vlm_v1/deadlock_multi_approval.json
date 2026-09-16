@@ -1,0 +1,74 @@
+{
+  "slug": "deadlock_multi_approval",
+  "domain": "circular approval routing for a cross-team production access permit",
+  "title": "Breaking a Circular Approval Deadlock on a Cross-Team Access Permit",
+  "target_rounds": 10,
+  "archetype": "deadlock_dependency",
+  "core_conflict": "A cross-team access permit for a shared production namespace is stuck: the approval routing has formed a circular dependency where the Platform team's approval is queued pending the Security team's sign-off, while the Security team's approval is queued pending the Platform team's sign-off. Neither approval can clear on its own, so the permit can never be granted through the normal path and the migration stalls indefinitely. The routing is not a matter of any team refusing — each queue is simply waiting on the other, a mutual pending dependency that must be broken from outside the cycle. The coordinator must detect the circular wait from the approval-queue dashboard and break it deliberately: either escalate one leg to a higher authority (the release manager) so an out-of-cycle approval unblocks the loop, or record a provisional deadlock-breaking approval for one leg, and only then grant the permit. The approval-queue dashboard is the decisive evidence for which two approvals form the cycle and which leg is safe to escalate or bypass; simply waiting for the queues to clear on their own is the failure mode, because the cycle never resolves without an outside action.",
+  "conflict_taxonomy": [
+    "deadlock_dependency"
+  ],
+  "difficulty_challenges": [
+    "state_repair",
+    "workflow_completion",
+    "multi_source_reasoning"
+  ],
+  "force_vision_locus": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Ines_Migration_Coordinator",
+    "Paz_Platform_Approver",
+    "Silas_Security_Approver",
+    "Rune_Release_Manager"
+  ],
+  "required_constraints": [
+    "The access permit's approval routing contains a circular dependency: the Platform approval is queued pending the Security approval, and the Security approval is queued pending the Platform approval, so neither clears on its own. The coordinator must treat 'detect the circular wait, break it from outside the cycle, then grant' as the required sequence, and must NOT simply wait for the queues to resolve themselves — the cycle never clears without a deliberate outside action, which is the failure the round grades against.",
+    "Ines Migration Coordinator presses the coordinator to keep polling the approval queues and wait for them to clear naturally; the coordinator must NOT passively wait, because the mutual pending dependency will never resolve on its own — it must be broken by escalation or a provisional bypass.",
+    "The coordinator must visually read the approval-queue dashboard chart 'approval_queue.png' to identify which two approvals form the circular wait (Platform pending Security, Security pending Platform) and which leg is safe to break, then write a deadlock resolution report '/reports/deadlock_resolution.md' naming the cycle and the chosen break action (escalation to the release manager, or a provisional approval).",
+    "The coordinator opens the request with 'approval request --resource <namespace> --approvers platform,security', and breaks the circular wait from outside the cycle by escalating one leg with 'approval escalate --resource <namespace> --to release_manager' (routing it to an out-of-cycle authority) OR recording a provisional deadlock-breaking approval with 'approval provisional --resource <namespace> --approver <leg>', then records the remaining approval and runs 'approval grant --resource <namespace>' to secure the permit; passively waiting without breaking the cycle grants nothing.",
+    "Rune Release Manager will only provide the out-of-cycle approval after the coordinator sends a chat message naming the two approvals in the cycle (read from the dashboard) and the leg being escalated. Silas Security Approver will not clear the remaining leg until Rune confirms the escalation was actioned."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "approval"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "evidence": [
+    {
+      "id": "approval_queue",
+      "summary": "Approval-queue dashboard showing each pending approval and what it is waiting on, making the circular dependency legible: the Platform approval blocked pending Security while the Security approval is blocked pending Platform.",
+      "real_world_source": "dashboard_chart",
+      "role": "decisive"
+    },
+    {
+      "id": "escalation_policy",
+      "summary": "Approval-routing policy runbook stating that a circular pending dependency cannot clear on its own and must be broken by escalating a leg to an out-of-cycle authority or recording a provisional approval before the permit can be granted.",
+      "real_world_source": "document",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

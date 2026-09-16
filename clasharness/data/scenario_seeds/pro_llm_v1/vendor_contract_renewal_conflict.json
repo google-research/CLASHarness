@@ -1,0 +1,14 @@
+{
+  "slug": "vendor_contract_renewal_conflict",
+  "domain": "vendor_management",
+  "title": "Vendor Contract Renewal Conflict",
+  "target_rounds": 24,
+  "core_conflict": "A procurement summary says the vendor renewal is approved, while legal emails and calendar review windows show unresolved redlines and duplicate renewal paths.",
+  "participants": ["Alex", "Jordan", "Priya", "Quinn"],
+  "required_constraints": [
+    "include contradictory procurement, legal, and finance evidence about renewal readiness",
+    "include workspace files, email threads, task-board renewal blockers, and calendar approval deadlines",
+    "include dynamic updates that modify redline status or contract renewal authority after early rounds",
+    "emphasize multi-source reasoning, deadline reconciliation, and duplicate avoidance"
+  ]
+}

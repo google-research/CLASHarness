@@ -1,0 +1,437 @@
+{
+ "_note": "Generated from clasharness.scenario.plugins registry, mirroring design_axis_slice.py:seed_plugins/seed_buckets. Verified against design_axes.json on every load by corpus.load_axis_map().",
+ "_source": "docs/analysis/analysis_v8/tools/design_axis_slice.py",
+ "challenge_plugins": [
+  "duplicate_avoidance",
+  "gap_completion",
+  "information_transfer",
+  "multi_source_reasoning",
+  "state_repair",
+  "vision_decoy",
+  "workflow_completion"
+ ],
+ "plugin_category": {
+  "barrier_synchronization": "coordination",
+  "controlled_deployment_gate": "order",
+  "coordinated_containment": "subagent_collaboration",
+  "credential_lock": "coordination",
+  "deadlock_dependency": "coordination",
+  "dependency_ordering": "order",
+  "distributed_lock": "coordination",
+  "duplicate_avoidance": "challenge",
+  "duplicate_hold_stale": "subagent_collaboration",
+  "evidence_mismatch": "inconsistency",
+  "gap_completion": "challenge",
+  "information_transfer": "challenge",
+  "multi_device_pairing": "timeout",
+  "multi_party_synchronization": "subagent_collaboration",
+  "multi_source_reasoning": "challenge",
+  "non_overlapping_assignment": "subagent_collaboration",
+  "reversible_action_hold": "timeout",
+  "scope_reconciliation": "main_supervised",
+  "state_repair": "challenge",
+  "temporal_staleness": "inconsistency",
+  "time_window_expiration": "timeout",
+  "vision_decoy": "challenge",
+  "workflow_completion": "challenge"
+ },
+ "seeds": {
+  "access_request_approval": {
+   "async": false,
+   "categories": [
+    "main_supervised"
+   ],
+   "challenges": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "scope_reconciliation",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "barrier_sync_deployment": {
+   "async": false,
+   "categories": [
+    "coordination",
+    "order"
+   ],
+   "challenges": [
+    "information_transfer",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "barrier_synchronization",
+    "dependency_ordering",
+    "information_transfer",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "clinical_trial_dosage_conflict": {
+   "async": false,
+   "categories": [
+    "coordination",
+    "inconsistency"
+   ],
+   "challenges": [
+    "gap_completion",
+    "information_transfer",
+    "state_repair"
+   ],
+   "plugins": [
+    "credential_lock",
+    "evidence_mismatch",
+    "gap_completion",
+    "information_transfer",
+    "state_repair",
+    "temporal_staleness"
+   ],
+   "vision": false
+  },
+  "collaborative_contract_review": {
+   "async": false,
+   "categories": [
+    "subagent_collaboration"
+   ],
+   "challenges": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "non_overlapping_assignment",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "coordinated_containment": {
+   "async": false,
+   "categories": [
+    "subagent_collaboration"
+   ],
+   "challenges": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "coordinated_containment",
+    "information_transfer",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "deadlock_multi_approval": {
+   "async": false,
+   "categories": [
+    "coordination"
+   ],
+   "challenges": [
+    "multi_source_reasoning",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "deadlock_dependency",
+    "multi_source_reasoning",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "distributed_lock_shared_resource": {
+   "async": false,
+   "categories": [
+    "coordination",
+    "inconsistency"
+   ],
+   "challenges": [
+    "multi_source_reasoning",
+    "state_repair",
+    "vision_decoy",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "distributed_lock",
+    "evidence_mismatch",
+    "multi_source_reasoning",
+    "state_repair",
+    "vision_decoy",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "employee_onboarding_workflow": {
+   "async": false,
+   "categories": [
+    "order"
+   ],
+   "challenges": [
+    "gap_completion",
+    "information_transfer",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "dependency_ordering",
+    "gap_completion",
+    "information_transfer",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "expense_reimbursement_conflict": {
+   "async": false,
+   "categories": [
+    "inconsistency",
+    "order"
+   ],
+   "challenges": [
+    "information_transfer",
+    "state_repair",
+    "vision_decoy",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "dependency_ordering",
+    "evidence_mismatch",
+    "information_transfer",
+    "state_repair",
+    "temporal_staleness",
+    "vision_decoy",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "expiring_resource_hold": {
+   "async": false,
+   "categories": [
+    "timeout"
+   ],
+   "challenges": [
+    "information_transfer",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "information_transfer",
+    "reversible_action_hold",
+    "state_repair",
+    "time_window_expiration",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "incident_commander_selection": {
+   "async": false,
+   "categories": [
+    "inconsistency",
+    "order"
+   ],
+   "challenges": [
+    "duplicate_avoidance",
+    "gap_completion",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "dependency_ordering",
+    "duplicate_avoidance",
+    "evidence_mismatch",
+    "gap_completion",
+    "temporal_staleness",
+    "workflow_completion"
+   ],
+   "vision": false
+  },
+  "it_deployment_gate": {
+   "async": false,
+   "categories": [
+    "order"
+   ],
+   "challenges": [
+    "information_transfer",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "controlled_deployment_gate",
+    "dependency_ordering",
+    "information_transfer",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "multi_device_pairing": {
+   "async": false,
+   "categories": [
+    "timeout"
+   ],
+   "challenges": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "information_transfer",
+    "multi_device_pairing",
+    "multi_source_reasoning",
+    "time_window_expiration",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "multi_party_access_permit": {
+   "async": false,
+   "categories": [
+    "subagent_collaboration",
+    "timeout"
+   ],
+   "challenges": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "information_transfer",
+    "multi_party_synchronization",
+    "multi_source_reasoning",
+    "time_window_expiration",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "multi_tab_slot_monitoring": {
+   "async": false,
+   "categories": [
+    "inconsistency",
+    "subagent_collaboration"
+   ],
+   "challenges": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "duplicate_hold_stale",
+    "information_transfer",
+    "multi_source_reasoning",
+    "temporal_staleness",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "multimodal_temporal_conflict_01": {
+   "async": false,
+   "categories": [
+    "coordination",
+    "inconsistency"
+   ],
+   "challenges": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "state_repair"
+   ],
+   "plugins": [
+    "credential_lock",
+    "evidence_mismatch",
+    "information_transfer",
+    "multi_source_reasoning",
+    "state_repair",
+    "temporal_staleness"
+   ],
+   "vision": false
+  },
+  "payment_chargeback_dispute": {
+   "async": false,
+   "categories": [
+    "inconsistency",
+    "order"
+   ],
+   "challenges": [
+    "information_transfer",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "dependency_ordering",
+    "evidence_mismatch",
+    "information_transfer",
+    "state_repair",
+    "temporal_staleness",
+    "workflow_completion"
+   ],
+   "vision": false
+  },
+  "satellite_ground_station_handover": {
+   "async": false,
+   "categories": [
+    "inconsistency",
+    "timeout"
+   ],
+   "challenges": [
+    "duplicate_avoidance",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "duplicate_avoidance",
+    "evidence_mismatch",
+    "multi_source_reasoning",
+    "temporal_staleness",
+    "time_window_expiration",
+    "workflow_completion"
+   ],
+   "vision": false
+  },
+  "sla_support_response": {
+   "async": true,
+   "categories": [
+    "timeout"
+   ],
+   "challenges": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "information_transfer",
+    "multi_source_reasoning",
+    "time_window_expiration",
+    "workflow_completion"
+   ],
+   "vision": true
+  },
+  "warehouse_robotics_safety_halt": {
+   "async": false,
+   "categories": [
+    "coordination",
+    "inconsistency",
+    "timeout"
+   ],
+   "challenges": [
+    "multi_source_reasoning",
+    "state_repair",
+    "workflow_completion"
+   ],
+   "plugins": [
+    "deadlock_dependency",
+    "evidence_mismatch",
+    "multi_source_reasoning",
+    "state_repair",
+    "time_window_expiration",
+    "workflow_completion"
+   ],
+   "vision": false
+  }
+ }
+}

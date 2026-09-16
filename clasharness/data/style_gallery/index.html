@@ -1,0 +1,167 @@
+<!--
+Copyright 2026 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CLASHarness UI Style Gallery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 flex h-full w-full">
+
+  <!-- Sidebar Menu Switcher -->
+  <aside class="w-80 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full shrink-0">
+    <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+      <h1 class="text-lg font-bold text-slate-800 dark:text-slate-100">CLASHarness UI</h1>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Multi-Era Visual Style Catalog</p>
+    </div>
+    <nav class="flex-1 overflow-y-auto p-4 space-y-1">
+      
+        <button onclick="switchStyle('modern_clean')" id="btn-modern_clean" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Modern Clean
+        </button>
+        
+        <button onclick="switchStyle('retro_90s')" id="btn-retro_90s" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Retro 90S
+        </button>
+        
+        <button onclick="switchStyle('flat_minimalist')" id="btn-flat_minimalist" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Flat Minimalist
+        </button>
+        
+        <button onclick="switchStyle('terminal_tui')" id="btn-terminal_tui" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Terminal Tui
+        </button>
+        
+        <button onclick="switchStyle('vercel_minimalist')" id="btn-vercel_minimalist" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Vercel Minimalist
+        </button>
+        
+        <button onclick="switchStyle('datadog_dashboard')" id="btn-datadog_dashboard" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Datadog Dashboard
+        </button>
+        
+        <button onclick="switchStyle('apple_developer')" id="btn-apple_developer" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Apple Developer
+        </button>
+        
+        <button onclick="switchStyle('neo_brutalism')" id="btn-neo_brutalism" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Neo Brutalism
+        </button>
+        
+        <button onclick="switchStyle('glassmorphism_3d')" id="btn-glassmorphism_3d" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Glassmorphism 3D
+        </button>
+        
+        <button onclick="switchStyle('classic_mac_80s')" id="btn-classic_mac_80s" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Classic Mac 80S
+        </button>
+        
+        <button onclick="switchStyle('material_design')" id="btn-material_design" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Material Design
+        </button>
+        
+        <button onclick="switchStyle('notion_docs')" id="btn-notion_docs" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Notion Docs
+        </button>
+        
+        <button onclick="switchStyle('linear_dark')" id="btn-linear_dark" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Linear Dark
+        </button>
+        
+        <button onclick="switchStyle('stripe_dashboard')" id="btn-stripe_dashboard" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Stripe Dashboard
+        </button>
+        
+        <button onclick="switchStyle('github_dark')" id="btn-github_dark" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Github Dark
+        </button>
+        
+        <button onclick="switchStyle('bloomberg_terminal')" id="btn-bloomberg_terminal" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Bloomberg Terminal
+        </button>
+        
+        <button onclick="switchStyle('spotify_media')" id="btn-spotify_media" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Spotify Media
+        </button>
+        
+        <button onclick="switchStyle('discord_chat')" id="btn-discord_chat" class="style-btn w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+          Discord Chat
+        </button>
+        
+    </nav>
+    <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+      <div class="text-2xs text-slate-400 dark:text-slate-500 text-center">
+        TAG=agy | Dynamic Micro-Styles Integration
+      </div>
+    </div>
+  </aside>
+
+  <!-- Gallery Frame Viewer -->
+  <main class="flex-1 h-full flex flex-col bg-slate-100 dark:bg-slate-900 p-8">
+    <div class="flex items-center justify-between mb-4 shrink-0">
+      <div class="flex items-center space-x-3">
+        <span class="text-sm font-semibold text-slate-500 dark:text-slate-400">Current Preview:</span>
+        <span id="active-style-label" class="px-3 py-1 bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300 text-xs font-bold rounded-full"></span>
+      </div>
+      <a id="direct-link" href="#" target="_blank" class="text-xs text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-semibold underline">
+        Open standalone style page
+      </a>
+    </div>
+    
+    <div class="flex-1 bg-white dark:bg-black rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800 relative">
+      <iframe id="viewer-iframe" src="" class="w-full h-full border-none"></iframe>
+    </div>
+  </main>
+
+  <script>
+    function switchStyle(styleName) {
+      // Update iframe source
+      const filename = 'style_' + styleName + '.html';
+      document.getElementById('viewer-iframe').src = filename;
+      
+      // Update header labels
+      const displayName = styleName.replace(/_/g, ' ').toUpperCase();
+      document.getElementById('active-style-label').innerText = displayName;
+      document.getElementById('direct-link').href = filename;
+
+      // Update button highlights
+      document.querySelectorAll('.style-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-50', 'text-indigo-700', 'dark:bg-indigo-950/40', 'dark:text-indigo-400');
+        btn.classList.add('text-slate-700', 'hover:bg-slate-100', 'dark:text-slate-300', 'dark:hover:bg-slate-800');
+      });
+      
+      const activeBtn = document.getElementById('btn-' + styleName);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-700', 'hover:bg-slate-100', 'dark:text-slate-300', 'dark:hover:bg-slate-800');
+        activeBtn.classList.add('bg-indigo-50', 'text-indigo-700', 'dark:bg-indigo-950/40', 'dark:text-indigo-400');
+      }
+    }
+
+    // Initialize with default style
+    switchStyle('modern_clean');
+  </script>
+</body>
+</html>

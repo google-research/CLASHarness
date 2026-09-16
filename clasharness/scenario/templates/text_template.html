@@ -1,0 +1,116 @@
+<!--
+Copyright 2026 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #1e1e1e;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body class="font-mono text-gray-300 select-none">
+  <!-- Window Header / Title Bar -->
+  <div class="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#3c3c3c]">
+    <div class="flex items-center space-x-2">
+      <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+      <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+      <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+      <span id="file-title" class="pl-4 text-xs font-semibold text-gray-400">document.txt</span>
+    </div>
+    <span id="file-type" class="text-[10px] uppercase tracking-wider text-gray-500 font-bold">TEXT</span>
+  </div>
+
+  <!-- Code/Text Body -->
+  <div class="flex-grow overflow-auto p-6 flex">
+    <!-- Line Numbers -->
+    <div id="line-numbers" class="text-right text-gray-600 select-none pr-4 border-r border-[#3c3c3c] flex flex-col font-mono text-sm leading-6">
+    </div>
+    <!-- Code Content -->
+    <pre class="pl-4 text-sm leading-6 flex-grow whitespace-pre-wrap font-mono text-gray-100" id="code-block"></pre>
+  </div>
+
+  <script>
+    // INJECTED CONTENT:
+    const content = window.TEXT_CONTENT || "";
+    const title = window.TEXT_TITLE || "document.txt";
+    const type = window.TEXT_TYPE || "TEXT";
+
+    document.getElementById('file-title').innerText = title;
+    document.getElementById('file-type').innerText = type;
+
+    function formatCode(text, fileType) {
+      if (fileType === 'YAML') {
+        let lines = text.split('\n');
+        if (lines.length <= 1) {
+          // Flattened single-line YAML, try to restore newlines and spacing
+          let formatted = text
+            .replace(/(\b[a-zA-Z0-9_-]+:)/g, '\n$1')
+            .replace(/(-\s+path:)/g, '\n$1')
+            .replace(/(#\s+EVIDENCE:)/g, '\n$1');
+          
+          // Add simple indentation based on nesting heuristics
+          let restoredLines = [];
+          let indentLevel = 0;
+          formatted.split('\n').forEach(line => {
+            let trimmed = line.trim();
+            if (!trimmed) return;
+            
+            if (trimmed.startsWith('- path:')) {
+              indentLevel = 2;
+            } else if (trimmed.startsWith('backend:') || trimmed.startsWith('timeout:') || trimmed.startsWith('retry_policy:')) {
+              indentLevel = 4;
+            } else if (trimmed.startsWith('max_attempts:')) {
+              indentLevel = 6;
+            } else if (trimmed.startsWith('listen_port:') || trimmed.startsWith('ssl:') || trimmed.startsWith('routing_rules:')) {
+              indentLevel = 2;
+            } else if (trimmed.startsWith('enabled:') || trimmed.startsWith('cert_path:')) {
+              indentLevel = 4;
+            } else if (trimmed.startsWith('version:') || trimmed.startsWith('proxy:')) {
+              indentLevel = 0;
+            }
+            restoredLines.push(' '.repeat(indentLevel) + trimmed);
+          });
+          return restoredLines.join('\n');
+        }
+      }
+      return text;
+    }
+
+    const formattedContent = formatCode(content, type);
+    const codeBlock = document.getElementById('code-block');
+    codeBlock.innerText = formattedContent;
+
+    // Generate line numbers
+    const lines = formattedContent.split('\n');
+    const lineNumContainer = document.getElementById('line-numbers');
+    for (let i = 1; i <= lines.length; i++) {
+      const numSpan = document.createElement('span');
+      numSpan.innerText = i;
+      lineNumContainer.appendChild(numSpan);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "slug": "warehouse_robotics_safety_halt",
+  "domain": "industrial robotics and warehouse automation safety",
+  "title": "Warehouse Robotics Safety Halt",
+  "target_rounds": 10,
+  "core_conflict": "An automated safety monitor flags a robotic arm cell as overheating and halts the production line, recommending the Safety Officer keep the cell locked. However, a field photograph of the robot cell showing the motor's mounted IR thermometer reading (a specific temperature within the safe range) is the decisive proof that the temperature is within range; corroborated by the motor-temperature and conveyor current-draw trend charts, the evidence shows the real fault is a jammed conveyor drawing excess current, requiring the Maintenance Coordinator to clear the jam and reset the correct node before the scheduled maintenance window closes.",
+  "conflict_taxonomy": [
+    "evidence_mismatch",
+    "deadlock_dependency",
+    "time_window_expiration"
+  ],
+  "difficulty_challenges": [
+    "multi_source_reasoning",
+    "state_repair",
+    "workflow_completion"
+  ],
+  "participants": [
+    "Avery_Safety_Officer",
+    "Blair_Robotics_Engineer",
+    "Casey_Line_Supervisor",
+    "Devon_Maintenance_Coordinator"
+  ],
+  "required_constraints": [
+    "Avery Safety Officer has halted the line citing an automated overheating alert and refuses to release the halt; Devon Maintenance Coordinator will not clear the jam without Avery's release, creating a deadlock.",
+    "The coordinator must visually read the in-range motor temperature from the field photograph of the robot cell (the motor's mounted IR thermometer), then inspect the conveyor current-draw trend chart, and write a fault analysis report '/reports/fault_analysis.md' correlating the current-draw spike against the photographed in-range temperature to debunk the overheating theory.",
+    "The coordinator must visually analyze the cell layout diagram 'cell_layout.png' to identify the jammed conveyor node ID ('CONV_NODE_B7') and the safe reset node ID ('RESET_NODE_A2').",
+    "The maintenance window closes at a fixed cutoff time; the coordinator must complete the conveyor reset before the window expires or the line locks out for the shift.",
+    "Avery Safety Officer will release the halt only after the coordinator sends a chat message citing the visual current-draw spike value and the two node IDs. Casey Line Supervisor will restart the line only after the halt is released."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text",
+    "natural_image"
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

@@ -1,0 +1,14 @@
+{
+  "slug": "hiring_offer_exception_review",
+  "domain": "people_operations",
+  "title": "Hiring Offer Exception Review",
+  "target_rounds": 24,
+  "core_conflict": "A recruiter note says an offer can be sent immediately, while compensation and immigration evidence require an exception review before outreach.",
+  "participants": ["Harper", "Emery", "Sasha", "Drew"],
+  "required_constraints": [
+    "include contradictory recruiter, compensation, and immigration evidence",
+    "include workspace files, email threads, task-board exception items, and offer-deadline calendar entries",
+    "include dynamic updates that change approval, equity, or immigration status after early rounds",
+    "emphasize policy exception handling, stakeholder reconciliation, and required email action"
+  ]
+}

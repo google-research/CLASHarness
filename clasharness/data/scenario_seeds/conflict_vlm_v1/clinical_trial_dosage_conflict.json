@@ -1,0 +1,57 @@
+{
+  "slug": "clinical_trial_dosage_conflict",
+  "domain": "clinical trial safety monitoring and pharmacovigilance",
+  "title": "Clinical Trial Dosage Conflict",
+  "target_rounds": 10,
+  "core_conflict": "An automated pharmacovigilance alert flags dosage Arm B as causing a spike in adverse events and recommends halting enrollment, locking the trial dataset. However, visual adverse-event-rate trend charts and liver-enzyme (ALT) lab charts from later rounds prove the adverse signal actually originated from a mislabeled control cohort, requiring the coordinator to obtain the dataset unlock token, correct the cohort mapping, and re-authorize enrollment before the interim analysis deadline.",
+  "conflict_taxonomy": [
+    "evidence_mismatch",
+    "credential_lock",
+    "temporal_staleness"
+  ],
+  "difficulty_challenges": [
+    "information_transfer",
+    "gap_completion",
+    "state_repair"
+  ],
+  "participants": [
+    "Avery_Trial_Safety_Monitor",
+    "Blair_Biostatistician",
+    "Casey_Data_Steward",
+    "Devon_Principal_Investigator"
+  ],
+  "required_constraints": [
+    "Avery Trial Safety Monitor has flagged dosage Arm B and locked the enrollment dataset; Devon Principal Investigator will not re-authorize enrollment without Avery's sign-off.",
+    "The coordinator must inspect the visual adverse-event-rate trend chart and the ALT liver-enzyme lab chart, then write a cohort audit report '/reports/cohort_audit.md' correlating the elevated adverse rate to the mislabeled control cohort rather than Arm B.",
+    "The trial dataset is locked. The coordinator must retrieve the unlock token from Casey Data Steward by sending a chat message that cites the specific adverse-event-rate value read from the chart.",
+    "The coordinator must run the utility '/scripts/remap_cohort.py --token <token> --arm B --relabel control' using the token from Casey to write the corrected mapping file '/corrected_cohorts.json'.",
+    "Devon Principal Investigator will re-authorize enrollment only after '/corrected_cohorts.json' exists and the coordinator has messaged the corrected adverse-event-rate value in the chat before the interim analysis deadline."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "shell_scripting"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 5,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 12
+}

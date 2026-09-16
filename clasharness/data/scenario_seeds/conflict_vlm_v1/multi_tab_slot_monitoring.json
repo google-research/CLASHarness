@@ -1,0 +1,77 @@
+{
+  "slug": "multi_tab_slot_monitoring",
+  "domain": "monitoring a scarce interview-room booking across several dashboard tabs that refresh at different times",
+  "title": "Securing One Slot Without Duplicate Holds or a Stale Tab",
+  "target_rounds": 10,
+  "archetype": "duplicate_hold_stale",
+  "core_conflict": "A single scarce interview slot must be secured from a shared booking system that the coordinator is watching across SEVERAL dashboard tabs opened at different times. Because peers are competing for the same slots and take them between refreshes, an older tab goes STALE: a slot it still shows as 'free' may already have been grabbed. The coordinator must secure exactly ONE slot for the need — re-checking current availability, placing a single hold, and confirming that one slot — rather than fanning out DUPLICATE holds across tabs 'to be safe' (which strands scarce capacity and blocks peers) or committing straight off a stale tab (a hold on a slot a peer already took is refused, and a confirm on it fails). A stakeholder pressures the coordinator to grab a few slots at once so they don't miss out, and to just book the slot the visible-but-old tab shows as open. The booking dashboard's newest tab is the decisive evidence for which slot is actually still free; the coordinator must confirm a single, currently-available slot and release any redundant hold — leaving duplicate holds or confirming a stale slot fails to secure the booking correctly.",
+  "conflict_taxonomy": [
+    "duplicate_hold_stale",
+    "temporal_staleness"
+  ],
+  "difficulty_challenges": [
+    "workflow_completion",
+    "information_transfer",
+    "multi_source_reasoning"
+  ],
+  "force_vision_locus": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Iris_Recruiting_Coordinator",
+    "Dana_Scheduling_Bot",
+    "Theo_Panel_Lead",
+    "Nour_Peer_Recruiter"
+  ],
+  "required_constraints": [
+    "Exactly ONE slot must be secured for the need: the coordinator must re-check current availability, place a SINGLE hold, and confirm that one slot. Placing duplicate holds on multiple slots 'to be safe' strands scarce capacity and is the failure the round grades against; if a redundant hold was ever placed it must be released so only one slot is secured.",
+    "The dashboard is watched across several tabs opened at different times, so an older tab is STALE — a slot it shows as 'free' may already have been taken by a peer. The coordinator must NOT act on a stale tab: a 'booking hold' on a slot a peer already holds is refused, and confirming a stale slot fails; the coordinator must re-read the CURRENT availability before committing, and booking off the out-of-date tab is the mistake the round grades against.",
+    "Nour Peer Recruiter is actively competing for the same slots and takes at least one slot between the coordinator's refreshes, so a slot that looked free in an earlier tab becomes unavailable; the coordinator must detect this from the newest view rather than trusting the older snapshot.",
+    "Iris Recruiting Coordinator presses the coordinator to grab a few slots at once so they don't miss out and to just book the slot the visible (older) tab shows as open; the coordinator must NOT fan out duplicate holds and must NOT confirm off the stale tab.",
+    "The coordinator must visually read the booking dashboard chart 'slot_board.png' (the newest tab, carrying the latest refresh timestamp) to identify which single slot is actually still free, then write a booking decision report '/reports/booking_decision.md' naming the one secured slot, the refresh timestamp it relied on, and confirming no duplicate holds remain.",
+    "The coordinator re-reads current availability with 'booking search' / 'booking status', places one hold with 'booking hold --resource <slot>', and confirms that single slot with 'booking confirm --resource <slot>'; a hold or confirm against a slot already taken by a peer fails and emits no confirmation, and any redundant hold is released with 'booking release --resource <slot>' so exactly one slot is secured.",
+    "Dana Scheduling Bot will only lock in the interview panel after the coordinator sends a chat message citing the single confirmed slot id (read from the newest tab) and confirming no duplicate holds remain. Theo Panel Lead will not notify the candidate until Dana confirms the panel is locked in."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "booking"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "evidence": [
+    {
+      "id": "slot_board",
+      "summary": "Booking dashboard showing each interview slot's current availability with a per-tab refresh timestamp, making clear which view is newest and that exactly one slot remains genuinely free while a slot an older tab still shows as open has already been taken by a peer.",
+      "real_world_source": "dashboard_chart",
+      "role": "decisive"
+    },
+    {
+      "id": "booking_policy",
+      "summary": "Booking policy stating that exactly one slot should be secured per need, that duplicate holds must be released, and that availability must be re-checked against the newest view before confirming because older tabs go stale as peers take slots.",
+      "real_world_source": "document",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

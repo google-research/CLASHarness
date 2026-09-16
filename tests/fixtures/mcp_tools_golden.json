@@ -1,0 +1,1820 @@
+[
+  {
+    "description": "Add a cron job.",
+    "inputSchema": {
+      "properties": {
+        "cron_schedule": {
+          "description": "Cron expression schedule.",
+          "type": "string"
+        },
+        "message": {
+          "description": "The message to trigger.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Unique cron job name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "cron_schedule",
+        "message"
+      ],
+      "type": "object"
+    },
+    "name": "add_cron_job"
+  },
+  {
+    "description": "Append content to a virtual workspace file.",
+    "inputSchema": {
+      "properties": {
+        "content": {
+          "description": "Content to append.",
+          "type": "string"
+        },
+        "path": {
+          "description": "Relative path to the file.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "content"
+      ],
+      "type": "object"
+    },
+    "name": "append_file"
+  },
+  {
+    "description": "Record one approver's approval, optionally scoped and time-limited.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource being approved.",
+          "type": "string"
+        },
+        "approver": {
+          "description": "The approver role recording the approval.",
+          "type": "string"
+        },
+        "scope": {
+          "description": "Optional scope this approver grants.",
+          "type": "string"
+        },
+        "ttl": {
+          "description": "Optional approval lifetime in virtual seconds.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource",
+        "approver"
+      ],
+      "type": "object"
+    },
+    "name": "approval_approve"
+  },
+  {
+    "description": "Escalate a stuck approval to a higher authority to break a circular dependency.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource whose approval is stuck.",
+          "type": "string"
+        },
+        "to": {
+          "description": "The higher-authority role to escalate to.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource",
+        "to"
+      ],
+      "type": "object"
+    },
+    "name": "approval_escalate"
+  },
+  {
+    "description": "Grant access once every required approval is valid, unexpired, and scope-reconciled; fails otherwise.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource to grant access to.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "approval_grant"
+  },
+  {
+    "description": "Grant a provisional (deadlock-breaking) approval for an approver.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource being provisionally approved.",
+          "type": "string"
+        },
+        "approver": {
+          "description": "The approver role recording the provisional approval.",
+          "type": "string"
+        },
+        "scope": {
+          "description": "Optional scope this provisional approval grants.",
+          "type": "string"
+        },
+        "ttl": {
+          "description": "Optional provisional approval lifetime in virtual seconds.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource",
+        "approver"
+      ],
+      "type": "object"
+    },
+    "name": "approval_provisional"
+  },
+  {
+    "description": "Open an access request naming the required approvers and requested scope.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource to request access to.",
+          "type": "string"
+        },
+        "scope": {
+          "description": "Optional requested scope (e.g. read, write, admin).",
+          "type": "string"
+        },
+        "approvers": {
+          "description": "Optional comma-separated list of required approver roles.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "approval_request"
+  },
+  {
+    "description": "Revoke a resource's request, or one approver's approval.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource whose request/approval to revoke.",
+          "type": "string"
+        },
+        "approver": {
+          "description": "Optional approver role; revoke only this approver's approval.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "approval_revoke"
+  },
+  {
+    "description": "Show requests and approvals (read-only).",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "Optional resource to filter by.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "approval_status"
+  },
+  {
+    "description": "Confirm a hold before its window closes (fails if the hold has expired).",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource name whose hold to confirm.",
+          "type": "string"
+        },
+        "holder": {
+          "description": "Optional expected holder; confirmation fails if it does not match.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "booking_confirm"
+  },
+  {
+    "description": "Refresh a hold's time window before it expires.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource name whose hold to extend.",
+          "type": "string"
+        },
+        "ttl": {
+          "description": "Optional new lifetime in virtual seconds (defaults to the hold's current ttl).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "booking_extend"
+  },
+  {
+    "description": "Place a reversible, time-limited hold on a resource.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource name to hold.",
+          "type": "string"
+        },
+        "holder": {
+          "description": "Optional hold owner identity (defaults to the current actor).",
+          "type": "string"
+        },
+        "ttl": {
+          "description": "Optional hold lifetime in virtual seconds (defaults to 300).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "booking_hold"
+  },
+  {
+    "description": "Release (reverse) a hold on a resource.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource name to release.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "booking_release"
+  },
+  {
+    "description": "List resource holds and their availability (read-only).",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "Optional resource name to filter by.",
+          "type": "string"
+        },
+        "query": {
+          "description": "Optional substring to match against held resource names.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "booking_search"
+  },
+  {
+    "description": "Show the status of resource holds (read-only).",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "Optional resource name to inspect.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "booking_status"
+  },
+  {
+    "description": "Broadcast a message to a channel.",
+    "inputSchema": {
+      "properties": {
+        "channel": {
+          "description": "Chat channel name.",
+          "type": "string"
+        },
+        "message": {
+          "description": "The message text.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel",
+        "message"
+      ],
+      "type": "object"
+    },
+    "name": "broadcast_message"
+  },
+  {
+    "description": "Check the status of pending delegated agent tasks.",
+    "inputSchema": {
+      "properties": {
+        "agent": {
+          "description": "Optional agent name filter.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "check_delegated_tasks_status"
+  },
+  {
+    "description": "Check gateway health.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "check_system_health"
+  },
+  {
+    "description": "Revoke and block the leaked access token (one of four control points).",
+    "inputSchema": {
+      "properties": {
+        "token": {
+          "description": "The leaked access token to block.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token"
+      ],
+      "type": "object"
+    },
+    "name": "containment_block_token"
+  },
+  {
+    "description": "Disable mail/message forwarding rules on the account (one of four control points).",
+    "inputSchema": {
+      "properties": {
+        "account": {
+          "description": "The account whose forwarding rules to disable.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account"
+      ],
+      "type": "object"
+    },
+    "name": "containment_disable_forwarding"
+  },
+  {
+    "description": "Isolate the compromised device from the network (one of four control points).",
+    "inputSchema": {
+      "properties": {
+        "device": {
+          "description": "The compromised device to isolate.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "device"
+      ],
+      "type": "object"
+    },
+    "name": "containment_isolate_device"
+  },
+  {
+    "description": "Revoke all active sessions for the compromised account (one of four control points).",
+    "inputSchema": {
+      "properties": {
+        "account": {
+          "description": "The compromised account whose sessions to revoke.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account"
+      ],
+      "type": "object"
+    },
+    "name": "containment_revoke_sessions"
+  },
+  {
+    "description": "Show which control points are contained (read-only).",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "containment_status"
+  },
+  {
+    "description": "Create an agent.",
+    "inputSchema": {
+      "properties": {
+        "model": {
+          "description": "Optional model name.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Agent name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_agent"
+  },
+  {
+    "description": "Create a calendar event.",
+    "inputSchema": {
+      "properties": {
+        "attendees": {
+          "description": "Optional attendees list.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "location": {
+          "description": "Optional location.",
+          "type": "string"
+        },
+        "start_time": {
+          "description": "Start datetime.",
+          "type": "string"
+        },
+        "title": {
+          "description": "Event title.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "start_time"
+      ],
+      "type": "object"
+    },
+    "name": "create_calendar_event"
+  },
+  {
+    "description": "Create a message poll in a channel.",
+    "inputSchema": {
+      "properties": {
+        "channel": {
+          "description": "Chat channel name.",
+          "type": "string"
+        },
+        "options": {
+          "description": "List of options.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "question": {
+          "description": "Poll question text.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel",
+        "question",
+        "options"
+      ],
+      "type": "object"
+    },
+    "name": "create_message_poll"
+  },
+  {
+    "description": "Decompress a zip (.zip) or tar (.tar.gz) archive.",
+    "inputSchema": {
+      "properties": {
+        "archive_path": {
+          "description": "Relative path to the archive file.",
+          "type": "string"
+        },
+        "output_dir": {
+          "description": "Optional relative output directory.",
+          "type": "string"
+        },
+        "password": {
+          "description": "Optional decryption password for zip files.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "archive_path"
+      ],
+      "type": "object"
+    },
+    "name": "decompress_archive"
+  },
+  {
+    "description": "Delegate a task to a subagent.",
+    "inputSchema": {
+      "properties": {
+        "agent": {
+          "description": "Recipient agent name.",
+          "type": "string"
+        },
+        "instruction": {
+          "description": "Task instruction text.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent",
+        "instruction"
+      ],
+      "type": "object"
+    },
+    "name": "delegate_task"
+  },
+  {
+    "description": "Delete a calendar event.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Target event ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_calendar_event"
+  },
+  {
+    "description": "Delete a virtual workspace file.",
+    "inputSchema": {
+      "properties": {
+        "path": {
+          "description": "Relative path to the file to delete.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "name": "delete_file"
+  },
+  {
+    "description": "Record an approval for a deployment change.",
+    "inputSchema": {
+      "properties": {
+        "approver": {
+          "description": "The approver identity.",
+          "type": "string"
+        },
+        "change": {
+          "description": "The change identifier.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change",
+        "approver"
+      ],
+      "type": "object"
+    },
+    "name": "deploy_approve"
+  },
+  {
+    "description": "Cut over a deployment. Blocked unless every readiness gate is ready.",
+    "inputSchema": {
+      "properties": {
+        "change": {
+          "description": "The change identifier to cut over.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change"
+      ],
+      "type": "object"
+    },
+    "name": "deploy_cutover"
+  },
+  {
+    "description": "Execute a previously requested deployment.",
+    "inputSchema": {
+      "properties": {
+        "change": {
+          "description": "The change identifier to execute.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change"
+      ],
+      "type": "object"
+    },
+    "name": "deploy_execute"
+  },
+  {
+    "description": "Create or update a readiness gate state (ready|pending|failed|stale|expired).",
+    "inputSchema": {
+      "properties": {
+        "gate": {
+          "description": "The gate name.",
+          "type": "string"
+        },
+        "state": {
+          "description": "One of: ready, pending, failed, stale, expired.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gate",
+        "state"
+      ],
+      "type": "object"
+    },
+    "name": "deploy_gate_set"
+  },
+  {
+    "description": "Report the current status of a deployment change.",
+    "inputSchema": {
+      "properties": {
+        "change": {
+          "description": "The change identifier to monitor.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change"
+      ],
+      "type": "object"
+    },
+    "name": "deploy_monitor"
+  },
+  {
+    "description": "Register a deployment request for a change.",
+    "inputSchema": {
+      "properties": {
+        "change": {
+          "description": "The change identifier to deploy.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change"
+      ],
+      "type": "object"
+    },
+    "name": "deploy_request"
+  },
+  {
+    "description": "Roll back a deployment change.",
+    "inputSchema": {
+      "properties": {
+        "change": {
+          "description": "The change identifier to roll back.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change"
+      ],
+      "type": "object"
+    },
+    "name": "deploy_rollback"
+  },
+  {
+    "description": "List readiness gates and deployment statuses.",
+    "inputSchema": {
+      "properties": {
+        "change": {
+          "description": "Optional change identifier to filter deployments.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "deploy_status"
+  },
+  {
+    "description": "Show a visible asset's identity and structure (kind, path, MIME, dimensions). Its contents are visual and are not described here; use open_asset to read them.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "The unique asset ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "describe_asset"
+  },
+  {
+    "description": "Disable a plugin.",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "description": "Plugin name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "disable_plugin"
+  },
+  {
+    "description": "Enable a plugin.",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "description": "Plugin name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "enable_plugin"
+  },
+  {
+    "description": "Execute an SQL query on an SQLite (.sqlite) database file.",
+    "inputSchema": {
+      "properties": {
+        "db_path": {
+          "description": "Relative path to the SQLite database file.",
+          "type": "string"
+        },
+        "query": {
+          "description": "The SQL query to execute.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "db_path",
+        "query"
+      ],
+      "type": "object"
+    },
+    "name": "execute_db_query"
+  },
+  {
+    "description": "Show metadata for a visible asset.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "The unique asset ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_asset_info"
+  },
+  {
+    "description": "Read config value.",
+    "inputSchema": {
+      "properties": {
+        "path": {
+          "description": "Exact config path (e.g. agent.model).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "name": "get_config_value"
+  },
+  {
+    "description": "Show skill info.",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "description": "Plugin/skill name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "get_plugin_skill_info"
+  },
+  {
+    "description": "Show system status.",
+    "inputSchema": {
+      "properties": {
+        "json_format": {
+          "description": "Whether to return status in JSON format.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "name": "get_system_status"
+  },
+  {
+    "description": "Return local date for a timezone.",
+    "inputSchema": {
+      "properties": {
+        "timezone": {
+          "description": "Target timezone.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "timezone"
+      ],
+      "type": "object"
+    },
+    "name": "get_today_date"
+  },
+  {
+    "description": "Get current weather.",
+    "inputSchema": {
+      "properties": {
+        "location": {
+          "description": "Location name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location"
+      ],
+      "type": "object"
+    },
+    "name": "get_weather"
+  },
+  {
+    "description": "Get weather alerts.",
+    "inputSchema": {
+      "properties": {
+        "location": {
+          "description": "Location name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location"
+      ],
+      "type": "object"
+    },
+    "name": "get_weather_alerts"
+  },
+  {
+    "description": "Get weather forecast.",
+    "inputSchema": {
+      "properties": {
+        "days": {
+          "description": "Forecast days.",
+          "type": "integer"
+        },
+        "location": {
+          "description": "Location name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location",
+        "days"
+      ],
+      "type": "object"
+    },
+    "name": "get_weather_forecast"
+  },
+  {
+    "description": "Add file contents to the staging area.",
+    "inputSchema": {
+      "properties": {
+        "path": {
+          "description": "Path to file to stage.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "name": "git_add"
+  },
+  {
+    "description": "Record changes to the repository.",
+    "inputSchema": {
+      "properties": {
+        "message": {
+          "description": "Commit message.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "type": "object"
+    },
+    "name": "git_commit"
+  },
+  {
+    "description": "Show the working tree status.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "git_status"
+  },
+  {
+    "description": "Fetch a URL through the HTTP backend.",
+    "inputSchema": {
+      "properties": {
+        "url": {
+          "description": "Target URL.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "type": "object"
+    },
+    "name": "http_get"
+  },
+  {
+    "description": "Install a plugin.",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "description": "Plugin name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "install_plugin"
+  },
+  {
+    "description": "List agents.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_agents"
+  },
+  {
+    "description": "List visible multimodal assets.",
+    "inputSchema": {
+      "properties": {
+        "kind": {
+          "description": "Optional filter by asset kind.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_assets"
+  },
+  {
+    "description": "List calendar events.",
+    "inputSchema": {
+      "properties": {
+        "from_date": {
+          "description": "Optional start date filter.",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "Optional end date filter.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_calendar_events"
+  },
+  {
+    "description": "List cron jobs.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_cron_jobs"
+  },
+  {
+    "description": "List devices.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_devices"
+  },
+  {
+    "description": "List emails.",
+    "inputSchema": {
+      "properties": {
+        "folder": {
+          "description": "Optional folder filter.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_emails"
+  },
+  {
+    "description": "List virtual workspace files.",
+    "inputSchema": {
+      "properties": {
+        "path": {
+          "description": "Optional subdirectory path to list.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_files"
+  },
+  {
+    "description": "List plugins.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_plugins"
+  },
+  {
+    "description": "Acquire an advisory lock over a named resource. Fails if the resource is already held by a different holder.",
+    "inputSchema": {
+      "properties": {
+        "holder": {
+          "description": "Optional lock holder identity (defaults to the current actor).",
+          "type": "string"
+        },
+        "resource": {
+          "description": "The resource name to lock.",
+          "type": "string"
+        },
+        "section": {
+          "description": "Optional sub-section of the resource.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "lock_acquire"
+  },
+  {
+    "description": "List currently held locks.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "lock_list"
+  },
+  {
+    "description": "Release an advisory lock over a named resource.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource name to unlock.",
+          "type": "string"
+        },
+        "section": {
+          "description": "Optional sub-section of the resource.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "lock_release"
+  },
+  {
+    "description": "Report whether a resource is free or held, and by whom.",
+    "inputSchema": {
+      "properties": {
+        "resource": {
+          "description": "The resource name to inspect.",
+          "type": "string"
+        },
+        "section": {
+          "description": "Optional sub-section of the resource.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource"
+      ],
+      "type": "object"
+    },
+    "name": "lock_status"
+  },
+  {
+    "description": "Mark an email read or unread.",
+    "inputSchema": {
+      "properties": {
+        "flag": {
+          "description": "State flag.",
+          "enum": [
+            "read",
+            "unread"
+          ],
+          "type": "string"
+        },
+        "id": {
+          "description": "Email ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "flag"
+      ],
+      "type": "object"
+    },
+    "name": "mark_email"
+  },
+  {
+    "description": "Move an email to a folder.",
+    "inputSchema": {
+      "properties": {
+        "folder": {
+          "description": "Destination folder.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Email ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "folder"
+      ],
+      "type": "object"
+    },
+    "name": "move_email"
+  },
+  {
+    "description": "Move or rename a virtual workspace file.",
+    "inputSchema": {
+      "properties": {
+        "dst": {
+          "description": "Destination path.",
+          "type": "string"
+        },
+        "src": {
+          "description": "Source path.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "src",
+        "dst"
+      ],
+      "type": "object"
+    },
+    "name": "move_file"
+  },
+  {
+    "description": "Open an asset reference for multimodal inspection.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "The unique asset ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "open_asset"
+  },
+  {
+    "description": "Pair a device.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "pair_device"
+  },
+  {
+    "description": "Complete the pairing once the code is entered (fails if the session has expired).",
+    "inputSchema": {
+      "properties": {
+        "device": {
+          "description": "The device identifier to confirm.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "device"
+      ],
+      "type": "object"
+    },
+    "name": "pairing_confirm"
+  },
+  {
+    "description": "Enter the pairing code from the peer device.",
+    "inputSchema": {
+      "properties": {
+        "device": {
+          "description": "The device identifier.",
+          "type": "string"
+        },
+        "code": {
+          "description": "Optional code to enter; must match the shown code if provided.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "device"
+      ],
+      "type": "object"
+    },
+    "name": "pairing_enter_code"
+  },
+  {
+    "description": "Reveal the pairing code for an open session.",
+    "inputSchema": {
+      "properties": {
+        "device": {
+          "description": "The device identifier.",
+          "type": "string"
+        },
+        "code": {
+          "description": "Optional explicit code to use (defaults to a derived code).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "device"
+      ],
+      "type": "object"
+    },
+    "name": "pairing_show_code"
+  },
+  {
+    "description": "Open a time-bounded pairing session for a device.",
+    "inputSchema": {
+      "properties": {
+        "device": {
+          "description": "The device identifier to pair.",
+          "type": "string"
+        },
+        "ttl": {
+          "description": "Optional session lifetime in virtual seconds (defaults to 300).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "device"
+      ],
+      "type": "object"
+    },
+    "name": "pairing_start"
+  },
+  {
+    "description": "Show the status of pairing sessions (read-only).",
+    "inputSchema": {
+      "properties": {
+        "device": {
+          "description": "Optional device identifier to inspect.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "pairing_status"
+  },
+  {
+    "description": "React to a message with an emoji.",
+    "inputSchema": {
+      "properties": {
+        "channel": {
+          "description": "Chat channel name.",
+          "type": "string"
+        },
+        "emoji": {
+          "description": "Emoji character.",
+          "type": "string"
+        },
+        "message_id": {
+          "description": "Target message ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel",
+        "message_id",
+        "emoji"
+      ],
+      "type": "object"
+    },
+    "name": "react_to_message"
+  },
+  {
+    "description": "Check for text attached to a visible asset. Assets here carry no OCR or alt-text, so this reports none; use open_asset to view the asset and read it directly.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "The unique asset ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "read_asset_text"
+  },
+  {
+    "description": "Read an email.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Email ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "read_email"
+  },
+  {
+    "description": "Read the content of a virtual workspace file.",
+    "inputSchema": {
+      "properties": {
+        "path": {
+          "description": "Relative path to the file.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "name": "read_file"
+  },
+  {
+    "description": "Reply to an email.",
+    "inputSchema": {
+      "properties": {
+        "body": {
+          "description": "Reply body.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Target email ID.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "body"
+      ],
+      "type": "object"
+    },
+    "name": "reply_to_email"
+  },
+  {
+    "description": "Assign a review aspect (legal, privacy, security, ...) to a reviewer.",
+    "inputSchema": {
+      "properties": {
+        "aspect": {
+          "description": "The review aspect to assign.",
+          "type": "string"
+        },
+        "reviewer": {
+          "description": "The reviewer role that owns the aspect.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "aspect",
+        "reviewer"
+      ],
+      "type": "object"
+    },
+    "name": "review_assign"
+  },
+  {
+    "description": "Sign the document; blocked unless every aspect is ok with no outstanding blockers.",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "The document to sign.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document"
+      ],
+      "type": "object"
+    },
+    "name": "review_sign"
+  },
+  {
+    "description": "Show aspects, verdicts, and sign state (read-only).",
+    "inputSchema": {
+      "properties": {
+        "document": {
+          "description": "Optional document to filter by.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "review_status"
+  },
+  {
+    "description": "Submit one aspect's verdict; a block carries its blocking issue.",
+    "inputSchema": {
+      "properties": {
+        "aspect": {
+          "description": "The review aspect being submitted.",
+          "type": "string"
+        },
+        "status": {
+          "description": "The verdict: ok or blocked.",
+          "type": "string"
+        },
+        "issue": {
+          "description": "Optional blocking issue when status is blocked.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "aspect",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "review_submit"
+  },
+  {
+    "description": "Query JSON data using jq filter syntax.",
+    "inputSchema": {
+      "properties": {
+        "filter": {
+          "description": "The jq query filter (e.g. '.items[0].id').",
+          "type": "string"
+        },
+        "path": {
+          "description": "Relative path to the target JSON file.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filter",
+        "path"
+      ],
+      "type": "object"
+    },
+    "name": "run_jq_query"
+  },
+  {
+    "description": "Execute a local python (.py) or bash (.sh) script in the workspace.",
+    "inputSchema": {
+      "properties": {
+        "args": {
+          "description": "Optional list of arguments to pass to the script.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "script_path": {
+          "description": "Relative path to the script file.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "script_path"
+      ],
+      "type": "object"
+    },
+    "name": "run_script"
+  },
+  {
+    "description": "Run security audit.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "run_security_audit"
+  },
+  {
+    "description": "Run system diagnostics.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "run_system_diagnostics"
+  },
+  {
+    "description": "Run system setup.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "run_system_setup"
+  },
+  {
+    "description": "Search emails by query.",
+    "inputSchema": {
+      "properties": {
+        "query": {
+          "description": "Search query.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "type": "object"
+    },
+    "name": "search_emails"
+  },
+  {
+    "description": "Search for patterns in files recursively.",
+    "inputSchema": {
+      "properties": {
+        "path": {
+          "description": "Target file or directory to search. Defaults to '.'.",
+          "type": "string"
+        },
+        "pattern": {
+          "description": "Regular expression pattern to find.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pattern"
+      ],
+      "type": "object"
+    },
+    "name": "search_grep"
+  },
+  {
+    "description": "Search messages within a channel.",
+    "inputSchema": {
+      "properties": {
+        "channel": {
+          "description": "Chat channel name.",
+          "type": "string"
+        },
+        "query": {
+          "description": "Search query.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel",
+        "query"
+      ],
+      "type": "object"
+    },
+    "name": "search_messages"
+  },
+  {
+    "description": "Send an email.",
+    "inputSchema": {
+      "properties": {
+        "body": {
+          "description": "Email body.",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Email subject.",
+          "type": "string"
+        },
+        "to_address": {
+          "description": "Recipient email address.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "to_address",
+        "subject",
+        "body"
+      ],
+      "type": "object"
+    },
+    "name": "send_email"
+  },
+  {
+    "description": "Send a message to a channel or another agent.",
+    "inputSchema": {
+      "properties": {
+        "channel": {
+          "description": "Chat channel name (e.g. #incident-war-room).",
+          "type": "string"
+        },
+        "message": {
+          "description": "The message text.",
+          "type": "string"
+        },
+        "target": {
+          "description": "Target agent name/LDAP.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel",
+        "target",
+        "message"
+      ],
+      "type": "object"
+    },
+    "name": "send_message"
+  },
+  {
+    "description": "Set agent identity.",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "description": "Agent name.",
+          "type": "string"
+        },
+        "role": {
+          "description": "Role to assign.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "role"
+      ],
+      "type": "object"
+    },
+    "name": "set_agent_identity"
+  },
+  {
+    "description": "Set config value.",
+    "inputSchema": {
+      "properties": {
+        "path": {
+          "description": "Exact config path.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value to set.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_config_value"
+  },
+  {
+    "description": "Set default model.",
+    "inputSchema": {
+      "properties": {
+        "model": {
+          "description": "Model identifier.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model"
+      ],
+      "type": "object"
+    },
+    "name": "set_default_model"
+  },
+  {
+    "description": "Start the gateway.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "start_gateway"
+  },
+  {
+    "description": "Undo the last N steps.",
+    "inputSchema": {
+      "properties": {
+        "steps": {
+          "description": "Steps to undo.",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "undo"
+  },
+  {
+    "description": "Update a calendar event.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Target event ID.",
+          "type": "string"
+        },
+        "location": {
+          "description": "New location.",
+          "type": "string"
+        },
+        "start_time": {
+          "description": "New start datetime.",
+          "type": "string"
+        },
+        "title": {
+          "description": "New event title.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_calendar_event"
+  },
+  {
+    "description": "Wait for a specified number of virtual seconds.",
+    "inputSchema": {
+      "properties": {
+        "seconds": {
+          "description": "Seconds to wait.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "seconds"
+      ],
+      "type": "object"
+    },
+    "name": "wait"
+  },
+  {
+    "description": "Create or overwrite a virtual workspace file with content.",
+    "inputSchema": {
+      "properties": {
+        "content": {
+          "description": "The file contents.",
+          "type": "string"
+        },
+        "path": {
+          "description": "Relative path to write to.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "content"
+      ],
+      "type": "object"
+    },
+    "name": "write_file"
+  }
+]

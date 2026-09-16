@@ -1,0 +1,56 @@
+{
+  "slug": "incident_commander_selection",
+  "domain": "incident response operations",
+  "title": "Incident Commander Selection",
+  "target_rounds": 12,
+  "archetype": "evidence_mismatch",
+  "core_conflict": "An automated Slack alert claims the outage is a database pool leak and recommends the Database Admin lead recovery. However, visual routing target charts and git deployment sync logs from later rounds prove the outage is a cascading routing configuration error, requiring the Operations Coordinator to take command and execute rollback.",
+  "conflict_taxonomy": [
+    "evidence_mismatch",
+    "temporal_staleness",
+    "dependency_ordering"
+  ],
+  "difficulty_challenges": [
+    "duplicate_avoidance",
+    "gap_completion",
+    "workflow_completion"
+  ],
+  "participants": [
+    "Avery_Frontend_Engineer",
+    "Blair_Backend_Developer",
+    "Casey_Database_Admin",
+    "Devon_Operations_Coordinator"
+  ],
+  "required_constraints": [
+    "Casey DB Admin claims a database pool leak and locks DB writes. Devon Ops is passive and refuses to roll back his routing change without Casey's approval.",
+    "The coordinator must inspect the visual database active/idle connections chart and latency timing charts, and write a timeline report '/reports/incident_timeline.md' correlating the timing mismatch (10:15 vs 10:18) to debunk Casey.",
+    "The coordinator must visually analyze the network diagram 'routing_topology.png' to identify the dead route node ID ('NODE_GATEWAY_C4') and the correct target node ID ('ROUTE_NODE_E3').",
+    "Casey will unlock database writes only after the coordinator sends a message in the chat citing the visual timings and node IDs. Devon will only rollback after the lock is released."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

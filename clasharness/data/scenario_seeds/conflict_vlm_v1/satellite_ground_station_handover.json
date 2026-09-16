@@ -1,0 +1,58 @@
+{
+  "slug": "satellite_ground_station_handover",
+  "domain": "satellite operations and ground station scheduling",
+  "title": "Satellite Ground Station Handover",
+  "target_rounds": 12,
+  "core_conflict": "An automated pass scheduler flags ground-station Antenna 3 as failing signal lock and recommends aborting the satellite pass, telling the Ground Ops Lead to stand down. However, a field photograph of Antenna 3's local diagnostic panel showing the loaded almanac epoch timestamp (a stale date) is the decisive proof that the degradation is caused by stale cached almanac data, not a hardware fault; corroborated by the signal-to-noise (SNR) and antenna pointing-error trend charts, the evidence requires the coordinator to push a fresh almanac and re-point the correct antenna before the orbital contact window closes.",
+  "conflict_taxonomy": [
+    "evidence_mismatch",
+    "temporal_staleness",
+    "time_window_expiration"
+  ],
+  "difficulty_challenges": [
+    "duplicate_avoidance",
+    "multi_source_reasoning",
+    "workflow_completion"
+  ],
+  "participants": [
+    "Avery_Pass_Scheduler",
+    "Blair_RF_Engineer",
+    "Casey_Flight_Dynamics_Officer",
+    "Devon_Ground_Ops_Lead"
+  ],
+  "required_constraints": [
+    "Avery Pass Scheduler has flagged Antenna 3 as failing lock and recommends aborting the pass; Devon Ground Ops Lead will not authorize the handover without Blair RF Engineer's confirmation.",
+    "The coordinator must visually read the stale loaded-almanac epoch timestamp from the field photograph of Antenna 3's local diagnostic panel, then inspect the SNR trend chart, and write a link-budget report '/reports/link_budget.md' correlating the SNR drop to the photographed stale almanac timestamp rather than to antenna hardware.",
+    "The coordinator must visually analyze the antenna array diagram 'antenna_array.png' to identify the correct antenna node ID ('ANT_NODE_3B') and the stale almanac file to be replaced.",
+    "The coordinator must run the utility '/scripts/push_almanac.py --station GS-7 --antenna ANT_NODE_3B --almanac fresh' to write the refreshed configuration file '/almanac_pushed.json'.",
+    "The orbital contact window closes at a fixed cutoff time; Devon Ground Ops Lead will authorize the handover only after '/almanac_pushed.json' exists and the coordinator has messaged the specific SNR value read from the chart before the window expires."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "shell_scripting"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text",
+    "natural_image"
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

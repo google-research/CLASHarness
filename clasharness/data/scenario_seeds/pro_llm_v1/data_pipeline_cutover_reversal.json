@@ -1,0 +1,14 @@
+{
+  "slug": "data_pipeline_cutover_reversal",
+  "domain": "data_engineering",
+  "title": "Data Pipeline Cutover Reversal",
+  "target_rounds": 24,
+  "core_conflict": "A migration summary says the cutover succeeded, while monitoring alerts and owner notes require rollback and cleanup before production traffic resumes.",
+  "participants": ["Iris", "Theo", "Chen", "Marin"],
+  "required_constraints": [
+    "include contradictory migration-success summaries and current monitoring or owner evidence",
+    "include workspace files, incident emails, task-board rollback steps, and cutover calendar events",
+    "include dynamic updates that change data-loss risk, rollback status, or owner approval after early rounds",
+    "emphasize workflow completion, rollback decision-making, and action-log maintenance"
+  ]
+}

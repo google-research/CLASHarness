@@ -1,0 +1,14 @@
+name: "tailwindcss"
+description: "A utility-first CSS framework for rapid UI development"
+third_party {
+  url {
+    type: HOMEPAGE
+    value: "https://tailwindcss.com/"
+  }
+  url {
+    type: GIT
+    value: "https://github.com/tailwindlabs/tailwindcss"
+  }
+  version: "3.4.0"
+  license_type: NOTICE
+}

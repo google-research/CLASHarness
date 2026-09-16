@@ -1,0 +1,1133 @@
+[
+  {
+    "name": "list_files",
+    "args": {},
+    "cli": "ls -la ."
+  },
+  {
+    "name": "list_files",
+    "args": {
+      "path": "sub/dir"
+    },
+    "cli": "ls -la sub/dir"
+  },
+  {
+    "name": "write_file",
+    "args": {
+      "path": "a.txt",
+      "content": "hello world"
+    },
+    "cli": "echo 'hello world' > a.txt"
+  },
+  {
+    "name": "read_file",
+    "args": {
+      "path": "a.txt"
+    },
+    "cli": "cat a.txt"
+  },
+  {
+    "name": "move_file",
+    "args": {
+      "src": "a",
+      "dst": "b"
+    },
+    "cli": "mv a b"
+  },
+  {
+    "name": "append_file",
+    "args": {
+      "path": "a.txt",
+      "content": "more"
+    },
+    "cli": "echo more >> a.txt"
+  },
+  {
+    "name": "delete_file",
+    "args": {
+      "path": "a.txt"
+    },
+    "cli": "rm -f a.txt"
+  },
+  {
+    "name": "list_assets",
+    "args": {},
+    "cli": "asset list"
+  },
+  {
+    "name": "list_assets",
+    "args": {
+      "kind": "image"
+    },
+    "cli": "asset list --kind image"
+  },
+  {
+    "name": "get_asset_info",
+    "args": {
+      "id": "A1"
+    },
+    "cli": "asset info --id A1"
+  },
+  {
+    "name": "read_asset_text",
+    "args": {
+      "id": "A1"
+    },
+    "cli": "asset read-text --id A1"
+  },
+  {
+    "name": "describe_asset",
+    "args": {
+      "id": "A1"
+    },
+    "cli": "asset describe --id A1"
+  },
+  {
+    "name": "open_asset",
+    "args": {
+      "id": "A1"
+    },
+    "cli": "asset open --id A1"
+  },
+  {
+    "name": "send_message",
+    "args": {
+      "channel": "slack",
+      "target": "C1",
+      "message": "hi"
+    },
+    "cli": "curl -X POST -H 'Content-Type: application/json' -d '{\"text\": \"hi\"}' https://hooks.slack.com/services/T000/B000/XXXX"
+  },
+  {
+    "name": "send_message",
+    "args": {
+      "channel": "telegram",
+      "target": "123",
+      "message": "hi"
+    },
+    "cli": "curl -X POST -H 'Content-Type: application/json' -d '{\"chat_id\": \"123\", \"text\": \"hi\"}' https://api.telegram.org/botTOKEN/sendMessage"
+  },
+  {
+    "name": "broadcast_message",
+    "args": {
+      "channel": "slack",
+      "message": "hi"
+    },
+    "cli": "curl -X POST -H 'Content-Type: application/json' -d '{\"text\": \"hi\"}' https://hooks.slack.com/services/T000/B000/XXXX"
+  },
+  {
+    "name": "search_messages",
+    "args": {
+      "channel": "slack",
+      "query": "foo"
+    },
+    "cli": "message search --channel slack --query foo"
+  },
+  {
+    "name": "react_to_message",
+    "args": {
+      "channel": "C1",
+      "message_id": "12345.678",
+      "emoji": "thumbsup"
+    },
+    "cli": "curl -X POST -H 'Authorization: Bearer xoxb-token' -H 'Content-Type: application/json' -d '{\"channel\": C1, \"timestamp\": 12345.678, \"name\": thumbsup}' https://slack.com/api/reactions.add"
+  },
+  {
+    "name": "create_message_poll",
+    "args": {
+      "channel": "slack",
+      "question": "Q?",
+      "options": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "cli": "message poll --channel slack --question 'Q?' --options a,b,c"
+  },
+  {
+    "name": "get_system_status",
+    "args": {},
+    "cli": "system status"
+  },
+  {
+    "name": "get_system_status",
+    "args": {
+      "json_format": true
+    },
+    "cli": "system status --json"
+  },
+  {
+    "name": "check_system_health",
+    "args": {},
+    "cli": "system health"
+  },
+  {
+    "name": "run_system_diagnostics",
+    "args": {},
+    "cli": "system doctor"
+  },
+  {
+    "name": "start_gateway",
+    "args": {},
+    "cli": "system gateway start"
+  },
+  {
+    "name": "set_default_model",
+    "args": {
+      "model": "gpt-4"
+    },
+    "cli": "system models set gpt-4"
+  },
+  {
+    "name": "get_config_value",
+    "args": {
+      "path": "a.b"
+    },
+    "cli": "system config get a.b"
+  },
+  {
+    "name": "set_config_value",
+    "args": {
+      "path": "a.b",
+      "value": "v"
+    },
+    "cli": "system config set a.b v"
+  },
+  {
+    "name": "set_config_value",
+    "args": {
+      "path": "a.b",
+      "value": 5
+    },
+    "cli": "system config set a.b 5"
+  },
+  {
+    "name": "add_cron_job",
+    "args": {
+      "name": "job",
+      "cron_schedule": "* * * * *",
+      "message": "run"
+    },
+    "cli": "system cron add --name job --cron '* * * * *' --message run"
+  },
+  {
+    "name": "list_cron_jobs",
+    "args": {},
+    "cli": "system cron list"
+  },
+  {
+    "name": "run_security_audit",
+    "args": {},
+    "cli": "system security audit"
+  },
+  {
+    "name": "run_system_setup",
+    "args": {},
+    "cli": "system setup"
+  },
+  {
+    "name": "pair_device",
+    "args": {},
+    "cli": "system devices pair"
+  },
+  {
+    "name": "list_devices",
+    "args": {},
+    "cli": "system devices list"
+  },
+  {
+    "name": "wait",
+    "args": {
+      "seconds": 3
+    },
+    "cli": "wait 3"
+  },
+  {
+    "name": "wait",
+    "args": {
+      "seconds": "3"
+    },
+    "cli": "wait 3"
+  },
+  {
+    "name": "undo",
+    "args": {},
+    "cli": "undo"
+  },
+  {
+    "name": "undo",
+    "args": {
+      "steps": 2
+    },
+    "cli": "undo 2"
+  },
+  {
+    "name": "create_agent",
+    "args": {
+      "name": "bot"
+    },
+    "cli": "agent add bot"
+  },
+  {
+    "name": "create_agent",
+    "args": {
+      "name": "bot",
+      "model": "gpt-4"
+    },
+    "cli": "agent add bot --model gpt-4"
+  },
+  {
+    "name": "list_agents",
+    "args": {},
+    "cli": "agent list"
+  },
+  {
+    "name": "set_agent_identity",
+    "args": {
+      "name": "bot",
+      "role": "admin"
+    },
+    "cli": "agent set-identity bot --role admin"
+  },
+  {
+    "name": "delegate_task",
+    "args": {
+      "agent": "bot",
+      "instruction": "do it"
+    },
+    "cli": "agent delegate --agent bot --instruction 'do it'"
+  },
+  {
+    "name": "check_delegated_tasks_status",
+    "args": {},
+    "cli": "agent status"
+  },
+  {
+    "name": "check_delegated_tasks_status",
+    "args": {
+      "agent": "bot"
+    },
+    "cli": "agent status --agent bot"
+  },
+  {
+    "name": "list_calendar_events",
+    "args": {},
+    "cli": "calendar list"
+  },
+  {
+    "name": "list_calendar_events",
+    "args": {
+      "from_date": "2024-01-01",
+      "to_date": "2024-02-01"
+    },
+    "cli": "calendar list --from 2024-01-01 --to 2024-02-01"
+  },
+  {
+    "name": "create_calendar_event",
+    "args": {
+      "title": "T",
+      "start_time": "2024-01-01T10:00"
+    },
+    "cli": "calendar add-event --title T --start 2024-01-01T10:00"
+  },
+  {
+    "name": "create_calendar_event",
+    "args": {
+      "title": "T",
+      "start_time": "2024-01-01T10:00",
+      "location": "HQ",
+      "attendees": [
+        "a@x",
+        "b@y"
+      ]
+    },
+    "cli": "calendar add-event --title T --start 2024-01-01T10:00 --location HQ --attendees a@x,b@y"
+  },
+  {
+    "name": "update_calendar_event",
+    "args": {
+      "id": "E1"
+    },
+    "cli": "calendar update-event --id E1"
+  },
+  {
+    "name": "update_calendar_event",
+    "args": {
+      "id": "E1",
+      "title": "T2",
+      "start_time": "2024-01-02T09:00",
+      "location": "L"
+    },
+    "cli": "calendar update-event --id E1 --title T2 --start 2024-01-02T09:00 --location L"
+  },
+  {
+    "name": "delete_calendar_event",
+    "args": {
+      "id": "E1"
+    },
+    "cli": "calendar delete-event --id E1"
+  },
+  {
+    "name": "get_today_date",
+    "args": {
+      "timezone": "UTC"
+    },
+    "cli": "calendar today --timezone UTC"
+  },
+  {
+    "name": "list_emails",
+    "args": {},
+    "cli": "email list"
+  },
+  {
+    "name": "list_emails",
+    "args": {
+      "folder": "inbox"
+    },
+    "cli": "email list --folder inbox"
+  },
+  {
+    "name": "read_email",
+    "args": {
+      "id": "M1"
+    },
+    "cli": "email read --id M1"
+  },
+  {
+    "name": "send_email",
+    "args": {
+      "to_address": "a@x",
+      "subject": "S",
+      "body": "B"
+    },
+    "cli": "email send --to a@x --subject S --body B"
+  },
+  {
+    "name": "reply_to_email",
+    "args": {
+      "id": "M1",
+      "body": "B"
+    },
+    "cli": "email reply --id M1 --body B"
+  },
+  {
+    "name": "move_email",
+    "args": {
+      "id": "M1",
+      "folder": "archive"
+    },
+    "cli": "email move --id M1 --folder archive"
+  },
+  {
+    "name": "mark_email",
+    "args": {
+      "id": "M1",
+      "flag": "read"
+    },
+    "cli": "email mark --id M1 --flag read"
+  },
+  {
+    "name": "search_emails",
+    "args": {
+      "query": "foo"
+    },
+    "cli": "email search --query foo"
+  },
+  {
+    "name": "get_weather",
+    "args": {
+      "location": "NYC"
+    },
+    "cli": "weather get --location NYC"
+  },
+  {
+    "name": "get_weather_forecast",
+    "args": {
+      "location": "NYC",
+      "days": 3
+    },
+    "cli": "weather forecast --location NYC --days 3"
+  },
+  {
+    "name": "get_weather_alerts",
+    "args": {
+      "location": "NYC"
+    },
+    "cli": "weather alerts --location NYC"
+  },
+  {
+    "name": "http_get",
+    "args": {
+      "url": "http://example.com"
+    },
+    "cli": "curl http://example.com"
+  },
+  {
+    "name": "enable_plugin",
+    "args": {
+      "name": "p"
+    },
+    "cli": "plugin enable p"
+  },
+  {
+    "name": "disable_plugin",
+    "args": {
+      "name": "p"
+    },
+    "cli": "plugin disable p"
+  },
+  {
+    "name": "list_plugins",
+    "args": {},
+    "cli": "plugin list"
+  },
+  {
+    "name": "install_plugin",
+    "args": {
+      "name": "p"
+    },
+    "cli": "plugin install p"
+  },
+  {
+    "name": "get_plugin_skill_info",
+    "args": {
+      "name": "p"
+    },
+    "cli": "plugin skill info p"
+  },
+  {
+    "name": "git_status",
+    "args": {},
+    "cli": "git status"
+  },
+  {
+    "name": "git_add",
+    "args": {
+      "path": "a"
+    },
+    "cli": "git add a"
+  },
+  {
+    "name": "git_commit",
+    "args": {
+      "message": "msg"
+    },
+    "cli": "git commit -m msg"
+  },
+  {
+    "name": "run_jq_query",
+    "args": {
+      "filter": ".x",
+      "path": "a.json"
+    },
+    "cli": "jq .x a.json"
+  },
+  {
+    "name": "search_grep",
+    "args": {
+      "pattern": "foo"
+    },
+    "cli": "grep -rn foo ."
+  },
+  {
+    "name": "search_grep",
+    "args": {
+      "pattern": "foo",
+      "path": "a.txt"
+    },
+    "cli": "grep -n foo a.txt"
+  },
+  {
+    "name": "search_grep",
+    "args": {
+      "pattern": "foo",
+      "path": "somedir"
+    },
+    "cli": "grep -rn foo somedir"
+  },
+  {
+    "name": "run_script",
+    "args": {
+      "script_path": "s.py",
+      "args": [
+        "a",
+        "b"
+      ]
+    },
+    "cli": "python3 s.py a b"
+  },
+  {
+    "name": "run_script",
+    "args": {
+      "script_path": "s.sh"
+    },
+    "cli": "bash s.sh "
+  },
+  {
+    "name": "run_script",
+    "args": {
+      "script_path": "s.rb"
+    },
+    "direct": [
+      {
+        "type": "text",
+        "text": "Error: Unsupported script file extension for s.rb. Must be .py or .sh."
+      }
+    ]
+  },
+  {
+    "name": "decompress_archive",
+    "args": {
+      "archive_path": "a.zip",
+      "output_dir": "out"
+    },
+    "cli": "unzip -d out a.zip"
+  },
+  {
+    "name": "decompress_archive",
+    "args": {
+      "archive_path": "a.zip",
+      "password": "pw"
+    },
+    "cli": "unzip -P pw a.zip"
+  },
+  {
+    "name": "decompress_archive",
+    "args": {
+      "archive_path": "a.tar.gz",
+      "output_dir": "out"
+    },
+    "cli": "tar -xzf a.tar.gz -C out"
+  },
+  {
+    "name": "decompress_archive",
+    "args": {
+      "archive_path": "a.tgz"
+    },
+    "cli": "tar -xzf a.tgz"
+  },
+  {
+    "name": "decompress_archive",
+    "args": {
+      "archive_path": "a.rar"
+    },
+    "direct": [
+      {
+        "type": "text",
+        "text": "Error: Unsupported archive file format for a.rar. Must be .zip, .tar.gz, or .tgz."
+      }
+    ]
+  },
+  {
+    "name": "execute_db_query",
+    "args": {
+      "db_path": "a.db",
+      "query": "SELECT 1"
+    },
+    "cli": "sqlite3 a.db 'SELECT 1'"
+  },
+  {
+    "name": "lock_acquire",
+    "args": {
+      "resource": "r"
+    },
+    "cli": "lock acquire --resource r"
+  },
+  {
+    "name": "lock_acquire",
+    "args": {
+      "resource": "r",
+      "section": "s",
+      "holder": "h"
+    },
+    "cli": "lock acquire --resource r --section s --holder h"
+  },
+  {
+    "name": "lock_release",
+    "args": {
+      "resource": "r"
+    },
+    "cli": "lock release --resource r"
+  },
+  {
+    "name": "lock_release",
+    "args": {
+      "resource": "r",
+      "section": "s"
+    },
+    "cli": "lock release --resource r --section s"
+  },
+  {
+    "name": "lock_list",
+    "args": {},
+    "cli": "lock list"
+  },
+  {
+    "name": "lock_status",
+    "args": {
+      "resource": "r"
+    },
+    "cli": "lock status --resource r"
+  },
+  {
+    "name": "lock_status",
+    "args": {
+      "resource": "r",
+      "section": "s"
+    },
+    "cli": "lock status --resource r --section s"
+  },
+  {
+    "name": "deploy_request",
+    "args": {
+      "change": "c"
+    },
+    "cli": "deploy request --change c"
+  },
+  {
+    "name": "deploy_approve",
+    "args": {
+      "change": "c",
+      "approver": "a"
+    },
+    "cli": "deploy approve --change c --approver a"
+  },
+  {
+    "name": "deploy_gate_set",
+    "args": {
+      "gate": "g",
+      "state": "open"
+    },
+    "cli": "deploy gate-set --gate g --state open"
+  },
+  {
+    "name": "deploy_execute",
+    "args": {
+      "change": "c"
+    },
+    "cli": "deploy execute --change c"
+  },
+  {
+    "name": "deploy_cutover",
+    "args": {
+      "change": "c"
+    },
+    "cli": "deploy cutover --change c"
+  },
+  {
+    "name": "deploy_rollback",
+    "args": {
+      "change": "c"
+    },
+    "cli": "deploy rollback --change c"
+  },
+  {
+    "name": "deploy_monitor",
+    "args": {
+      "change": "c"
+    },
+    "cli": "deploy monitor --change c"
+  },
+  {
+    "name": "deploy_status",
+    "args": {},
+    "cli": "deploy status"
+  },
+  {
+    "name": "deploy_status",
+    "args": {
+      "change": "c"
+    },
+    "cli": "deploy status --change c"
+  },
+  {
+    "name": "get_system_status",
+    "args": {
+      "json_format": false
+    },
+    "cli": "system status"
+  },
+  {
+    "name": "lock_acquire",
+    "args": {
+      "resource": "r",
+      "section": "",
+      "holder": ""
+    },
+    "cli": "lock acquire --resource r"
+  },
+  {
+    "name": "lock_release",
+    "args": {
+      "resource": "r",
+      "section": ""
+    },
+    "cli": "lock release --resource r"
+  },
+  {
+    "name": "lock_status",
+    "args": {
+      "resource": "r",
+      "section": ""
+    },
+    "cli": "lock status --resource r"
+  },
+  {
+    "name": "deploy_status",
+    "args": {
+      "change": ""
+    },
+    "cli": "deploy status"
+  },
+  {
+    "name": "create_agent",
+    "args": {
+      "name": "bot",
+      "model": ""
+    },
+    "cli": "agent add bot --model ''"
+  },
+  {
+    "name": "check_delegated_tasks_status",
+    "args": {
+      "agent": ""
+    },
+    "cli": "agent status --agent ''"
+  },
+  {
+    "name": "undo",
+    "args": {
+      "steps": 0
+    },
+    "cli": "undo 0"
+  },
+  {
+    "name": "decompress_archive",
+    "args": {
+      "archive_path": "a.zip",
+      "output_dir": "out",
+      "password": "pw"
+    },
+    "cli": "unzip -P pw -d out a.zip"
+  },
+  {
+    "name": "booking_search",
+    "args": {},
+    "cli": "booking search"
+  },
+  {
+    "name": "booking_search",
+    "args": {
+      "resource": "room-a"
+    },
+    "cli": "booking search --resource room-a"
+  },
+  {
+    "name": "booking_search",
+    "args": {
+      "query": "room"
+    },
+    "cli": "booking search --query room"
+  },
+  {
+    "name": "booking_hold",
+    "args": {
+      "resource": "room-a"
+    },
+    "cli": "booking hold --resource room-a"
+  },
+  {
+    "name": "booking_hold",
+    "args": {
+      "resource": "room-a",
+      "holder": "alice",
+      "ttl": 600
+    },
+    "cli": "booking hold --resource room-a --holder alice --ttl 600"
+  },
+  {
+    "name": "booking_confirm",
+    "args": {
+      "resource": "room-a"
+    },
+    "cli": "booking confirm --resource room-a"
+  },
+  {
+    "name": "booking_confirm",
+    "args": {
+      "resource": "room-a",
+      "holder": "alice"
+    },
+    "cli": "booking confirm --resource room-a --holder alice"
+  },
+  {
+    "name": "booking_release",
+    "args": {
+      "resource": "room-a"
+    },
+    "cli": "booking release --resource room-a"
+  },
+  {
+    "name": "booking_extend",
+    "args": {
+      "resource": "room-a"
+    },
+    "cli": "booking extend --resource room-a"
+  },
+  {
+    "name": "booking_extend",
+    "args": {
+      "resource": "room-a",
+      "ttl": 120
+    },
+    "cli": "booking extend --resource room-a --ttl 120"
+  },
+  {
+    "name": "booking_status",
+    "args": {},
+    "cli": "booking status"
+  },
+  {
+    "name": "booking_status",
+    "args": {
+      "resource": "room-a"
+    },
+    "cli": "booking status --resource room-a"
+  },
+  {
+    "name": "pairing_start",
+    "args": {
+      "device": "phone-1"
+    },
+    "cli": "pairing start --device phone-1"
+  },
+  {
+    "name": "pairing_start",
+    "args": {
+      "device": "phone-1",
+      "ttl": 600
+    },
+    "cli": "pairing start --device phone-1 --ttl 600"
+  },
+  {
+    "name": "pairing_show_code",
+    "args": {
+      "device": "phone-1"
+    },
+    "cli": "pairing show-code --device phone-1"
+  },
+  {
+    "name": "pairing_show_code",
+    "args": {
+      "device": "phone-1",
+      "code": "123456"
+    },
+    "cli": "pairing show-code --device phone-1 --code 123456"
+  },
+  {
+    "name": "pairing_enter_code",
+    "args": {
+      "device": "phone-1"
+    },
+    "cli": "pairing enter-code --device phone-1"
+  },
+  {
+    "name": "pairing_enter_code",
+    "args": {
+      "device": "phone-1",
+      "code": "123456"
+    },
+    "cli": "pairing enter-code --device phone-1 --code 123456"
+  },
+  {
+    "name": "pairing_confirm",
+    "args": {
+      "device": "phone-1"
+    },
+    "cli": "pairing confirm --device phone-1"
+  },
+  {
+    "name": "pairing_status",
+    "args": {},
+    "cli": "pairing status"
+  },
+  {
+    "name": "pairing_status",
+    "args": {
+      "device": "phone-1"
+    },
+    "cli": "pairing status --device phone-1"
+  },
+  {
+    "name": "approval_request",
+    "args": {
+      "resource": "prod-db"
+    },
+    "cli": "approval request --resource prod-db"
+  },
+  {
+    "name": "approval_request",
+    "args": {
+      "resource": "prod-db",
+      "scope": "write",
+      "approvers": "security,legal"
+    },
+    "cli": "approval request --resource prod-db --scope write --approvers security,legal"
+  },
+  {
+    "name": "approval_approve",
+    "args": {
+      "resource": "prod-db",
+      "approver": "security"
+    },
+    "cli": "approval approve --resource prod-db --approver security"
+  },
+  {
+    "name": "approval_approve",
+    "args": {
+      "resource": "prod-db",
+      "approver": "security",
+      "scope": "write",
+      "ttl": 300
+    },
+    "cli": "approval approve --resource prod-db --approver security --scope write --ttl 300"
+  },
+  {
+    "name": "approval_grant",
+    "args": {
+      "resource": "prod-db"
+    },
+    "cli": "approval grant --resource prod-db"
+  },
+  {
+    "name": "approval_revoke",
+    "args": {
+      "resource": "prod-db"
+    },
+    "cli": "approval revoke --resource prod-db"
+  },
+  {
+    "name": "approval_revoke",
+    "args": {
+      "resource": "prod-db",
+      "approver": "security"
+    },
+    "cli": "approval revoke --resource prod-db --approver security"
+  },
+  {
+    "name": "approval_provisional",
+    "args": {
+      "resource": "prod-db",
+      "approver": "security"
+    },
+    "cli": "approval provisional --resource prod-db --approver security"
+  },
+  {
+    "name": "approval_provisional",
+    "args": {
+      "resource": "prod-db",
+      "approver": "security",
+      "scope": "write",
+      "ttl": 120
+    },
+    "cli": "approval provisional --resource prod-db --approver security --scope write --ttl 120"
+  },
+  {
+    "name": "approval_escalate",
+    "args": {
+      "resource": "prod-db",
+      "to": "cto"
+    },
+    "cli": "approval escalate --resource prod-db --to cto"
+  },
+  {
+    "name": "approval_status",
+    "args": {},
+    "cli": "approval status"
+  },
+  {
+    "name": "approval_status",
+    "args": {
+      "resource": "prod-db"
+    },
+    "cli": "approval status --resource prod-db"
+  },
+  {
+    "name": "containment_revoke_sessions",
+    "args": {
+      "account": "victim@corp.com"
+    },
+    "cli": "containment revoke-sessions --account victim@corp.com"
+  },
+  {
+    "name": "containment_disable_forwarding",
+    "args": {
+      "account": "victim@corp.com"
+    },
+    "cli": "containment disable-forwarding --account victim@corp.com"
+  },
+  {
+    "name": "containment_isolate_device",
+    "args": {
+      "device": "laptop-42"
+    },
+    "cli": "containment isolate-device --device laptop-42"
+  },
+  {
+    "name": "containment_block_token",
+    "args": {
+      "token": "tok_abc123"
+    },
+    "cli": "containment block-token --token tok_abc123"
+  },
+  {
+    "name": "containment_status",
+    "args": {},
+    "cli": "containment status"
+  },
+  {
+    "name": "review_assign",
+    "args": {
+      "aspect": "legal",
+      "reviewer": "alice"
+    },
+    "cli": "review assign --aspect legal --reviewer alice"
+  },
+  {
+    "name": "review_submit",
+    "args": {
+      "aspect": "legal",
+      "status": "ok"
+    },
+    "cli": "review submit --aspect legal --status ok"
+  },
+  {
+    "name": "review_submit",
+    "args": {
+      "aspect": "legal",
+      "status": "blocked",
+      "issue": "clause 5 unclear"
+    },
+    "cli": "review submit --aspect legal --status blocked --issue 'clause 5 unclear'"
+  },
+  {
+    "name": "review_sign",
+    "args": {
+      "document": "contract-v2"
+    },
+    "cli": "review sign --document contract-v2"
+  },
+  {
+    "name": "review_status",
+    "args": {},
+    "cli": "review status"
+  },
+  {
+    "name": "review_status",
+    "args": {
+      "document": "contract-v2"
+    },
+    "cli": "review status --document contract-v2"
+  }
+]

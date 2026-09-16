@@ -1,0 +1,77 @@
+{
+  "slug": "distributed_lock_shared_resource",
+  "domain": "warehouse fulfillment and shared inventory allocation",
+  "title": "Distributed Lock for a Shared Inventory Ledger",
+  "target_rounds": 10,
+  "archetype": "distributed_lock",
+  "core_conflict": "Two allocation agents are editing the same shared inventory ledger for a high-demand SKU, each working from its own stale local cache. An earlier concurrent write already silently overwrote a peer's reservation (a lost update), so the automated allocation view no longer matches the physical stock. A field photograph of the warehouse bay showing the true on-hand pallet count is the decisive proof of the real quantity; corroborated by the on-hand stock trend chart, it shows the ledger must be corrected. Because a second allocation agent is mid-edit from a stale cache, the coordinator must acquire an exclusive lock on the ledger before editing and release it afterwards so the peer's in-flight reservation is preserved rather than clobbered.",
+  "conflict_taxonomy": [
+    "distributed_lock",
+    "evidence_mismatch"
+  ],
+  "difficulty_challenges": [
+    "multi_source_reasoning",
+    "state_repair",
+    "workflow_completion",
+    "vision_decoy"
+  ],
+  "force_vision_locus": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Avery_Fulfillment_Coordinator",
+    "Blair_Allocation_Agent",
+    "Casey_Inventory_Controller",
+    "Devon_Warehouse_Lead"
+  ],
+  "required_constraints": [
+    "Blair Allocation Agent is editing the same shared inventory ledger from a stale local cache; an earlier concurrent write already silently overwrote a reservation (a lost update), so the coordinator must serialize access to the ledger rather than edit it directly.",
+    "The coordinator must visually read the true on-hand pallet count from the field photograph of the warehouse bay 'bay_pallet_photo.png' (the physically observed count on the bay), then inspect the on-hand stock trend chart, and write a reconciliation report '/reports/inventory_reconciliation.md' correlating the photographed count against the ledger to justify the correction.",
+    "Before editing the shared ledger the coordinator must acquire the exclusive lock with 'lock acquire --resource inventory_ledger' (checking 'lock status --resource inventory_ledger' first), apply the corrected on-hand count to the ledger file only while holding the lock, and then run 'lock release --resource inventory_ledger' once the edit is written; the coordinator must NOT edit the ledger while another holder owns the lock.",
+    "The coordinator's correction must preserve (not overwrite) Blair Allocation Agent's in-flight reservation; the reconciled ledger must reflect both the true on-hand count and the peer's still-valid reservation.",
+    "Casey Inventory Controller will commit the final allocation only after the coordinator sends a chat message citing the visually read on-hand count and confirming the ledger lock was released. Devon Warehouse Lead will not re-open the bay for picking until Casey confirms the commit."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "lock"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text",
+    "natural_image"
+  ],
+  "evidence": [
+    {
+      "id": "bay_pallet_photo",
+      "summary": "Field photograph of the warehouse bay showing the true on-hand pallet/unit count for the disputed SKU.",
+      "real_world_source": "physical_photo",
+      "role": "decisive"
+    },
+    {
+      "id": "allocation_trend_chart",
+      "summary": "On-hand stock / allocation throughput trend chart corroborating that the ledger is out of sync with physical stock.",
+      "real_world_source": "dashboard_chart",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

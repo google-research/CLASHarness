@@ -1,0 +1,267 @@
+{
+ "_note": "Round-level conflict-protocol gate, derived from the generator. A round is GATED (the gold trajectory must carry out a real state-changing protocol step, not merely inspect) iff _round_requires_mechanic(round_idx) AND the seed routes to a plugin that declares emits_effects. Seeds that route to no such plugin are the placebo arm: the gate is a no-op for them, so the same round positions carry no extra demand. Verified against the live registry on every load by corpus.load_gate_map().",
+ "_source": "clasharness/scenario/conflict_llm_pipeline.py: MECHANIC_ROUND_RATIO, _round_requires_mechanic, _final_mechanic_round, _mechanic_command_sets",
+ "gated_positions": [
+  2,
+  3,
+  5,
+  6,
+  8,
+  9
+ ],
+ "ratio": [
+  2,
+  3
+ ],
+ "rounds_per_package": 10,
+ "seeds": {
+  "access_request_approval": {
+   "effects": [
+    "approval_granted"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "approval approve",
+    "approval escalate",
+    "approval grant",
+    "approval provisional",
+    "approval request"
+   ],
+   "terminals": [
+    "approval grant"
+   ]
+  },
+  "barrier_sync_deployment": {
+   "effects": [
+    "deployment_cutover"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "deploy approve",
+    "deploy cutover",
+    "deploy execute",
+    "deploy gate-set",
+    "deploy request",
+    "deploy rollback"
+   ],
+   "terminals": [
+    "deploy cutover"
+   ]
+  },
+  "clinical_trial_dosage_conflict": {
+   "effects": [],
+   "mechanic": false,
+   "protocol": [],
+   "terminals": []
+  },
+  "collaborative_contract_review": {
+   "effects": [
+    "document_signed"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "review assign",
+    "review sign",
+    "review submit"
+   ],
+   "terminals": [
+    "review sign"
+   ]
+  },
+  "coordinated_containment": {
+   "effects": [
+    "containment_action"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "containment block-token",
+    "containment disable-forwarding",
+    "containment isolate-device",
+    "containment revoke-sessions"
+   ],
+   "terminals": [
+    "containment block-token",
+    "containment disable-forwarding",
+    "containment isolate-device",
+    "containment revoke-sessions"
+   ]
+  },
+  "deadlock_multi_approval": {
+   "effects": [
+    "approval_granted"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "approval approve",
+    "approval escalate",
+    "approval grant",
+    "approval provisional",
+    "approval request"
+   ],
+   "terminals": [
+    "approval grant"
+   ]
+  },
+  "distributed_lock_shared_resource": {
+   "effects": [
+    "lock_acquired",
+    "lock_released"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "lock acquire",
+    "lock release"
+   ],
+   "terminals": [
+    "lock acquire",
+    "lock release"
+   ]
+  },
+  "employee_onboarding_workflow": {
+   "effects": [
+    "deployment_cutover"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "deploy approve",
+    "deploy cutover",
+    "deploy execute",
+    "deploy gate-set",
+    "deploy request",
+    "deploy rollback"
+   ],
+   "terminals": [
+    "deploy cutover"
+   ]
+  },
+  "expense_reimbursement_conflict": {
+   "effects": [],
+   "mechanic": false,
+   "protocol": [],
+   "terminals": []
+  },
+  "expiring_resource_hold": {
+   "effects": [
+    "booking_confirmed",
+    "booking_held",
+    "booking_released",
+    "pairing_completed"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "booking confirm",
+    "booking extend",
+    "booking hold",
+    "booking release"
+   ],
+   "terminals": [
+    "booking confirm",
+    "booking hold",
+    "booking release"
+   ]
+  },
+  "incident_commander_selection": {
+   "effects": [],
+   "mechanic": false,
+   "protocol": [],
+   "terminals": []
+  },
+  "it_deployment_gate": {
+   "effects": [
+    "deployment_cutover"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "deploy approve",
+    "deploy cutover",
+    "deploy execute",
+    "deploy gate-set",
+    "deploy request",
+    "deploy rollback"
+   ],
+   "terminals": [
+    "deploy cutover"
+   ]
+  },
+  "multi_device_pairing": {
+   "effects": [
+    "booking_confirmed",
+    "pairing_completed"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "pairing confirm",
+    "pairing enter-code",
+    "pairing show-code",
+    "pairing start"
+   ],
+   "terminals": [
+    "pairing confirm"
+   ]
+  },
+  "multi_party_access_permit": {
+   "effects": [
+    "approval_granted",
+    "booking_confirmed",
+    "pairing_completed"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "approval approve",
+    "approval escalate",
+    "approval grant",
+    "approval provisional",
+    "approval request"
+   ],
+   "terminals": [
+    "approval grant"
+   ]
+  },
+  "multi_tab_slot_monitoring": {
+   "effects": [
+    "booking_confirmed"
+   ],
+   "mechanic": true,
+   "protocol": [
+    "booking confirm",
+    "booking extend",
+    "booking hold",
+    "booking release"
+   ],
+   "terminals": [
+    "booking confirm"
+   ]
+  },
+  "multimodal_temporal_conflict_01": {
+   "effects": [],
+   "mechanic": false,
+   "protocol": [],
+   "terminals": []
+  },
+  "payment_chargeback_dispute": {
+   "effects": [],
+   "mechanic": false,
+   "protocol": [],
+   "terminals": []
+  },
+  "satellite_ground_station_handover": {
+   "effects": [],
+   "mechanic": false,
+   "protocol": [],
+   "terminals": []
+  },
+  "sla_support_response": {
+   "effects": [],
+   "mechanic": false,
+   "protocol": [],
+   "terminals": []
+  },
+  "warehouse_robotics_safety_halt": {
+   "effects": [],
+   "mechanic": false,
+   "protocol": [],
+   "terminals": []
+  }
+ },
+ "terminal_position": 9
+}

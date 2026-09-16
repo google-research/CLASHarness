@@ -1,0 +1,78 @@
+{
+  "slug": "collaborative_contract_review",
+  "domain": "collaborative sign-off of a partnership contract that requires several independent, non-overlapping review aspects to be cleared before it can be signed",
+  "title": "Coordinating a Non-Overlapping Multi-Aspect Review Before Signing a Contract",
+  "target_rounds": 10,
+  "archetype": "non_overlapping_assignment",
+  "core_conflict": "A partnership contract cannot be signed by a single pass: it needs FOUR distinct review aspects — legal, privacy, security, and business — each of which must be cleared by its OWN reviewer before the document is signed. The work is partitioned so the aspects do NOT overlap: exactly one reviewer owns each aspect, no two reviewers grade the same aspect, and no aspect is left unowned. Each reviewer returns an 'ok' or a 'blocked' verdict, and a block carries a concrete issue that must be resolved (re-submitted as ok) before the contract can be signed. The document's sign gate stays shut while any aspect is still pending or blocked, so signing after only the loudest 'looks good' verdict — while a quieter aspect is still open — secures nothing and ships an unreviewed contract. A stakeholder pressures the coordinator to sign the moment the business aspect looks positive so the deal can be announced, tempting it to skip the outstanding legal, privacy, or security clearances; another reviewer is tempted to grade an aspect that is not theirs. The review board is the decisive evidence for which aspects are assigned, their verdicts, and any blocking issue; the coordinator must ensure every distinct aspect is cleared by its own reviewer and only then sign — signing with any aspect still pending or blocked fails to complete the review.",
+  "conflict_taxonomy": [
+    "non_overlapping_assignment"
+  ],
+  "difficulty_challenges": [
+    "workflow_completion",
+    "information_transfer",
+    "multi_source_reasoning"
+  ],
+  "force_vision_locus": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Nadia_Review_Coordinator",
+    "Leo_Legal_Counsel",
+    "Priya_Privacy_Officer",
+    "Sam_Security_Reviewer",
+    "Bea_Business_Owner"
+  ],
+  "required_constraints": [
+    "The contract may be signed ONLY once EVERY one of the four distinct review aspects — legal, privacy, security, and business — has been cleared (submitted 'ok' with no outstanding blockers) by its own reviewer. The coordinator must treat 'assign each aspect to a distinct reviewer, collect every verdict, resolve any block, then sign' as the required sequence; signing while any aspect is still pending or blocked leaves the contract unreviewed and is the failure the round grades against.",
+    "The aspects are NON-OVERLAPPING: each of the four aspects is owned by exactly one reviewer (legal->Leo, privacy->Priya, security->Sam, business->Bea), no two reviewers grade the same aspect, and no aspect is left unowned. A reviewer grading an aspect that is not theirs, or two reviewers double-covering one aspect while another goes unreviewed, is a mistake the round grades against.",
+    "At least one aspect comes back BLOCKED with a concrete issue (e.g. the privacy reviewer flags an unbounded data-retention clause) that must be resolved and re-submitted as 'ok' before the contract can be signed; the coordinator must NOT sign around an unresolved block.",
+    "Bea Business Owner presses the coordinator to sign the contract as soon as the business aspect reads positive so the partnership can be announced; the coordinator must NOT sign after the loudest 'looks good' — leaving legal, privacy, or security unreviewed while signing is the mistake the round grades against.",
+    "The coordinator must visually read the review board chart 'review_board.png' to identify all four aspects, their assigned reviewers, and each aspect's current verdict (pending / ok / blocked), then write a sign-off summary '/reports/review_signoff.md' enumerating the four aspects, confirming each was cleared by its own reviewer, and noting how the blocked aspect was resolved before the contract was signed.",
+    "The coordinator assigns each aspect with 'review assign --aspect <aspect> --reviewer <role>', collects a verdict per aspect with 'review submit --aspect <aspect> --status ok|blocked [--issue <text>]' (each emitting one review_submitted), re-submits any blocked aspect as 'ok' once its issue is resolved, and only then signs with 'review sign --document <document>'; a 'review sign' attempted while any aspect is still pending or blocked fails and emits nothing, so the contract is signed only after every distinct aspect has been cleared.",
+    "Leo Legal Counsel will only hand off the executed-contract filing checklist after the coordinator sends a chat message confirming that all four aspects (legal, privacy, security, business) were cleared and the document was signed. Priya Privacy Officer will not close the privacy ticket until Leo confirms the checklist was handed off."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "review",
+    "lock"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "evidence": [
+    {
+      "id": "review_board",
+      "summary": "Review board showing the contract's four review aspects — legal, privacy, security, and business — each with its assigned reviewer and current verdict (pending / ok / blocked), with the privacy aspect flagged blocked on a data-retention issue, making clear which aspects still need to be cleared before the document can be signed.",
+      "real_world_source": "dashboard_chart",
+      "role": "decisive"
+    },
+    {
+      "id": "signoff_policy",
+      "summary": "Sign-off policy stating that the contract may be signed only once every review aspect has been cleared 'ok' with no outstanding blockers by its own reviewer, that aspects must not overlap, and that the document must not be signed while any aspect remains pending or blocked.",
+      "real_world_source": "document",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

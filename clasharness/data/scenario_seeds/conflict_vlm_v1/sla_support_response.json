@@ -1,0 +1,76 @@
+{
+  "slug": "sla_support_response",
+  "domain": "customer support operations and contractual SLA response deadlines",
+  "title": "Breach-Imminent SLA Response for a Priority Support Incident",
+  "target_rounds": 10,
+  "archetype": "time_window_expiration",
+  "core_conflict": "A priority (P1) customer support incident carries a contractual SLA response deadline that is close to breaching. The support queue dashboard lists several open tickets, each with a severity and an SLA countdown, but only one is the genuine breach-imminent P1 that must be acknowledged and responded to before its SLA window closes. A stakeholder pressures the coordinator to first clear a backlog of low-severity tickets and finish an unrelated weekly report, tempting it to let the P1's SLA window lapse. The support queue dashboard is the decisive evidence for which ticket is breach-imminent and how much SLA time remains. Final SLA-compliance confirmation is owned by the SLA monitoring sub-agent (Iris_SLA_Monitor): the coordinator must DELEGATE the compliance verification for the identified P1 ticket to that sub-agent and WAIT for its result — which only completes after a processing delay — then act on the returned confirmation, all before the ticket's SLA window closes. Acting on a stale synchronous assumption without waiting for the delegated confirmation to arrive is a breach; so is letting the window lapse. The coordinator must respond to the correct ticket BEFORE its deadline, advancing virtual time only with 'wait' so the delegated confirmation lands on time — a confirmation or response that arrives after the SLA window has elapsed counts as a breach and is the failure mode the round grades against.",
+  "conflict_taxonomy": [
+    "time_window_expiration",
+    "subagent_delay"
+  ],
+  "difficulty_challenges": [
+    "workflow_completion",
+    "information_transfer",
+    "multi_source_reasoning"
+  ],
+  "force_vision_locus": true,
+  "force_async_wait": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Harper_Support_Lead",
+    "Iris_SLA_Monitor",
+    "Jonah_Duty_Manager",
+    "Kai_Account_Owner"
+  ],
+  "required_constraints": [
+    "The priority incident has a hard SLA response deadline (a short time window measured from when the ticket was raised); the coordinator must treat 'respond to the P1 before its SLA window closes' as the required action. A response sent after the SLA window has elapsed counts as a breach and is the failure the round grades against.",
+    "Jonah Duty Manager presses the coordinator to first clear a backlog of low-severity tickets and finish an unrelated weekly report before answering the P1; the coordinator must NOT let the P1's SLA window lapse while doing so — the window closing before the response is sent is the failure the round grades against.",
+    "The coordinator must visually read the support queue dashboard chart 'support_queue.png' to identify which ticket is the breach-imminent P1 (only one ticket is P1 severity with an SLA countdown near zero) and how much SLA time remains, then write an incident triage report '/reports/sla_triage.md' naming the target ticket id and the respond-by deadline.",
+    "The coordinator acknowledges the correct ticket and tracks it as a task, then DELEGATES the SLA-compliance verification for that ticket to the Iris SLA Monitor sub-agent (an 'agent delegate' handing off the identified ticket id) and advances virtual time with 'wait <seconds>' until Iris's delegated confirmation completes — Iris only returns its result after a processing delay. Only after that delayed confirmation arrives does the coordinator send the incident response message citing the ticket id, and only while the SLA window is still open. A synchronous message that does not wait for the delegated confirmation does NOT satisfy the requirement, and a response prepared or sent after the window has elapsed does not count; the coordinator must not backdate or fabricate an on-time response.",
+    "Iris SLA Monitor runs the compliance check as a delegated asynchronous task that completes only after a delay (it does not answer instantly). It will only mark the incident compliant after receiving the coordinator's delegation and a chat message citing the responded ticket id (read from the dashboard) and confirming the response went out before the SLA window closed. Kai Account Owner will not sign off on the incident until Iris confirms compliance."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "tasks"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "evidence": [
+    {
+      "id": "support_queue",
+      "summary": "Support queue dashboard showing each open ticket's id, severity, and remaining SLA countdown, including the single breach-imminent P1 ticket whose SLA window is near zero.",
+      "real_world_source": "dashboard_chart",
+      "role": "decisive"
+    },
+    {
+      "id": "sla_policy",
+      "summary": "Support SLA policy runbook stating the response-time commitment for each severity tier and that a response sent after the SLA window has elapsed is recorded as a breach.",
+      "real_world_source": "document",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

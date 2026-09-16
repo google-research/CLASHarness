@@ -1,0 +1,631 @@
+<!--
+Copyright 2026 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Evaluation Visualizer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f4f4f5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d8;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1aa;
+        }
+    </style>
+</head>
+<body class="bg-zinc-50 text-zinc-800 min-h-screen flex flex-col font-sans">
+
+    <!-- Top Indicator Gradient Line -->
+    <div class="h-1 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-500 shrink-0"></div>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-zinc-200 px-8 py-5 shadow-sm relative shrink-0">
+        <div class="max-w-7xl mx-auto flex justify-between items-start gap-4">
+            <div class="flex flex-col gap-1.5">
+                <div class="flex items-center gap-3">
+                    <span class="bg-emerald-50 border border-emerald-200 text-emerald-600 font-bold text-[9px] tracking-wider px-2 py-0.5 rounded-full uppercase">Evaluation Report</span>
+                    <h1 class="text-2xl font-extrabold text-zinc-900 tracking-tight">Agent Run Visualizer</h1>
+                </div>
+                <p class="text-zinc-500 text-sm leading-relaxed" id="eval-summary-subtitle">Loading evaluation run summary...</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs shrink-0" id="eval-meta-badges">
+                <!-- Config badges loaded dynamically -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl mx-auto w-full p-6 flex flex-col gap-6">
+
+        <!-- Summary Statistics Row -->
+        <section class="grid grid-cols-1 md:grid-cols-5 gap-4" id="stats-container">
+            <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-sm flex flex-col gap-1.5">
+                <span class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-widest">Pass Rate</span>
+                <span class="text-3xl font-black text-emerald-600 tracking-tight" id="stat-pass-rate">0.0%</span>
+                <span class="text-[10px] text-zinc-400 font-medium" id="stat-adjusted-rate">Adjusted: --</span>
+            </div>
+            <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-sm flex flex-col gap-1.5">
+                <span class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-widest">Total Tasks</span>
+                <span class="text-3xl font-black text-zinc-900 tracking-tight" id="stat-total-tasks">0</span>
+                <span class="text-[10px] text-zinc-400 font-medium" id="stat-completed-tasks">Completed: 0</span>
+            </div>
+            <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-sm flex flex-col gap-1.5">
+                <span class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-widest">Average Score</span>
+                <span class="text-3xl font-black text-indigo-600 tracking-tight" id="stat-avg-score">0.0000</span>
+                <span class="text-[10px] text-zinc-400 font-medium">Out of 1.0</span>
+            </div>
+            <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-sm flex flex-col gap-1.5">
+                <span class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-widest">Near Misses</span>
+                <span class="text-3xl font-black text-amber-500 tracking-tight" id="stat-near-misses">0</span>
+                <span class="text-[10px] text-zinc-400 font-medium" id="stat-near-miss-rate">Rate: 0.0%</span>
+            </div>
+            <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-sm flex flex-col gap-1.5">
+                <span class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-widest">API Failures</span>
+                <span class="text-3xl font-black text-rose-500 tracking-tight" id="stat-provider-failures">0</span>
+                <span class="text-[10px] text-zinc-400 font-medium">Provider errors</span>
+            </div>
+        </section>
+
+        <!-- Two Column Layout: Left Filter + Task list; Right Trajectory View -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- Left Panel (Col span 5): Filters & Task List -->
+            <div class="lg:col-span-5 flex flex-col gap-4">
+
+                <!-- Filter Controls Card -->
+                <div class="bg-white border border-zinc-200 rounded-xl p-5 shadow-sm flex flex-col gap-4">
+                    <h3 class="text-xs font-bold text-zinc-700 tracking-wide uppercase border-b border-zinc-100 pb-2">Filter Tasks</h3>
+                    
+                    <div class="flex flex-col gap-3">
+                        <!-- Search input -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Search Task ID</label>
+                            <input type="text" id="filter-search" placeholder="Type to filter..." class="w-full bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 text-xs focus:bg-white focus:outline-indigo-500 transition-colors">
+                        </div>
+
+                        <!-- Status filter -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Status</label>
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                <label class="flex items-center gap-1.5 text-xs text-zinc-600 bg-emerald-50/60 border border-emerald-100 px-2 py-1 rounded cursor-pointer hover:bg-emerald-50 transition-colors">
+                                    <input type="checkbox" value="success" class="status-checkbox text-emerald-600 focus:ring-emerald-500" checked> Success
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs text-zinc-600 bg-rose-50/60 border border-rose-100 px-2 py-1 rounded cursor-pointer hover:bg-rose-50 transition-colors">
+                                    <input type="checkbox" value="failure" class="status-checkbox text-rose-600 focus:ring-rose-500" checked> Failures
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs text-zinc-600 bg-amber-50/60 border border-amber-100 px-2 py-1 rounded cursor-pointer hover:bg-amber-50 transition-colors">
+                                    <input type="checkbox" value="near_miss" class="status-checkbox text-amber-600 focus:ring-amber-500" checked> Near Miss
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs text-zinc-600 bg-gray-50/60 border border-gray-200 px-2 py-1 rounded cursor-pointer hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" value="provider_failure" class="status-checkbox text-gray-600 focus:ring-gray-500" checked> API Error
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Scenario dropdown -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Scenario Family</label>
+                            <select id="filter-scenario" class="w-full bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 text-xs focus:bg-white focus:outline-indigo-500 transition-colors">
+                                <option value="all">All Scenarios</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task List Card -->
+                <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-4 border-b border-zinc-100 bg-zinc-50/50 flex justify-between items-center">
+                        <span class="text-xs font-extrabold text-zinc-400 uppercase tracking-widest">Task Runs</span>
+                        <span class="bg-zinc-200 text-zinc-700 px-2 py-0.5 rounded-full text-[9px] font-bold" id="task-list-count">0 / 0</span>
+                    </div>
+                    <div class="max-h-[600px] overflow-y-auto divide-y divide-zinc-100" id="task-list-container">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Panel (Col span 7): Detailed Trajectory View -->
+            <div class="lg:col-span-7 bg-white border border-zinc-200 rounded-xl shadow-sm p-6 flex flex-col gap-6 sticky top-6 max-h-[calc(100vh-100px)] overflow-y-auto" id="details-panel">
+                
+                <!-- Placeholder when no task is selected -->
+                <div id="details-placeholder" class="py-20 flex flex-col items-center justify-center text-zinc-400 gap-3">
+                    <span class="text-4xl">📄</span>
+                    <p class="text-sm font-medium">Select a task from the list to view its execution trajectory.</p>
+                </div>
+
+                <!-- Main Details Host -->
+                <div id="details-host" class="hidden flex flex-col gap-6">
+
+                    <!-- Metadata Header -->
+                    <div class="flex flex-col gap-2 border-b border-zinc-100 pb-4">
+                        <div class="flex justify-between items-start gap-4">
+                            <h2 class="text-lg font-black text-zinc-900 tracking-tight font-mono" id="details-task-id">task_id_here</h2>
+                            <div id="details-status-badge"></div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-[10px] font-mono mt-1" id="details-meta-labels">
+                            <!-- Metas populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Scenario context / instructions -->
+                    <div class="flex flex-col gap-3 bg-indigo-50/40 border border-indigo-100 rounded-lg p-4" id="details-context-section">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[9px] font-extrabold text-indigo-500 uppercase tracking-widest">Scenario Summary</span>
+                            <p class="text-xs text-zinc-700 leading-relaxed font-medium" id="details-scenario-summary">Loading scenario summary...</p>
+                        </div>
+                        <div class="border-t border-indigo-100 my-1"></div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[9px] font-extrabold text-indigo-500 uppercase tracking-widest">Round Instruction</span>
+                            <p class="text-xs text-zinc-900 leading-relaxed font-bold select-all font-mono whitespace-pre-wrap bg-white/70 border border-zinc-200/50 rounded-md p-2.5" id="details-round-instruction">Loading round instruction...</p>
+                        </div>
+                    </div>
+
+                    <!-- Summary Grid -->
+                    <div class="grid grid-cols-4 gap-3 bg-zinc-50 border border-zinc-200 rounded-lg p-3">
+                        <div class="flex flex-col">
+                            <span class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider">Score</span>
+                            <span class="text-lg font-bold text-zinc-800" id="details-score">0.0</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider">Steps</span>
+                            <span class="text-lg font-bold text-zinc-800" id="details-steps">0</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider">Duration</span>
+                            <span class="text-lg font-bold text-zinc-800" id="details-duration">0s</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider">Stop Reason</span>
+                            <span class="text-xs font-bold text-zinc-600 truncate mt-1" id="details-stop-reason" title="">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Checkers / Assertions Section -->
+                    <div class="flex flex-col gap-2.5 hidden" id="details-checkers-section">
+                        <h3 class="text-xs font-extrabold text-zinc-400 uppercase tracking-widest">Checkers &amp; Assertions</h3>
+                        <div class="border border-zinc-200 rounded-lg overflow-hidden divide-y divide-zinc-100" id="details-checkers-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Steps Timeline -->
+                    <div class="flex flex-col gap-4">
+                        <h3 class="text-xs font-extrabold text-zinc-400 uppercase tracking-widest">Step-by-Step Trajectory</h3>
+                        <div class="flex flex-col gap-5 pl-4 border-l-2 border-zinc-100 relative" id="details-trajectory-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-zinc-200 text-center py-4 text-xs text-zinc-400 font-mono shadow-inner shrink-0 mt-8">
+        OpenClaw Multi-Agent Interactive DevOps Evaluation Visualizer
+    </footer>
+
+    <!-- JSON Data Payload Injected by compiler -->
+    <script type="text/javascript">
+        const evalPayload = /* EVAL_DATA_PLACEHOLDER */;
+
+        // Data arrays
+        const summary = evalPayload.summary || {};
+        const runs = evalPayload.runs || [];
+
+        // Populate Summary Statistics
+        document.getElementById('stat-pass-rate').innerText = summary.pass_rate || '--';
+        document.getElementById('stat-adjusted-rate').innerText = 'Adjusted: ' + (summary.adjusted_accuracy || '--');
+        document.getElementById('stat-total-tasks').innerText = summary.total_tasks || '0';
+        document.getElementById('stat-completed-tasks').innerText = 'Completed: ' + (summary.completed_tasks || '0');
+        document.getElementById('stat-avg-score').innerText = summary.avg_score !== undefined ? Number(summary.avg_score).toFixed(4) : '0.0000';
+        document.getElementById('stat-near-misses').innerText = summary.near_miss_tasks || '0';
+        document.getElementById('stat-near-miss-rate').innerText = 'Rate: ' + (summary.near_miss_rate || '--');
+        document.getElementById('stat-provider-failures').innerText = summary.provider_failures || '0';
+
+        // Add header subtitle info
+        const agent = summary.agent || 'llm';
+        const model = summary.model || '--';
+        const split = summary.split || 'dev';
+        const mode = summary.mode || 'multi';
+        document.getElementById('eval-summary-subtitle').innerText = `Agent: ${agent} • Model: ${model} • Split: ${split} • Mode: ${mode}`;
+
+        const metaBadges = document.getElementById('eval-meta-badges');
+        if (metaBadges) {
+            metaBadges.innerHTML = `
+                <span class="bg-zinc-100 border border-zinc-200 text-zinc-600 px-2.5 py-1 rounded font-mono">Agent: ${agent}</span>
+                <span class="bg-zinc-100 border border-zinc-200 text-zinc-600 px-2.5 py-1 rounded font-mono">${model}</span>
+            `;
+        }
+
+        // Helper: escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Resolve an image reference (a relative file path, loaded lazily by
+        // the browser) for a lookup key. Supports the current de-duplicated
+        // format ({ blobs: {id: ref}, alias: {key: id} }) as well as the legacy
+        // flat format ({ key: ref }) for old reports (whose refs were base64
+        // data URIs). Either way the value is used directly as an <img src>.
+        function resolveAssetBlob(slugMap, key) {
+            if (!slugMap || !key) return null;
+            if (slugMap.blobs) {
+                if (slugMap.blobs[key]) return slugMap.blobs[key];
+                const aliasId = slugMap.alias && slugMap.alias[key];
+                if (aliasId && slugMap.blobs[aliasId]) return slugMap.blobs[aliasId];
+                return null;
+            }
+            return slugMap[key] || null; // legacy flat format
+        }
+
+        // Helper: check if command has an image asset and return its src ref
+        // (a relative path) if available.
+        function tryGetImageB64(command, stdoutText, slug) {
+            if (!evalPayload.assets_map || !slug) return null;
+            const slugMap = evalPayload.assets_map[slug];
+            if (!slugMap) return null;
+            
+            // 1. Try from command line
+            if (command) {
+                const cmdLower = command.toLowerCase().trim();
+                if (cmdLower.includes('asset open') || cmdLower.includes('openclaw asset open')) {
+                    const idMatch = command.match(/--id\s+([^\s]+)/);
+                    if (idMatch) {
+                        const id = idMatch[1].trim();
+                        const b64 = resolveAssetBlob(slugMap, id);
+                        if (b64) return { key: id, b64: b64 };
+                    }
+                    const pathMatch = command.match(/asset open\s+([^\s]+)/);
+                    if (pathMatch && !pathMatch[1].startsWith('--')) {
+                        const p = pathMatch[1].trim();
+                        const b64 = resolveAssetBlob(slugMap, p);
+                        if (b64) return { key: p, b64: b64 };
+                    }
+                }
+            }
+            
+            // 2. Try from stdout text
+            if (stdoutText) {
+                const pathRegex = /path=([^\s]+\.(?:png|jpg|jpeg|gif))/i;
+                const stdoutMatch = stdoutText.match(pathRegex) || stdoutText.match(/Path:\s*([^\s]+\.(?:png|jpg|jpeg|gif))/i);
+                if (stdoutMatch) {
+                    const path = stdoutMatch[1].trim();
+                    let b64 = resolveAssetBlob(slugMap, path);
+                    if (b64) return { key: path, b64: b64 };
+                    const filename = path.split('/').pop();
+                    b64 = resolveAssetBlob(slugMap, filename);
+                    if (b64) return { key: filename, b64: b64 };
+                }
+            }
+            return null;
+        }
+
+        // Populate Scenario selector options
+        const scenarioSelector = document.getElementById('filter-scenario');
+        const scenarios = [...new Set(runs.map(r => r.metadata?.scenario_slug || r.scenario_slug))].filter(Boolean).sort();
+        scenarios.forEach(slug => {
+            const opt = document.createElement('option');
+            opt.value = slug;
+            opt.innerText = slug;
+            scenarioSelector.appendChild(opt);
+        });
+
+        // Current filtered runs list
+        let filteredRuns = [...runs];
+        let selectedRunId = null;
+
+        function updateTaskList() {
+            const listContainer = document.getElementById('task-list-container');
+            listContainer.innerHTML = '';
+
+            const searchValue = document.getElementById('filter-search').value.toLowerCase().trim();
+            const scenarioValue = document.getElementById('filter-scenario').value;
+            
+            // Get active status checkboxes
+            const activeStatuses = [];
+            document.querySelectorAll('.status-checkbox:checked').forEach(cb => {
+                activeStatuses.push(cb.value);
+            });
+
+            filteredRuns = runs.filter(run => {
+                // Search match
+                if (searchValue && !run.task_id.toLowerCase().includes(searchValue)) return false;
+
+                // Scenario match
+                const slug = run.metadata?.scenario_slug || run.scenario_slug;
+                if (scenarioValue !== 'all' && slug !== scenarioValue) return false;
+
+                // Status match
+                let statusGroup = 'failure';
+                if (run.success) statusGroup = 'success';
+                else if (run.provider_impacted || run.error_type === 'provider_failure') statusGroup = 'provider_failure';
+                else if (run.score > 0 && run.score < 1.0) statusGroup = 'near_miss';
+
+                if (!activeStatuses.includes(statusGroup)) return false;
+
+                return true;
+            });
+
+            document.getElementById('task-list-count').innerText = `${filteredRuns.length} / ${runs.length}`;
+
+            if (filteredRuns.length === 0) {
+                listContainer.innerHTML = `<div class="p-8 text-center text-xs text-zinc-400">No matching tasks found.</div>`;
+                return;
+            }
+
+            filteredRuns.forEach(run => {
+                const item = document.createElement('div');
+                item.className = `p-4 flex flex-col gap-1.5 cursor-pointer hover:bg-zinc-50 transition-colors ${selectedRunId === run.task_id ? 'bg-indigo-50/50 border-l-4 border-indigo-500' : ''}`;
+                item.onclick = () => selectTask(run.task_id);
+
+                let statusBadge = '';
+                if (run.success) {
+                    statusBadge = `<span class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-1.5 py-0.5 rounded text-[9px] font-bold">SUCCESS</span>`;
+                } else if (run.provider_impacted || run.error_type === 'provider_failure') {
+                    statusBadge = `<span class="bg-gray-100 border border-gray-200 text-gray-600 px-1.5 py-0.5 rounded text-[9px] font-bold">API ERROR</span>`;
+                } else if (run.score > 0 && run.score < 1.0) {
+                    statusBadge = `<span class="bg-amber-50 border border-amber-200 text-amber-700 px-1.5 py-0.5 rounded text-[9px] font-bold">NEAR MISS (${Number(run.score * 100).toFixed(0)}%)</span>`;
+                } else {
+                    statusBadge = `<span class="bg-rose-50 border border-rose-200 text-rose-700 px-1.5 py-0.5 rounded text-[9px] font-bold">FAIL</span>`;
+                }
+
+                const slug = run.metadata?.scenario_slug || run.scenario_slug || '--';
+
+                item.innerHTML = `
+                    <div class="flex justify-between items-center gap-2">
+                        <span class="font-mono text-xs font-bold text-zinc-900 truncate">${run.task_id}</span>
+                        ${statusBadge}
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] text-zinc-400">
+                        <span class="font-medium truncate max-w-[200px]" title="${slug}">${slug}</span>
+                        <span class="font-mono font-bold">${run.steps} steps • ${Number(run.duration_s || 0).toFixed(0)}s</span>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function selectTask(taskId) {
+            selectedRunId = taskId;
+            updateTaskList(); // Updates active selection style
+
+            const run = runs.find(r => r.task_id === taskId);
+            if (!run) return;
+
+            document.getElementById('details-placeholder').classList.add('hidden');
+            const detailsHost = document.getElementById('details-host');
+            detailsHost.classList.remove('hidden');
+
+            // Header metadata
+            document.getElementById('details-task-id').innerText = run.task_id;
+            
+            const badgeContainer = document.getElementById('details-status-badge');
+            if (run.success) {
+                badgeContainer.innerHTML = `<span class="bg-emerald-100 border border-emerald-200 text-emerald-800 px-2.5 py-0.5 rounded-full text-xs font-extrabold uppercase">Success</span>`;
+            } else if (run.provider_impacted || run.error_type === 'provider_failure') {
+                badgeContainer.innerHTML = `<span class="bg-gray-100 border border-gray-200 text-gray-700 px-2.5 py-0.5 rounded-full text-xs font-extrabold uppercase">API Error</span>`;
+            } else if (run.score > 0 && run.score < 1.0) {
+                badgeContainer.innerHTML = `<span class="bg-amber-100 border border-amber-200 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-extrabold uppercase">Near Miss</span>`;
+            } else {
+                badgeContainer.innerHTML = `<span class="bg-rose-100 border border-rose-200 text-rose-800 px-2.5 py-0.5 rounded-full text-xs font-extrabold uppercase">Failure</span>`;
+            }
+
+            // Metas labels
+            const metas = run.metadata || {};
+            const metaContainer = document.getElementById('details-meta-labels');
+            metaContainer.innerHTML = `
+                <span class="bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded">Difficulty: ${metas.difficulty || run.difficulty || '--'}</span>
+                <span class="bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded">Round: ${metas.round_id || '--'} (${metas.round_type || '--'})</span>
+                <span class="bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded">Template: ${metas.template_id || '--'}</span>
+            `;
+
+            // Scenario context updates
+            document.getElementById('details-scenario-summary').innerText = metas.scenario_summary || 'No scenario summary available.';
+            document.getElementById('details-round-instruction').innerText = metas.instruction || run.task_instruction || 'No round instruction available.';
+
+            // Summary row
+            document.getElementById('details-score').innerText = run.score !== undefined ? Number(run.score).toFixed(3) : '0.0';
+            document.getElementById('details-steps').innerText = run.steps || '0';
+            document.getElementById('details-duration').innerText = Number(run.duration_s || 0).toFixed(1) + 's';
+            
+            const stopReasonText = run.stop_reason || '--';
+            const stopReasonSpan = document.getElementById('details-stop-reason');
+            stopReasonSpan.innerText = stopReasonText;
+            stopReasonSpan.title = stopReasonText;
+            if (run.error_type || run.error) {
+                stopReasonSpan.innerText += ` (${run.error_type || run.error})`;
+            }
+
+            // Checkers / Assertions rendering
+            const checkersSection = document.getElementById('details-checkers-section');
+            const checkersContainer = document.getElementById('details-checkers-container');
+            checkersContainer.innerHTML = '';
+            
+            const checkResults = metas.check_results || [];
+            if (checkResults.length > 0) {
+                checkersSection.classList.remove('hidden');
+                checkResults.forEach(check => {
+                    const row = document.createElement('div');
+                    row.className = `p-3 flex items-start justify-between gap-4 text-xs ${check.passed ? 'bg-emerald-50/20' : 'bg-rose-50/20'}`;
+                    
+                    const statusIcon = check.passed
+                        ? `<span class="text-emerald-600 font-bold shrink-0">✓</span>`
+                        : `<span class="text-rose-600 font-bold shrink-0">✗</span>`;
+                        
+                    const badge = check.passed
+                        ? `<span class="bg-emerald-50 border border-emerald-100 text-emerald-700 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono shrink-0">PASSED</span>`
+                        : `<span class="bg-rose-50 border border-rose-100 text-rose-700 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono shrink-0">FAILED</span>`;
+                        
+                    const weightMsg = check.weight !== 1.0 ? ` (Weight: ${check.weight})` : '';
+                    
+                    row.innerHTML = `
+                        <div class="flex items-start gap-2.5 min-w-0">
+                            ${statusIcon}
+                            <div class="flex flex-col gap-1 min-w-0">
+                                <span class="font-mono font-bold text-zinc-800 truncate">${escapeHtml(check.name)}</span>
+                                ${check.message ? `<p class="text-[11px] text-zinc-500 leading-normal select-all">${escapeHtml(check.message)}</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="text-[10px] text-zinc-400 font-mono">${check.score.toFixed(2)}${weightMsg}</span>
+                            ${badge}
+                        </div>
+                    `;
+                    checkersContainer.appendChild(row);
+                });
+            } else {
+                checkersSection.classList.add('hidden');
+            }
+
+            // Timeline container
+            const trajectoryContainer = document.getElementById('details-trajectory-container');
+            trajectoryContainer.innerHTML = '';
+
+            const steps = run.trajectory || [];
+            steps.forEach((stepObj, idx) => {
+                const stepCard = document.createElement('div');
+                stepCard.className = "relative flex flex-col gap-3 bg-white border border-zinc-200 rounded-lg p-4 shadow-sm hover:shadow transition-shadow";
+
+                // Timeline node marker
+                const timelineNode = document.createElement('div');
+                timelineNode.className = "absolute -left-[23px] top-4 w-2.5 h-2.5 rounded-full border-2 border-white bg-indigo-500 shadow-sm";
+                stepCard.appendChild(timelineNode);
+
+                // Command Header
+                const command = stepObj.action || stepObj.executed_action || '--';
+                
+                // Extract retry/backoff lines from model debug
+                const debugLines = stepObj.model_debug || [];
+                const backoffLines = debugLines.filter(line => line.includes('api-backoff:') || line.includes('api-error:'));
+                const backoffBadge = backoffLines.length > 0
+                    ? `<span class="bg-rose-50 border border-rose-200 text-rose-600 text-[8px] font-bold px-1 py-0.5 rounded uppercase flex items-center gap-1 shrink-0 animate-pulse">⚠️ Rate Limit Hit (${backoffLines.length}x)</span>`
+                    : '';
+
+                // Stdout collapsible section
+                const stdoutText = stepObj.stdout || '';
+                const stderrText = stepObj.stderr || '';
+                
+                let outputSection = '';
+                if (stdoutText.trim() || stderrText.trim()) {
+                    outputSection = `
+                        <div class="flex flex-col gap-1.5 mt-2">
+                            <span class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider">Output</span>
+                            <div class="bg-zinc-900 text-zinc-300 font-mono text-xs rounded-md p-3 overflow-x-auto max-h-60 overflow-y-auto border border-zinc-950">
+                                ${stdoutText ? `<pre class="text-zinc-100 select-all">${escapeHtml(stdoutText)}</pre>` : ''}
+                                ${stderrText ? `<pre class="text-rose-400 select-all font-bold mt-1">${escapeHtml(stderrText)}</pre>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Complete Model Debug details collapsible
+                let debugDetailSection = '';
+                if (debugLines.length > 0) {
+                    const debugContent = debugLines.map(line => `• ${line}`).join('\n');
+                    debugDetailSection = `
+                        <details class="group mt-2">
+                            <summary class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider cursor-pointer select-none list-none flex items-center gap-1 hover:text-zinc-600 transition-colors">
+                                <span class="group-open:rotate-90 transition-transform font-mono inline-block">▶</span> Model Debug Details
+                            </summary>
+                            <div class="bg-zinc-50 border border-zinc-200 rounded p-2.5 mt-1.5 font-mono text-[10px] text-zinc-600 whitespace-pre-wrap select-all leading-relaxed">${escapeHtml(debugContent)}</div>
+                        </details>
+                    `;
+                }
+
+                // Step status row
+                const compatStatus = stepObj.compat_status || 'ok';
+                const exitCode = stepObj.exit_code !== undefined ? stepObj.exit_code : 0;
+                const reward = stepObj.reward !== undefined ? stepObj.reward : 0.0;
+                
+                let stepStatusBadge = '';
+                if (exitCode !== 0) {
+                    stepStatusBadge = `<span class="bg-rose-50 border border-rose-100 text-rose-600 px-1 py-0.5 rounded text-[8px] font-bold font-mono">Exit Code: ${exitCode}</span>`;
+                }
+                if (compatStatus !== 'ok') {
+                    stepStatusBadge += `<span class="bg-amber-50 border border-amber-100 text-amber-600 px-1 py-0.5 rounded text-[8px] font-bold font-mono ml-1.5">Incompatible</span>`;
+                }
+
+                const imageAsset = tryGetImageB64(command, stdoutText, metas.scenario_slug || run.scenario_slug);
+                let imageSection = '';
+                if (imageAsset) {
+                    imageSection = `
+                        <div class="flex flex-col gap-1.5 mt-2">
+                            <span class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider">Visual Asset (${escapeHtml(imageAsset.key)})</span>
+                            <div class="border border-zinc-200 rounded-md overflow-hidden bg-zinc-50 flex justify-center p-2 relative group max-w-lg">
+                                <img src="${imageAsset.b64}" class="max-h-60 object-contain hover:max-h-none transition-all duration-300 rounded cursor-zoom-in" title="Click or hover to expand visual details" />
+                            </div>
+                        </div>
+                    `;
+                }
+
+                stepCard.innerHTML += `
+                    <div class="flex justify-between items-start gap-4">
+                        <div class="flex items-start gap-2.5 min-w-0">
+                            <span class="bg-indigo-50 text-indigo-700 text-[10px] font-extrabold px-1.5 py-0.5 rounded shrink-0 font-mono">Step ${idx}</span>
+                            <span class="text-xs font-bold text-zinc-900 font-mono truncate select-all" title="${command}">${escapeHtml(command)}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            ${backoffBadge}
+                            ${stepStatusBadge}
+                        </div>
+                    </div>
+                    ${outputSection}
+                    ${imageSection}
+                    ${debugDetailSection}
+                    <div class="flex justify-between items-center text-[9px] text-zinc-400 font-mono border-t border-zinc-50 pt-2">
+                        <span>Reward change: ${reward >= 0 ? '+' : ''}${reward.toFixed(3)}</span>
+                        <span>${stepObj.done ? 'Reached End (done=True)' : ''}</span>
+                    </div>
+                `;
+                trajectoryContainer.appendChild(stepCard);
+            });
+        }
+
+        // Add event listeners for filters
+        document.getElementById('filter-search').addEventListener('input', updateTaskList);
+        document.getElementById('filter-scenario').addEventListener('change', updateTaskList);
+        document.querySelectorAll('.status-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateTaskList);
+        });
+
+        // Initial task list render
+        updateTaskList();
+    </script>
+</body>
+</html>

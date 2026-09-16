@@ -1,0 +1,842 @@
+[
+ {
+  "key": "flash",
+  "effort": "low",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 10018,
+  "reason_n": 9961,
+  "reason_sum": 2366872,
+  "reason_mean": 237.6138941873306,
+  "reason_median": 30,
+  "reason_p90": 285,
+  "reason_max": 62917,
+  "reason_zero": 0,
+  "no_reason_field": 57,
+  "out_sum": 628889,
+  "out_n": 10018,
+  "out_mean": 62.77590337392693,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "flash",
+  "effort": "medium",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 11751,
+  "reason_n": 11705,
+  "reason_sum": 5280088,
+  "reason_mean": 451.0967962409227,
+  "reason_median": 32,
+  "reason_p90": 433,
+  "reason_max": 31460,
+  "reason_zero": 0,
+  "no_reason_field": 46,
+  "out_sum": 574431,
+  "out_n": 11751,
+  "out_mean": 48.8835843757978,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "flash",
+  "effort": "high",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 11879,
+  "reason_n": 11826,
+  "reason_sum": 5295416,
+  "reason_mean": 447.77743953999664,
+  "reason_median": 34,
+  "reason_p90": 448,
+  "reason_max": 32758,
+  "reason_zero": 0,
+  "no_reason_field": 53,
+  "out_sum": 555003,
+  "out_n": 11879,
+  "out_mean": 46.72135701658389,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "flash36",
+  "effort": "low",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 6475,
+  "reason_n": 2768,
+  "reason_sum": 422510,
+  "reason_mean": 152.64089595375722,
+  "reason_median": 56,
+  "reason_p90": 387,
+  "reason_max": 2656,
+  "reason_zero": 0,
+  "no_reason_field": 3707,
+  "out_sum": 646019,
+  "out_n": 6475,
+  "out_mean": 99.77127413127413,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "flash36",
+  "effort": "medium",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 9256,
+  "reason_n": 9256,
+  "reason_sum": 2140798,
+  "reason_mean": 231.28759723422644,
+  "reason_median": 66,
+  "reason_p90": 630,
+  "reason_max": 5610,
+  "reason_zero": 0,
+  "no_reason_field": 0,
+  "out_sum": 877530,
+  "out_n": 9256,
+  "out_mean": 94.80661192739845,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "flash36",
+  "effort": "high",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 10127,
+  "reason_n": 10127,
+  "reason_sum": 2559314,
+  "reason_mean": 252.72183272440012,
+  "reason_median": 60,
+  "reason_p90": 717,
+  "reason_max": 9095,
+  "reason_zero": 0,
+  "no_reason_field": 0,
+  "out_sum": 912989,
+  "out_n": 10127,
+  "out_mean": 90.15394489977288,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "flash37",
+  "effort": "low",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 7769,
+  "reason_n": 4730,
+  "reason_sum": 647634,
+  "reason_mean": 136.92050739957716,
+  "reason_median": 32,
+  "reason_p90": 384,
+  "reason_max": 1881,
+  "reason_zero": 0,
+  "no_reason_field": 3039,
+  "out_sum": 749904,
+  "out_n": 7769,
+  "out_mean": 96.52516411378556,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "flash37",
+  "effort": "medium",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 9341,
+  "reason_n": 9341,
+  "reason_sum": 1546834,
+  "reason_mean": 165.59618884487742,
+  "reason_median": 35,
+  "reason_p90": 460,
+  "reason_max": 3669,
+  "reason_zero": 0,
+  "no_reason_field": 0,
+  "out_sum": 901054,
+  "out_n": 9341,
+  "out_mean": 96.46226314099133,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "flash37",
+  "effort": "high",
+  "family": "gemini",
+  "run": "r02",
+  "files": 60,
+  "attempts": 10908,
+  "reason_n": 10908,
+  "reason_sum": 2541961,
+  "reason_mean": 233.03639530619728,
+  "reason_median": 38,
+  "reason_p90": 672,
+  "reason_max": 11006,
+  "reason_zero": 0,
+  "no_reason_field": 0,
+  "out_sum": 998899,
+  "out_n": 10908,
+  "out_mean": 91.57489915658232,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "pro",
+  "effort": "low",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 6422,
+  "reason_n": 6360,
+  "reason_sum": 601078,
+  "reason_mean": 94.50911949685535,
+  "reason_median": 23,
+  "reason_p90": 200,
+  "reason_max": 31458,
+  "reason_zero": 0,
+  "no_reason_field": 62,
+  "out_sum": 339712,
+  "out_n": 6422,
+  "out_mean": 52.89816256617876,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "pro",
+  "effort": "medium",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 7092,
+  "reason_n": 7084,
+  "reason_sum": 836605,
+  "reason_mean": 118.09782608695652,
+  "reason_median": 34,
+  "reason_p90": 238,
+  "reason_max": 31456,
+  "reason_zero": 0,
+  "no_reason_field": 8,
+  "out_sum": 388007,
+  "out_n": 7092,
+  "out_mean": 54.710518894529045,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "pro",
+  "effort": "high",
+  "family": "gemini",
+  "run": "r01",
+  "files": 60,
+  "attempts": 8269,
+  "reason_n": 8256,
+  "reason_sum": 1415337,
+  "reason_mean": 171.4313226744186,
+  "reason_median": 33,
+  "reason_p90": 297,
+  "reason_max": 31458,
+  "reason_zero": 0,
+  "no_reason_field": 13,
+  "out_sum": 451025,
+  "out_n": 8269,
+  "out_mean": 54.54408029991534,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "opus",
+  "effort": "low",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 6271,
+  "reason_n": 6271,
+  "reason_sum": 430075,
+  "reason_mean": 68.58156593844681,
+  "reason_median": 0,
+  "reason_p90": 187,
+  "reason_max": 7304,
+  "reason_zero": 4019,
+  "no_reason_field": 0,
+  "out_sum": 2437304,
+  "out_n": 6271,
+  "out_mean": 388.6627332163929,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "opus",
+  "effort": "medium",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 7106,
+  "reason_n": 7106,
+  "reason_sum": 895892,
+  "reason_mean": 126.0754292147481,
+  "reason_median": 0,
+  "reason_p90": 318,
+  "reason_max": 8233,
+  "reason_zero": 4062,
+  "no_reason_field": 0,
+  "out_sum": 3276163,
+  "out_n": 7106,
+  "out_mean": 461.04179566563465,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "opus",
+  "effort": "high",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 7729,
+  "reason_n": 7729,
+  "reason_sum": 1374543,
+  "reason_mean": 177.84228231336525,
+  "reason_median": 0,
+  "reason_p90": 436,
+  "reason_max": 13124,
+  "reason_zero": 3973,
+  "no_reason_field": 0,
+  "out_sum": 3978850,
+  "out_n": 7729,
+  "out_mean": 514.7949281925216,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "opus5",
+  "effort": "low",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 5255,
+  "reason_n": 5255,
+  "reason_sum": 26925,
+  "reason_mean": 5.1236917221693625,
+  "reason_median": 0,
+  "reason_p90": 0,
+  "reason_max": 448,
+  "reason_zero": 5009,
+  "no_reason_field": 0,
+  "out_sum": 1422109,
+  "out_n": 5255,
+  "out_mean": 270.62017126546147,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "opus5",
+  "effort": "medium",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 6259,
+  "reason_n": 6259,
+  "reason_sum": 110392,
+  "reason_mean": 17.637322255951428,
+  "reason_median": 0,
+  "reason_p90": 32,
+  "reason_max": 937,
+  "reason_zero": 5553,
+  "no_reason_field": 0,
+  "out_sum": 2411608,
+  "out_n": 6259,
+  "out_mean": 385.30244447994886,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "opus5",
+  "effort": "high",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 7149,
+  "reason_n": 7149,
+  "reason_sum": 332077,
+  "reason_mean": 46.45083228423556,
+  "reason_median": 0,
+  "reason_p90": 154,
+  "reason_max": 3083,
+  "reason_zero": 5452,
+  "no_reason_field": 0,
+  "out_sum": 3764313,
+  "out_n": 7149,
+  "out_mean": 526.5509861519093,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "sonnet",
+  "effort": "low",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 4902,
+  "reason_n": 4902,
+  "reason_sum": 243329,
+  "reason_mean": 49.638718890248875,
+  "reason_median": 0,
+  "reason_p90": 148,
+  "reason_max": 2007,
+  "reason_zero": 3563,
+  "no_reason_field": 0,
+  "out_sum": 2241185,
+  "out_n": 4902,
+  "out_mean": 457.19808241534065,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "sonnet",
+  "effort": "medium",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 5745,
+  "reason_n": 5745,
+  "reason_sum": 657256,
+  "reason_mean": 114.40487380330723,
+  "reason_median": 0,
+  "reason_p90": 283,
+  "reason_max": 7619,
+  "reason_zero": 3706,
+  "no_reason_field": 0,
+  "out_sum": 3169842,
+  "out_n": 5745,
+  "out_mean": 551.7566579634465,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "sonnet",
+  "effort": "high",
+  "family": "claude",
+  "run": "r01",
+  "files": 60,
+  "attempts": 6840,
+  "reason_n": 6840,
+  "reason_sum": 1708349,
+  "reason_mean": 249.75862573099414,
+  "reason_median": 0,
+  "reason_p90": 541,
+  "reason_max": 13798,
+  "reason_zero": 3624,
+  "no_reason_field": 0,
+  "out_sum": 4701823,
+  "out_n": 6840,
+  "out_mean": 687.4010233918128,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "sol",
+  "effort": "low",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 6506,
+  "reason_n": 6506,
+  "reason_sum": 180464,
+  "reason_mean": 27.738087918844144,
+  "reason_median": 16,
+  "reason_p90": 65,
+  "reason_max": 515,
+  "reason_zero": 688,
+  "no_reason_field": 0,
+  "out_sum": 905345,
+  "out_n": 6506,
+  "out_mean": 139.15539501998157,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "sol",
+  "effort": "medium",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 7894,
+  "reason_n": 7894,
+  "reason_sum": 456215,
+  "reason_mean": 57.79262731188244,
+  "reason_median": 32,
+  "reason_p90": 142,
+  "reason_max": 1074,
+  "reason_zero": 765,
+  "no_reason_field": 0,
+  "out_sum": 1359984,
+  "out_n": 7894,
+  "out_mean": 172.28071953382315,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "sol",
+  "effort": "high",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 8638,
+  "reason_n": 8638,
+  "reason_sum": 812320,
+  "reason_mean": 94.04028710349618,
+  "reason_median": 47,
+  "reason_p90": 243,
+  "reason_max": 1562,
+  "reason_zero": 877,
+  "no_reason_field": 0,
+  "out_sum": 1837529,
+  "out_n": 8638,
+  "out_mean": 212.7262097707803,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "luna",
+  "effort": "low",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 5953,
+  "reason_n": 5953,
+  "reason_sum": 173107,
+  "reason_mean": 29.078951789013942,
+  "reason_median": 19,
+  "reason_p90": 69,
+  "reason_max": 373,
+  "reason_zero": 1391,
+  "no_reason_field": 0,
+  "out_sum": 811680,
+  "out_n": 5953,
+  "out_mean": 136.3480598017806,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "luna",
+  "effort": "medium",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 7024,
+  "reason_n": 7024,
+  "reason_sum": 379299,
+  "reason_mean": 54.000427107061505,
+  "reason_median": 31,
+  "reason_p90": 139,
+  "reason_max": 999,
+  "reason_zero": 1866,
+  "no_reason_field": 0,
+  "out_sum": 1166746,
+  "out_n": 7024,
+  "out_mean": 166.10848519362187,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "luna",
+  "effort": "high",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 8545,
+  "reason_n": 8545,
+  "reason_sum": 1196455,
+  "reason_mean": 140.01813926272675,
+  "reason_median": 61,
+  "reason_p90": 393,
+  "reason_max": 1916,
+  "reason_zero": 2481,
+  "no_reason_field": 0,
+  "out_sum": 2199719,
+  "out_n": 8545,
+  "out_mean": 257.42761849034525,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ },
+ {
+  "key": "terra",
+  "effort": "low",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 5760,
+  "reason_n": 5760,
+  "reason_sum": 145763,
+  "reason_mean": 25.30607638888889,
+  "reason_median": 16,
+  "reason_p90": 52,
+  "reason_max": 355,
+  "reason_zero": 23,
+  "no_reason_field": 0,
+  "out_sum": 700591,
+  "out_n": 5760,
+  "out_mean": 121.63038194444445,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "low"
+  ],
+  "hdr_eff": [
+   "low"
+  ]
+ },
+ {
+  "key": "terra",
+  "effort": "medium",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 6557,
+  "reason_n": 6557,
+  "reason_sum": 375130,
+  "reason_mean": 57.210614610340095,
+  "reason_median": 39,
+  "reason_p90": 125,
+  "reason_max": 712,
+  "reason_zero": 9,
+  "no_reason_field": 0,
+  "out_sum": 1019600,
+  "out_n": 6557,
+  "out_mean": 155.49794113161508,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "medium"
+  ],
+  "hdr_eff": [
+   "medium"
+  ]
+ },
+ {
+  "key": "terra",
+  "effort": "high",
+  "family": "openai",
+  "run": "r01",
+  "files": 60,
+  "attempts": 7409,
+  "reason_n": 7409,
+  "reason_sum": 1055901,
+  "reason_mean": 142.5159940612768,
+  "reason_median": 91,
+  "reason_p90": 332,
+  "reason_max": 1688,
+  "reason_zero": 9,
+  "no_reason_field": 0,
+  "out_sum": 1837387,
+  "out_n": 7409,
+  "out_mean": 247.99392630584424,
+  "multi_reason": 0,
+  "multi_out": 0,
+  "hdr_n": 60,
+  "hdr_req": [
+   "high"
+  ],
+  "hdr_eff": [
+   "high"
+  ]
+ }
+]

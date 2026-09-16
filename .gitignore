@@ -1,0 +1,36 @@
+# Python caches / build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+.eggs/
+
+# Generated / large data. The corpus is hosted separately and fetched by
+# tools/download_data.py; see README.
+/eval_results/
+/data/
+clasharness/data/scenarios/
+clasharness/data/profiles/
+
+# Dev scratch and session logs
+scratch/
+session-ses_*.md
+
+# Generated HTML
+VLM_GENERATION_PIPELINE.html
+
+# OS / editor cruft
+.DS_Store
+*.swp
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# Editor / tool backups
+*.bak
+*.orig
+*.rej
+*~

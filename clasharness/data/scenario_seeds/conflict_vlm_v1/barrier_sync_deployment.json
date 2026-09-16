@@ -1,0 +1,75 @@
+{
+  "slug": "barrier_sync_deployment",
+  "domain": "release engineering and production deployment cutover",
+  "title": "Barrier Synchronization for a Deployment Cutover",
+  "target_rounds": 10,
+  "archetype": "barrier_synchronization",
+  "core_conflict": "A production cutover is guarded by several independent readiness gates (canary health, data backfill, dependency version, and on-call sign-off) that reach the ready state at different phases, with one gate lagging behind until a late phase. A stakeholder presses for an early cutover to hit a launch window. The cutover is a BARRIER: it is only valid once every gate is simultaneously ready, so cutting over while any gate is still pending is the tempting-but-wrong action. The gate-readiness dashboard is the decisive evidence for which gate is still pending; the coordinator must record each gate as it clears, verify the full board, and trigger the cutover only after the barrier is satisfied.",
+  "conflict_taxonomy": [
+    "barrier_synchronization",
+    "dependency_ordering"
+  ],
+  "difficulty_challenges": [
+    "workflow_completion",
+    "state_repair",
+    "information_transfer"
+  ],
+  "force_vision_locus": true,
+  "min_round_steps": 8,
+  "target_round_steps_min": 8,
+  "target_round_steps_max": 12,
+  "participants": [
+    "Avery_Release_Manager",
+    "Blair_Canary_Analyst",
+    "Casey_Data_Engineer",
+    "Devon_Product_Owner"
+  ],
+  "required_constraints": [
+    "The cutover is guarded by several independent readiness gates that reach the ready state at different phases; at least one gate remains pending until a late phase, and the coordinator must treat the cutover as a barrier that requires ALL gates ready at once.",
+    "Devon Product Owner presses for an early cutover to hit a launch window before every gate is green; the coordinator must NOT cut over while any gate is still pending.",
+    "The coordinator must visually read the gate-readiness dashboard chart 'gate_board.png' to identify which gate is still pending and its state, then write a go/no-go report '/reports/cutover_readiness.md' listing each gate's state and the barrier decision.",
+    "As each gate clears, the coordinator records it with 'deploy gate-set --gate <gate> --state ready', verifies the full board with 'deploy status', and runs 'deploy cutover --change <change>' only once EVERY gate is ready; a premature 'deploy cutover' is blocked and is the failure the round grades against.",
+    "Casey Data Engineer will confirm post-cutover monitoring only after the coordinator sends a chat message citing the last gate that cleared (read from the dashboard) and confirming all gates were ready at cutover. Blair Canary Analyst will not close the launch ticket until Casey confirms monitoring is healthy."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "deploy"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "evidence": [
+    {
+      "id": "gate_board",
+      "summary": "Deployment readiness-gate dashboard showing each gate's state (ready or pending), including the lagging gate.",
+      "real_world_source": "dashboard_chart",
+      "role": "decisive"
+    },
+    {
+      "id": "release_runbook",
+      "summary": "Release runbook stating the cutover requires all readiness gates green simultaneously (barrier rule).",
+      "real_world_source": "document",
+      "role": "corroborating"
+    }
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 4,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 10
+}

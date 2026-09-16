@@ -1,0 +1,56 @@
+{
+  "slug": "multimodal_temporal_conflict_01",
+  "domain": "data analysis and reporting",
+  "title": "Multimodal Temporal Conflict Analysis",
+  "target_rounds": 12,
+  "core_conflict": "A cascading traffic drop incident starts as a latency anomaly (Rounds 1-3), develops into a complete traffic drop (Rounds 4-8), and ends in database connection exhaustion (Rounds 9-12). Ops trusts the gateway dashboard; Dev trusts the logs; DB Admin trusts the DB pool. Dev Agent has silently mutated the edge proxy config but lies about it. The edge proxy config is encrypted; Coordinator must retrieve the password file 'proxy_key.txt' from Dev Agent. Furthermore, the coordinator must analyze pipeline build logs to find the mutation commit hash 'COMMIT_SHA: f8c22d1' and confront Dev Agent with it to force them to output the key and confess.",
+  "conflict_taxonomy": [
+    "evidence_mismatch",
+    "temporal_staleness",
+    "credential_lock"
+  ],
+  "difficulty_challenges": [
+    "information_transfer",
+    "state_repair",
+    "multi_source_reasoning"
+  ],
+  "participants": [
+    "Ops_Agent",
+    "Dev_Agent",
+    "DB_Admin_Agent"
+  ],
+  "required_constraints": [
+    "Enforce a cascading outage: Latency spike (initial phase) -> Outage (middle phases) -> Database pool connection exhaustion (final phases before recovery).",
+    "The edge proxy configuration file edge_proxy.yaml is encrypted. The coordinator cannot audit it directly without the key file proxy_key.txt.",
+    "The Dev Agent will only output an encrypted key payload file 'proxy_key.enc' to the workspace. The coordinator must read 'docs/security_playbook.md' and run the python utility 'scripts/decrypt_key.py --input proxy_key.enc --output proxy_key.txt --salt <salt>' using the dynamic salt key extracted from the CI/CD pipeline build logs to produce the decrypted 'proxy_key.txt'.",
+    "The subagents have conflicting diagnoses: Ops Agent claims traffic surge requires rate limiting, DB Admin claims DB DDoS. The coordinator must cross-reference charts to debunk their diagnoses and align them before they authorize the override gate.",
+    "The gate override procedure requires the coordinator to write the SHA256 checksum of the corrected 'edge_proxy.yaml' to '/config_checksum.txt'. The reload command will fail if the checksum is missing or mismatching."
+  ],
+  "allowed_tool_families": [
+    "asset",
+    "agents",
+    "file",
+    "message",
+    "shell_scripting"
+  ],
+  "modalities": [
+    "chart",
+    "rich_text"
+  ],
+  "input_policy": {
+    "default_mode": "path",
+    "supports_direct": true,
+    "supports_both": true
+  },
+  "generation_policy": {
+    "chart_provider": "template",
+    "natural_image_provider": "mock",
+    "google_model": "gemini-3.1-flash-image",
+    "chart_layouts": {
+      "asset_bg_01": "devops_dashboard"
+    }
+  },
+  "min_workspace_files": 5,
+  "min_chat_sessions": 2,
+  "min_chat_messages": 15
+}

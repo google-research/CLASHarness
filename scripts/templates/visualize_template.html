@@ -1,0 +1,841 @@
+<!--
+Copyright 2026 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Scenario Visualizer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Svg Pan Zoom CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <!-- Mermaid.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f4f4f5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d8;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1aa;
+        }
+    </style>
+</head>
+<body class="bg-zinc-50 text-zinc-800 min-h-screen flex flex-col font-sans">
+
+    <!-- Top Indicator Gradient Line -->
+    <div class="h-1 w-full bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 shrink-0"></div>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-zinc-200 px-8 py-5 flex flex-col gap-3 shadow-sm relative shrink-0">
+        <div class="flex justify-between items-start gap-4">
+            <div class="flex flex-col gap-1.5">
+                <div class="flex items-center gap-3">
+                    <span class="bg-sky-50 border border-sky-200 text-sky-600 font-bold text-[9px] tracking-wider px-2 py-0.5 rounded-full uppercase">OpenClaw PRO Suite</span>
+                    <h1 class="text-2xl font-extrabold text-zinc-900 tracking-tight" id="scenario-title">Scenario Visualizer</h1>
+                </div>
+                <p class="text-zinc-500 text-sm leading-relaxed" id="scenario-core-conflict">Loading core conflict description...</p>
+            </div>
+            <div class="flex flex-col items-end gap-2 shrink-0">
+                <span class="bg-zinc-100 border border-zinc-200 text-zinc-600 px-3 py-1 rounded text-xs font-mono font-bold shadow-sm" id="scenario-slug">slug</span>
+                <div class="flex gap-1.5" id="header-badges"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 flex flex-col gap-8 max-w-7xl mx-auto w-full">
+        
+        <!-- Conflict Dependency Graph (Mermaid) -->
+        <section class="bg-white border border-zinc-200 shadow-md rounded-xl p-6 flex flex-col gap-4">
+            <h2 class="text-lg font-bold text-zinc-800 border-b border-zinc-100 pb-3 flex items-center gap-2">
+                <span>📊</span> Conflict Dependency & Workflow Graph
+            </h2>
+            <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4 h-[500px] overflow-hidden relative">
+                <div id="mermaid-host" class="w-full h-full">
+                    <pre class="mermaid w-full h-full block" id="mermaid-container">
+                        graph TD
+                        loading[Loading Graph...]
+                    </pre>
+                </div>
+                <div class="absolute bottom-2 right-2 bg-white/80 backdrop-blur border border-zinc-200 rounded px-2 py-1 text-[10px] text-zinc-500 pointer-events-none shadow-sm">
+                    Use Mouse Wheel to Zoom • Drag to Pan • Click nodes to scroll to details
+                </div>
+            </div>
+        </section>
+
+        <!-- Two-Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Timeline Navigator Sticky Sidebar -->
+            <aside class="lg:col-span-3 bg-white border border-zinc-200 rounded-xl p-5 shadow-sm sticky top-6 max-h-[calc(100vh-100px)] overflow-y-auto flex flex-col gap-4">
+                <h3 class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-widest border-b border-zinc-100 pb-2">Timeline Navigator</h3>
+                <div class="relative pl-6 border-l border-zinc-200 flex flex-col gap-6" id="timeline-navigator">
+                    <!-- Dynamic timeline navigator links will be populated here -->
+                </div>
+            </aside>
+
+            <!-- Right Column: Round Details Cards -->
+            <section class="lg:col-span-9 flex flex-col gap-8" id="rounds-container">
+                <!-- Round cards will be dynamically appended here -->
+            </section>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-zinc-200 text-center py-4 text-xs text-zinc-400 font-mono shadow-inner shrink-0">
+        OpenClaw Multi-Agent Interactive DevOps Scenario Visualizer
+    </footer>
+
+    <script type="text/javascript">
+        // Embedded spec data injected by compiler
+        const scenarioData = /* SCENARIO_DATA_PLACEHOLDER */;
+
+        // Helper to escape HTML characters in raw text file content and log strings
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // 1. Populate Scenario Info
+        document.getElementById('scenario-title').innerText = scenarioData.title || scenarioData.scenario_slug;
+        document.getElementById('scenario-slug').innerText = scenarioData.scenario_slug;
+        document.getElementById('scenario-core-conflict').innerText = scenarioData.core_conflict || 'No core conflict summary provided.';
+
+        // Populate header badges
+        const badgesContainer = document.getElementById('header-badges');
+        if (badgesContainer) {
+            const roundsCount = scenarioData.rounds.length;
+            const hasAssets = (scenarioData.assets || []).length > 0;
+            const uniqueParticipants = new Set();
+            scenarioData.rounds.forEach(r => {
+                (r.mock_subagents || []).forEach(sa => {
+                    uniqueParticipants.add(sa.agent_role);
+                });
+            });
+            const subagentsCount = uniqueParticipants.size || (scenarioData.participants || []).length;
+            
+            badgesContainer.innerHTML = `
+                <span class="bg-emerald-50 border border-emerald-200 text-emerald-700 font-medium text-[10px] px-2 py-0.5 rounded-full shadow-sm">${roundsCount} Rounds</span>
+                <span class="bg-indigo-50 border border-indigo-200 text-indigo-700 font-medium text-[10px] px-2 py-0.5 rounded-full shadow-sm">${subagentsCount} Subagents</span>
+                ${hasAssets ? '<span class="bg-amber-50 border border-amber-200 text-amber-700 font-medium text-[10px] px-2 py-0.5 rounded-full shadow-sm">Multimodal Assets</span>' : ''}
+            `;
+        }
+
+        // Global workspace helper maps and functions
+        const wsFileContents = {};
+
+        function getFileIcon(filename) {
+            const p = filename.toLowerCase();
+            const ext = p.split('.').pop();
+            if (p.includes('key') || p.includes('token') || p.includes('password') || p.includes('secret')) return '🔑';
+            if (ext === 'py') return '🐍';
+            if (ext === 'yaml' || ext === 'yml') return '⚙️';
+            if (ext === 'json') return 'ℹ️';
+            if (ext === 'md') return '📝';
+            if (ext === 'sh' || ext === 'bash') return '🐚';
+            if (ext === 'png' || ext === 'jpg' || ext === 'gif') return '🖼️';
+            return '📄';
+        }
+
+        window.selectWorkspaceFile = function(roundId, fileId, element) {
+            const previewEl = document.getElementById(`ws-preview-${roundId}`);
+            if (previewEl) {
+                previewEl.innerText = wsFileContents[fileId] || '';
+            }
+            
+            const treeEl = document.getElementById(`ws-tree-${roundId}`);
+            if (treeEl) {
+                const buttons = treeEl.getElementsByTagName('button');
+                for (let btn of buttons) {
+                    btn.classList.remove('bg-zinc-200/80', 'font-semibold', 'text-zinc-800');
+                    btn.classList.add('text-zinc-600');
+                }
+            }
+            
+            element.classList.add('bg-zinc-200/80', 'font-semibold', 'text-zinc-800');
+            element.classList.remove('text-zinc-600');
+        }
+
+        // 2. Generate and Render Mermaid Graph
+        function generateMermaidGraph() {
+            let mStr = "graph LR\n";
+            mStr += "  classDef round fill:#e0f2fe,stroke:#0284c7,color:#0369a1,stroke-width:2px;\n";
+            mStr += "  classDef asset fill:#d1fae5,stroke:#059669,color:#065f46,stroke-width:1.5px;\n";
+            mStr += "  classDef agent fill:#fef3c7,stroke:#d97706,color:#92400e,stroke-width:1.5px;\n";
+            mStr += "  classDef file fill:#f3e8ff,stroke:#9333ea,color:#6b21a8,stroke-width:1.5px;\n";
+            mStr += "  classDef key fill:#fce7f3,stroke:#db2777,color:#9d174d,stroke-width:1.5px;\n\n";
+
+            // Add Rounds Chain
+            let prevRoundId = null;
+            scenarioData.rounds.forEach(rnd => {
+                const rNum = rnd.round_id.replace('r', '');
+                mStr += `  ${rnd.round_id}(["Round ${parseInt(rNum)}"]):::round\n`;
+                mStr += `  click ${rnd.round_id} "#round-card-${rnd.round_id}"\n`;
+                if (prevRoundId) {
+                    mStr += `  ${prevRoundId} --> ${rnd.round_id}\n`;
+                }
+                prevRoundId = rnd.round_id;
+            });
+
+            // Add Assets & Link to Rounds
+            (scenarioData.assets || []).forEach(asset => {
+                const cleanAssetId = asset.id.replace(/[^a-zA-Z0-9_]/g, '');
+                mStr += `  ${cleanAssetId}["📄 ${asset.id}"]:::asset\n`;
+                mStr += `  click ${cleanAssetId} "#asset-${cleanAssetId}"\n`;
+                const rId = `r0${asset.available_from_round}`.replace('r010', 'r10').replace('r011', 'r11').replace('r012', 'r12');
+                mStr += `  ${rId} -.-> ${cleanAssetId}\n`;
+            });
+
+            // Add Subagents and links
+            scenarioData.rounds.forEach(rnd => {
+                (rnd.mock_subagents || []).forEach(agent => {
+                    const cleanAgentRole = agent.agent_role.replace(/[^a-zA-Z0-9_]/g, '');
+                    const agentNodeId = `A_${cleanAgentRole}_${rnd.round_id}`;
+                    mStr += `  ${agentNodeId}(["🤖 ${agent.agent_role}"]):::agent\n`;
+                    mStr += `  click ${agentNodeId} "#round-card-${rnd.round_id}"\n`;
+                    mStr += `  ${rnd.round_id} --> ${agentNodeId}\n`;
+
+                    // Parse withholding constraints & commitments
+                    (agent.private_knowledge || []).forEach(know => {
+                        const shaMatch = know.match(/[a-f0-9]{7}/);
+                        if (shaMatch) {
+                            const shaNodeId = `commit_${shaMatch[0]}`;
+                            mStr += `  ${shaNodeId}{"🔑 Commit: ${shaMatch[0]}"}:::key\n`;
+                            mStr += `  ${shaNodeId} -->|confront| ${agentNodeId}\n`;
+                        }
+                    });
+                });
+            });
+
+            // Add Workspace files
+            (scenarioData.updates || []).forEach(upd => {
+                const uNum = parseInt(upd.update_id.replace('u_r', '').split('_')[0]);
+                const rId = `r0${uNum}`.replace('r010', 'r10').replace('r011', 'r11').replace('r012', 'r12');
+                (upd.workspace_adds || []).forEach(add => {
+                    const cleanPath = add.path.replace(/[^a-zA-Z0-9_]/g, '_');
+                    const fileNodeId = `file_${cleanPath}`;
+                    mStr += `  ${fileNodeId}["💻 File: ${add.path}"]:::file\n`;
+                    mStr += `  click ${fileNodeId} "#file-${cleanPath}"\n`;
+                    mStr += `  ${rId} -.-> ${fileNodeId}\n`;
+                });
+            });
+
+            return mStr;
+        }
+
+        // Render Mermaid and Setup Pan-Zoom
+        function renderGraph() {
+            const container = document.getElementById('mermaid-container');
+            const graphCode = generateMermaidGraph();
+            container.innerHTML = graphCode;
+            
+            if (window.mermaid) {
+                window.mermaid.run({
+                    querySelector: '.mermaid',
+                    postRenderCallback: (id) => {
+                        // Initialize SVG Pan Zoom after SVG is inserted into HTML
+                        const svgElement = document.getElementById(id);
+                        if (svgElement) {
+                            svgElement.removeAttribute('width');
+                            svgElement.removeAttribute('height');
+                            svgElement.style.setProperty('width', '100%', 'important');
+                            svgElement.style.setProperty('height', '100%', 'important');
+                            svgElement.style.setProperty('max-width', 'none', 'important');
+                            
+                            svgPanZoom(svgElement, {
+                                zoomEnabled: true,
+                                controlIconsEnabled: true,
+                                fit: true,
+                                center: true
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+        setTimeout(renderGraph, 100);
+
+        // 3. Render Collapsible Round-by-Round Cards
+        const roundsContainer = document.getElementById('rounds-container');
+        
+        // Initialize cumulative workspace state
+        const virtualWorkspace = {};
+        if (scenarioData.workspace && scenarioData.workspace.files) {
+            scenarioData.workspace.files.forEach(f => {
+                const cleanPath = f.path.replace(/^workspace\//, '');
+                virtualWorkspace[cleanPath] = f.content;
+            });
+        }
+        
+        // Parse baseline chat messages
+        const baselineMsgs = [];
+        (scenarioData.sessions || []).forEach(sess => {
+            if (sess.session_id === 'slack_incident_war_room') {
+                if (sess.messages && sess.messages.length > 0) {
+                    baselineMsgs.push(...sess.messages);
+                }
+            }
+        });
+
+        // Toggle Expand/Collapse round card
+        window.toggleRoundCard = function(roundId) {
+            const content = document.getElementById(`round-content-${roundId}`);
+            const chevron = document.getElementById(`round-chevron-${roundId}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.innerHTML = '&#9660;'; // Down chevron
+            } else {
+                content.classList.add('hidden');
+                chevron.innerHTML = '&#9654;'; // Right chevron
+            }
+        }
+
+        scenarioData.rounds.forEach((rnd, index) => {
+            const rNum = parseInt(rnd.round_id.replace('r', ''));
+            const isFirst = rNum === 1;
+            
+            // Dynamically populate Left Sidebar Timeline links
+            const timelineLink = document.createElement('a');
+            timelineLink.href = `#round-card-${rnd.round_id}`;
+            timelineLink.className = "group relative flex flex-col gap-0.5 hover:no-underline select-none";
+            
+            let dotColorClass = "bg-zinc-100 border-zinc-300 text-zinc-500";
+            let textColorClass = "text-zinc-700 font-semibold group-hover:text-sky-600";
+            let phaseLabel = rnd.phase || "System Updates";
+            
+            const phaseTheme = phaseLabel.toLowerCase();
+            if (phaseTheme.includes("latency") || phaseTheme.includes("warning")) {
+                dotColorClass = "bg-amber-500 border-amber-600 text-white shadow-sm ring-4 ring-amber-100";
+            } else if (phaseTheme.includes("outage") || phaseTheme.includes("exhaustion") || phaseTheme.includes("escalation")) {
+                dotColorClass = "bg-rose-500 border-rose-600 text-white shadow-sm ring-4 ring-rose-100";
+            } else if (phaseTheme.includes("recovery") || phaseTheme.includes("fix") || phaseTheme.includes("audit") || phaseTheme.includes("reconcil")) {
+                dotColorClass = "bg-sky-500 border-sky-600 text-white shadow-sm ring-4 ring-sky-100";
+            } else {
+                dotColorClass = "bg-emerald-500 border-emerald-600 text-white shadow-sm ring-4 ring-emerald-100";
+            }
+
+            timelineLink.innerHTML = `
+                <div class="absolute -left-[34px] top-1.5 w-5 h-5 rounded-full border-2 border-white ${dotColorClass} flex items-center justify-center text-[9px] font-extrabold shadow-sm group-hover:scale-110 transition duration-150">
+                    ${rNum}
+                </div>
+                <span class="text-xs ${textColorClass} transition uppercase tracking-wider">${rnd.round_id}</span>
+                <span class="text-[10px] text-zinc-400 font-normal leading-tight">${phaseLabel}</span>
+            `;
+            const timelineNav = document.getElementById('timeline-navigator');
+            if (timelineNav) {
+                timelineNav.appendChild(timelineLink);
+            }
+
+            // Build Round Card container
+            const card = document.createElement('div');
+            card.className = "bg-white border border-zinc-200 shadow-md rounded-xl overflow-hidden scroll-mt-6 hover:shadow-lg transition-shadow duration-200";
+            card.id = `round-card-${rnd.round_id}`;
+            
+            // Card Header (Collapse Trigger)
+            let headerHtml = `
+                <button onclick="toggleRoundCard('${rnd.round_id}')" class="w-full text-left px-6 py-4 bg-zinc-50/50 border-b border-zinc-200/80 flex justify-between items-center hover:bg-zinc-100/60 transition">
+                    <div class="flex items-center gap-3">
+                        <span id="round-chevron-${rnd.round_id}" class="text-zinc-400 font-mono text-xs">&#9660;</span>
+                        <h3 class="text-base font-extrabold text-zinc-800 tracking-tight flex items-center gap-2">
+                            <span>Round ${rNum}</span>
+                            <span class="text-xs font-normal text-zinc-400 px-2 py-0.5 bg-zinc-200/50 rounded-full font-mono uppercase">${rnd.round_type}</span>
+                        </h3>
+                    </div>
+                    <span class="bg-zinc-100 border border-zinc-200 text-zinc-500 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold">${phaseLabel}</span>
+                </button>
+            `;
+
+            // Card Content wrapper
+            let contentStartHtml = `<div id="round-content-${rnd.round_id}" class="p-6 flex flex-col gap-6">`;
+            
+            // Instruction
+            let instructionHtml = `
+                <div class="text-zinc-700">
+                    <span class="text-zinc-400 font-bold block mb-1 text-xs uppercase tracking-wider">Round Instruction</span>
+                    <p class="text-sm font-medium leading-relaxed bg-zinc-50 border border-zinc-200 p-3 rounded">${rnd.instruction}</p>
+                </div>
+            `;
+
+            // Subagents in this round
+            let subagentsHtml = '';
+            if (rnd.mock_subagents && rnd.mock_subagents.length > 0) {
+                subagentsHtml = `
+                    <div class="flex flex-col gap-2">
+                        <span class="text-zinc-400 font-bold text-xs uppercase tracking-wider">Active Subagent Mock Behaviors</span>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                `;
+                rnd.mock_subagents.forEach(agent => {
+                    const privateTxt = (agent.private_knowledge || []).length > 0 
+                        ? agent.private_knowledge.map(k => `<li class="ml-4 list-disc">${k}</li>`).join('') 
+                        : '<li class="ml-4 list-disc text-zinc-400">None</li>';
+                    
+                    // Parse and build state effects visual box
+                    // Parse and build state effects visual box
+                    const formattedEffects = (agent.state_effects || []).map(eff => {
+                        if (typeof eff === 'string') {
+                            return eff;
+                        } else if (eff && typeof eff === 'object') {
+                            if (eff.conditions && eff.effects) {
+                                const conds = eff.conditions.map(c => `${c.field} ${c.operator || 'contains'} "${c.value}"`).join(' AND ');
+                                const effs = eff.effects.map(e => {
+                                    if (e.type === 'write_file') {
+                                        return `write_file: ${e.path}`;
+                                    } else if (e.type === 'run_command') {
+                                        return `run_command: ${e.command}`;
+                                    }
+                                    return JSON.stringify(e);
+                                }).join(', ');
+                                return `Trigger Rule: On ${conds}\n  Effect: ${effs}`;
+                            }
+                            if (eff.actions) {
+                                return `[Trigger: ${JSON.stringify(eff.trigger)}]\nActions:\n` + eff.actions.map(act => {
+                                    if (act.type === 'write_file') {
+                                        return `  - write_file: ${act.path}\n    content: ${act.content}`;
+                                    } else if (act.type === 'run_command') {
+                                        return `  - run_command: ${act.command}`;
+                                    }
+                                    return `  - ${JSON.stringify(act)}`;
+                                }).join('\n');
+                            }
+                            if (eff.effect_type === 'terminal_command_exception') {
+                                return `Rule: Allow Command Exception\n  Command: ${eff.command}\n  Reason: ${eff.reason}`;
+                            }
+                            if (eff.trigger && eff.effect) {
+                                return `Trigger Rule: On ${eff.trigger.type} containing "${eff.trigger.contains}"\n  Effect: ${eff.effect.type} -> '${eff.effect.command}'\n  Detail: ${eff.effect.description}`;
+                            }
+                            return JSON.stringify(eff, null, 2);
+                        }
+                        return String(eff);
+                    });
+
+                    const effectsTxt = formattedEffects.length > 0
+                        ? `<div class="text-xs text-zinc-600 mt-2 border-t border-zinc-100 pt-2">
+                               <span class="font-semibold text-zinc-500 block mb-1">State Effects (CLI Execution):</span>
+                               <pre class="bg-zinc-100 border border-zinc-200 p-2 rounded text-[10px] font-mono text-zinc-600 overflow-x-auto whitespace-pre">${formattedEffects.join('\n\n')}</pre>
+                           </div>`
+                        : '';
+
+                    // Apply side-effects to virtual workspace state
+                    (agent.state_effects || []).forEach(eff => {
+                        try {
+                            if (typeof eff === 'string') {
+                                if (eff.startsWith('file create')) {
+                                    const pathMatch = eff.match(/--path\s+([^\s]+)/);
+                                    const contentMatch = eff.match(/--content\s+"([^"]+)"/) || eff.match(/--content\s+'([^']+)'/);
+                                    if (pathMatch && contentMatch) {
+                                        const cleanPath = pathMatch[1].replace(/^workspace\//, '');
+                                        virtualWorkspace[cleanPath] = contentMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+                                    }
+                                } else if (eff.startsWith('file append')) {
+                                    const pathMatch = eff.match(/--path\s+([^\s]+)/);
+                                    const contentMatch = eff.match(/--content\s+"([^"]+)"/) || eff.match(/--content\s+'([^']+)'/);
+                                    if (pathMatch && contentMatch) {
+                                        const cleanPath = pathMatch[1].replace(/^workspace\//, '');
+                                        const val = contentMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+                                        virtualWorkspace[cleanPath] = (virtualWorkspace[cleanPath] || '') + val;
+                                    }
+                                }
+                            } else if (eff && typeof eff === 'object') {
+                                // Emulate actions inside triggers
+                                const actions = eff.actions || [];
+                                actions.forEach(act => {
+                                    if (act.type === 'write_file') {
+                                        const cleanPath = act.path.replace(/^workspace\//, '');
+                                        virtualWorkspace[cleanPath] = act.content;
+                                    }
+                                });
+                            }
+                        } catch(e) {
+                            console.error("Failed to parse state effect: ", eff, e);
+                        }
+                    });
+
+
+                    const capTxt = (agent.capabilities || []).length > 0 
+                        ? `<div class="text-[10px] text-zinc-400 mt-2 font-mono">Capabilities: ${agent.capabilities.join(', ')}</div>` 
+                        : '';
+                    subagentsHtml += `
+                        <div class="bg-zinc-50 border border-zinc-200 rounded p-4 flex flex-col gap-2">
+                            <span class="font-bold text-amber-600 text-sm">${agent.agent_role}</span>
+                            <blockquote class="italic text-zinc-500 text-xs border-l-2 border-amber-500 pl-2">"${agent.mock_response}"</blockquote>
+                            <div class="text-xs text-zinc-600 mt-2">
+                                <span class="font-semibold text-zinc-500 block mb-1">Withholding / Private Knowledge:</span>
+                                <ul>${privateTxt}</ul>
+                            </div>
+                            ${effectsTxt}
+                            ${capTxt}
+                        </div>
+                    `;
+                });
+                subagentsHtml += `</div></div>`;
+            }
+
+            // Dialogues in this round
+            const appendedMsgs = [];
+            (scenarioData.updates || []).forEach(upd => {
+                const uNum = parseInt(upd.update_id.replace('u_r', '').split('_')[0]);
+                if (uNum === rNum) {
+                    (upd.session_appends || []).forEach(app => {
+                        if (app.session_id === 'slack_incident_war_room') {
+                            (app.messages || []).forEach(msg => {
+                                appendedMsgs.push(msg);
+                            });
+                        }
+                    });
+                }
+            });
+
+            // For Round 1, display baseline dialogues, otherwise display appended ones
+            const roundMsgs = (rNum === 1) ? [...baselineMsgs, ...appendedMsgs] : appendedMsgs;
+            let dialogueHtml = '';
+            if (roundMsgs.length > 0) {
+                dialogueHtml = `
+                    <div class="flex flex-col gap-2">
+                        <span class="text-zinc-400 font-bold text-xs uppercase tracking-wider">${rNum === 1 ? 'Incident War Room Initial Messages & Dialogue Updates' : 'Incident War Room Dialogue Updates'}</span>
+                        <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4 flex flex-col gap-3 max-h-[350px] overflow-y-auto">
+                `;
+                roundMsgs.forEach(msg => {
+                    const isCoordinator = msg.sender === 'Coordinator' || msg.sender === 'user';
+                    const senderColor = msg.sender === 'Ops_Agent' ? 'text-green-600' 
+                                      : msg.sender === 'Dev_Agent' ? 'text-amber-600' 
+                                      : msg.sender === 'DB_Admin_Agent' ? 'text-red-600' 
+                                      : 'text-sky-600';
+                    dialogueHtml += `
+                        <div class="flex flex-col max-w-[85%] rounded px-3 py-2 text-sm ${isCoordinator ? 'bg-sky-50 border border-sky-100 self-end text-sky-800' : 'bg-zinc-200 self-start text-zinc-800'} shrink-0">
+                            <div class="flex justify-between items-baseline gap-4 mb-1 border-b border-zinc-300 pb-0.5">
+                                <span class="font-bold text-xs ${senderColor}">${msg.sender}</span>
+                                <span class="text-[9px] text-zinc-400 font-mono">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+                            <p class="whitespace-pre-wrap">${escapeHtml(msg.text)}</p>
+                        </div>
+                    `;
+                });
+                dialogueHtml += `</div></div>`;
+            }
+
+            // Assets introduced in this round
+            const roundAssets = (scenarioData.assets || []).filter(a => parseInt(a.available_from_round) === rNum);
+            let assetsHtml = '';
+            if (roundAssets.length > 0) {
+                assetsHtml = `
+                    <div class="flex flex-col gap-2">
+                        <span class="text-zinc-400 font-bold text-xs uppercase tracking-wider">New Evidence Assets Discovered</span>
+                        <div class="flex flex-col gap-4">
+                `;
+                roundAssets.forEach(asset => {
+                    const cleanAssetId = asset.id.replace(/[^a-zA-Z0-9_]/g, '');
+                    const ocrTxt = (asset.ocr_text || asset.content_text || '(No OCR text content)').trim();
+                    assetsHtml += `
+                        <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4 flex flex-col gap-4" id="asset-${cleanAssetId}">
+                            <!-- Header & Description -->
+                            <div class="flex flex-col gap-1">
+                                <span class="font-bold text-emerald-600 text-sm">${asset.id} (${asset.kind})</span>
+                                <p class="text-zinc-500 text-xs leading-relaxed">${asset.description}</p>
+                            </div>
+                            
+                            <!-- Content Details (Side-by-Side Grid) -->
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+                                <!-- Image Preview (7 cols) -->
+                                <div class="md:col-span-7 border border-zinc-200 bg-white rounded overflow-hidden flex justify-center items-center h-64 shadow-inner relative group">
+                                    <img src="${asset.base64_data || 'assets/' + asset.path}" onclick="openImageModal(this.src)" class="max-w-full max-h-full object-contain cursor-zoom-in hover:opacity-90 transition" alt="Asset Preview" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\\'text-xs text-zinc-400\\'>Image Asset: assets/${asset.path}</span>';">
+                                    <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">Click to Zoom</div>
+                                </div>
+                                
+                                <!-- OCR Text Box (5 cols) -->
+                                <div class="md:col-span-5 bg-zinc-950 border border-zinc-900 rounded-lg p-4 flex flex-col h-64 overflow-hidden shadow-md relative">
+                                    <div class="flex items-center justify-between border-b border-zinc-900 pb-2 mb-2">
+                                        <div class="flex gap-1.5 items-center">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                                        </div>
+                                        <span class="text-zinc-500 font-bold uppercase text-[9px] tracking-wider font-mono">DECODED OCR</span>
+                                    </div>
+                                    <pre class="flex-1 text-[11px] font-mono text-emerald-400/90 overflow-y-auto whitespace-pre-wrap leading-relaxed select-all bg-zinc-900/40 p-2.5 rounded border border-zinc-900/60 shadow-inner">${escapeHtml(ocrTxt)}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                assetsHtml += `</div></div>`;
+            }
+
+            // Workspace files additions in this round
+            const roundFileAdds = [];
+            (scenarioData.updates || []).forEach(upd => {
+                const uNum = parseInt(upd.update_id.replace('u_r', '').split('_')[0]);
+                if (uNum === rNum) {
+                    (upd.workspace_adds || []).forEach(add => {
+                        roundFileAdds.push(add);
+                        const cleanPath = add.path.replace(/^workspace\//, '');
+                        virtualWorkspace[cleanPath] = add.content;
+                    });
+                }
+            });
+
+            let filesHtml = '';
+            if (roundFileAdds.length > 0) {
+                filesHtml = `
+                    <div class="flex flex-col gap-2">
+                        <span class="text-zinc-400 font-bold text-xs uppercase tracking-wider">Workspace File Additions / Updates</span>
+                        <div class="flex flex-col gap-3">
+                `;
+                roundFileAdds.forEach(add => {
+                    const cleanPath = add.path.replace(/[^a-zA-Z0-9_]/g, '_');
+                    filesHtml += `
+                        <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4 flex flex-col gap-2 shadow-sm" id="file-${cleanPath}">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs">⚙️</span>
+                                <span class="font-bold text-zinc-700 text-xs font-mono">${add.path}</span>
+                            </div>
+                            <pre class="bg-zinc-950 text-zinc-300 border border-zinc-900 text-[11px] font-mono p-3 rounded-md overflow-x-auto whitespace-pre-wrap leading-relaxed shadow-inner">${escapeHtml(add.content)}</pre>
+                        </div>
+                    `;
+                });
+                filesHtml += `</div></div>`;
+            }
+
+            // Expert solution commands in this round
+            let solutionHtml = '';
+            if (rnd.solution_commands && rnd.solution_commands.length > 0) {
+                solutionHtml = `
+                    <div class="flex flex-col gap-2 bg-zinc-900 border border-zinc-800 rounded-lg p-4 shadow-inner">
+                        <span class="text-zinc-500 font-extrabold text-[10px] uppercase tracking-wider">Expert Evaluation Reference Commands</span>
+                        <pre class="text-[11px] font-mono text-sky-400 overflow-x-auto whitespace-pre leading-relaxed select-all">${rnd.solution_commands.join('\n')}</pre>
+                    </div>
+                `;
+            }
+
+            // Find evaluation asserts matching this round
+            const roundEval = (scenarioData.evals || []).find(e => e.round_id === rnd.round_id);
+            let evalsHtml = '';
+            if (roundEval) {
+                const anchorsTxt = (roundEval.expected_anchor_ids || []).length > 0
+                    ? roundEval.expected_anchor_ids.map(a => `<span class="bg-purple-100 text-purple-800 px-2 py-0.5 rounded text-[10px] font-mono font-bold">${a}</span>`).join(' ')
+                    : '<span class="text-zinc-400 text-xs">None</span>';
+                
+                let checksListHtml = '';
+                (roundEval.checks || []).forEach(ch => {
+                    let desc = '';
+                    if (ch.effect_type === 'assets_accessed') {
+                        desc = `Assert Coordinator accesses Asset: <code class="bg-zinc-100 text-zinc-700 px-1 rounded font-mono text-[10px]">${ch.expected.value}</code>`;
+                    } else if (ch.effect_type === 'messages_sent') {
+                        desc = `Assert Coordinator delegates: <blockquote class="border-l-2 border-purple-400 pl-2 italic text-zinc-500 text-xs my-1">"${ch.expected.criterion || ch.expected.value}"</blockquote>`;
+                    } else {
+                        desc = `Assert ${ch.effect_type} satisfies ${ch.condition} -> expected ${JSON.stringify(ch.expected)}`;
+                    }
+                    checksListHtml += `
+                        <li class="border-b border-zinc-100 pb-2 mb-2 last:border-0 last:pb-0 last:mb-0 text-xs text-zinc-600 leading-relaxed">
+                            <span class="font-bold text-purple-600 uppercase text-[9px] tracking-wider block mb-0.5">${ch.type} Check (${ch.effect_type})</span>
+                            ${desc}
+                        </li>
+                    `;
+                });
+
+                evalsHtml = `
+                    <div class="bg-purple-50/50 border border-purple-100 rounded-lg p-4 flex flex-col gap-3">
+                        <div class="flex justify-between items-center border-b border-purple-100 pb-2">
+                            <span class="text-purple-700 font-bold text-xs uppercase tracking-wider">Evaluation verification checkpoints (asserts)</span>
+                            <div class="flex gap-1 items-center">
+                                <span class="text-[9px] text-zinc-400 font-bold uppercase mr-1">Expected Anchors:</span>
+                                ${anchorsTxt}
+                            </div>
+                        </div>
+                        <ul class="flex flex-col gap-2">
+                            ${checksListHtml || '<li class="text-xs text-zinc-400">No specific check assertions defined for this round.</li>'}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Build Workspace State at Round End HTML (IDE tree view style)
+            const wsKeys = Object.keys(virtualWorkspace).sort();
+            let wsTreeHtml = '';
+            wsKeys.forEach((p, idx) => {
+                const icon = getFileIcon(p);
+                const fileId = `ws-file-${rnd.round_id}-${idx}`;
+                wsFileContents[fileId] = virtualWorkspace[p];
+                
+                wsTreeHtml += `
+                    <button onclick="selectWorkspaceFile('${rnd.round_id}', '${fileId}', this)" class="w-full text-left px-2 py-1.5 rounded text-[10px] font-mono hover:bg-zinc-200/60 transition flex items-center gap-1.5 text-zinc-600 ${idx === 0 ? 'bg-zinc-200/80 font-semibold text-zinc-800' : ''}">
+                        <span>${icon}</span>
+                        <span class="truncate">${p}</span>
+                    </button>
+                `;
+            });
+
+            const initialContent = wsKeys.length > 0 ? escapeHtml(virtualWorkspace[wsKeys[0]]) : 'Select a file from the tree to preview...';
+
+            let workspaceStateHtml = `
+                <div class="border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
+                    <button onclick="toggleWorkspacePanel('${rnd.round_id}')" class="w-full text-left bg-zinc-100 hover:bg-zinc-200 transition px-4 py-2.5 border-b border-zinc-200 flex justify-between items-center text-xs font-bold text-zinc-700">
+                        <span class="flex items-center gap-2"><span>💻</span> Cumulative Workspace Snapshot (${wsKeys.length} files)</span>
+                        <span id="ws-chevron-${rnd.round_id}" class="font-mono text-[10px]">&#9654;</span>
+                    </button>
+                    <div id="ws-panel-${rnd.round_id}" class="hidden p-0 bg-white">
+                        <div class="flex items-stretch h-[280px]">
+                            <!-- Left Sidebar: File Tree -->
+                            <div class="w-1/3 md:w-1/4 bg-zinc-50 border-r border-zinc-200 overflow-y-auto p-2 flex flex-col gap-0.5 select-none" id="ws-tree-${rnd.round_id}">
+                                ${wsTreeHtml || '<span class="text-xs text-zinc-400 italic p-2">Workspace is empty.</span>'}
+                            </div>
+                            <!-- Right Panel: Code Preview -->
+                            <div class="w-2/3 md:w-3/4 bg-zinc-950 text-zinc-300 font-mono text-[11px] p-4 overflow-y-auto leading-relaxed relative">
+                                <div class="absolute top-2 right-2 text-[9px] text-zinc-600 select-none uppercase tracking-wider">PREVIEW</div>
+                                <pre class="whitespace-pre" id="ws-preview-${rnd.round_id}">${initialContent}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Append all HTML elements to round card
+            card.innerHTML = `
+                ${headerHtml}
+                ${contentStartHtml}
+                    ${instructionHtml}
+                    ${dialogueHtml}
+                    ${assetsHtml}
+                    ${subagentsHtml}
+                    ${filesHtml}
+                    ${evalsHtml}
+                    ${workspaceStateHtml}
+                    ${solutionHtml}
+                </div>
+            `;
+            roundsContainer.appendChild(card);
+        });
+
+        // Image Zoom Modal Functions
+        let modalScale = 1;
+        let modalTranslateX = 0;
+        let modalTranslateY = 0;
+        let isDraggingModal = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+
+        window.openImageModal = function(src) {
+            const modal = document.getElementById('image-modal');
+            const img = document.getElementById('modal-img');
+            img.src = src;
+            
+            // Reset transforms
+            modalScale = 1;
+            modalTranslateX = 0;
+            modalTranslateY = 0;
+            updateModalTransform();
+            
+            modal.classList.remove('hidden');
+        };
+
+        window.closeImageModalDirect = function() {
+            document.getElementById('image-modal').classList.add('hidden');
+        };
+
+        window.closeImageModal = function(event) {
+            if (event.target.id === 'image-modal' || event.target.id === 'modal-img-container') {
+                closeImageModalDirect();
+            }
+        };
+
+        function updateModalTransform() {
+            const img = document.getElementById('modal-img');
+            img.style.transform = `translate(${modalTranslateX}px, ${modalTranslateY}px) scale(${modalScale})`;
+        }
+
+        // Setup Zoom & Pan Event Listeners
+        setTimeout(() => {
+            const container = document.getElementById('modal-img-container');
+            if (!container) return;
+
+            // 1. Wheel Zoom
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const zoomFactor = 0.15;
+                if (e.deltaY < 0) {
+                    modalScale = Math.min(modalScale + zoomFactor, 6); // Max zoom 6x
+                } else {
+                    modalScale = Math.max(modalScale - zoomFactor, 0.4); // Min zoom 0.4x
+                }
+                updateModalTransform();
+            }, { passive: false });
+
+            // 2. Drag Pan
+            container.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                isDraggingModal = true;
+                dragStartX = e.clientX - modalTranslateX;
+                dragStartY = e.clientY - modalTranslateY;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDraggingModal) return;
+                modalTranslateX = e.clientX - dragStartX;
+                modalTranslateY = e.clientY - dragStartY;
+                updateModalTransform();
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDraggingModal = false;
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                isDraggingModal = false;
+            });
+        window.toggleWorkspacePanel = function(roundId) {
+            const panel = document.getElementById(`ws-panel-${roundId}`);
+            const chevron = document.getElementById(`ws-chevron-${roundId}`);
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                chevron.innerHTML = '&#9660;'; // Down
+            } else {
+                panel.classList.add('hidden');
+                chevron.innerHTML = '&#9654;'; // Right
+            }
+        };
+        
+        }, 200);
+    </script>
+
+    <!-- Zoom Modal Overlay -->
+    <div id="image-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center overflow-hidden" onclick="closeImageModal(event)">
+        <!-- Close button on top-right -->
+        <button class="absolute top-4 right-4 text-white text-3xl font-bold hover:text-zinc-300 z-50 pointer-events-auto" onclick="closeImageModalDirect()">&times;</button>
+        
+        <!-- Container to isolate transforms -->
+        <div id="modal-img-container" class="w-full h-full flex items-center justify-center select-none cursor-grab active:cursor-grabbing">
+            <img id="modal-img" class="max-w-[90%] max-h-[90%] object-contain transition-transform duration-75 ease-out origin-center" src="" style="transform: translate(0px, 0px) scale(1);">
+        </div>
+    </div>
+</body>
+</html>

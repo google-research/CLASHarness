@@ -1,0 +1,14 @@
+{
+  "slug": "privacy_deletion_request_hold",
+  "domain": "privacy_operations",
+  "title": "Privacy Deletion Request Hold",
+  "target_rounds": 24,
+  "core_conflict": "An automation report marks a deletion request complete, while legal hold and audit evidence require pausing completion and documenting the exception.",
+  "participants": ["Mina", "Elliot", "Parker", "Reese"],
+  "required_constraints": [
+    "include contradictory deletion automation output and current legal or audit evidence",
+    "include workspace files, privacy emails, task-board hold items, and deadline calendar entries",
+    "include dynamic updates that change hold scope, audit status, or owner approval after early rounds",
+    "emphasize privacy compliance, stale automation correction, and final handoff evidence"
+  ]
+}
