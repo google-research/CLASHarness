@@ -19,6 +19,8 @@ from __future__ import annotations
 import os
 import sys
 
+import pytest
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from train_eval.eval_report import (  # noqa: E402
@@ -135,6 +137,29 @@ def test_print_report_shows_judge_line_and_health(capsys):
     assert "Judge : gemini / gemini-3.1-flash-lite" in out
     assert "Judge health :" in out
     assert "voted=1" in out
+    assert "takes no temperature" not in out
+
+
+@pytest.mark.parametrize("provider, model, noted", [
+    ("vertex-anthropic", "claude-sonnet-5-5", True),
+    ("anthropic", "claude-opus-4-8", True),
+    ("vertex-anthropic", "claude-sonnet-4@20250514", False),
+    # Same model name under a non-Claude provider: the provider decides.
+    ("openai", "claude-sonnet-5-5", False),
+])
+def test_print_report_notes_a_judge_without_temperature(
+    capsys, provider, model, noted
+):
+    # The default 3 votes are greedy only where temperature 0 can be sent.
+    s = _summary_with(
+        [[_judge_check("LLM semantic match: ok [self-consistency 3/3 passed]")]],
+        judge_provider=provider,
+        judge_model=model,
+    )
+    s.print_report()
+    out = capsys.readouterr().out
+    assert f"Judge : {provider} / {model}" in out
+    assert ("takes no temperature" in out) is noted
 
 
 def test_print_report_warns_when_degraded(capsys):

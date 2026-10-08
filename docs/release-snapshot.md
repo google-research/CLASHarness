@@ -16,7 +16,7 @@ The repository checks in the source-of-truth conflict artifacts under `clasharne
 - a regenerable **subset** of materialized conflict scenario packages under `clasharness/data/scenarios/conflict_vlm_v1/` — only some seeds are materialized at any given time, and any of them can be rebuilt from the seeds (see below), so this directory is a convenience cache rather than a frozen, complete artifact
 - base configuration fixtures under `clasharness/data/base_configs/`
 
-The repository also checks in documentation-facing figure assets under `docs/assets/`.
+The repository also checks in documentation-facing figure assets under `fig/` and `docs/assets/`.
 
 ## Locally regenerable artifacts
 

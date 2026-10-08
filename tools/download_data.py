@@ -60,9 +60,10 @@ DATA_ROOT = os.environ.get(
 #
 # Sizes are measured from the published tree, not estimated, and they are the
 # sizes after `tools/scrub_corpus.py` drops `visualize.html` -- so they are what
-# you actually download, 46.4 GB for --all. The destination is also the path
-# prefix inside the dataset repository, so the manifest is the single place the
-# two layouts are kept in step.
+# you actually download. Totals are summed from this table (`--list`,
+# `--dry-run`) rather than restated. The destination is also the path prefix
+# inside the dataset repository, so the manifest is the single place the two
+# layouts are kept in step.
 COMPONENTS = {
     "eval-v8": (
         "eval_results/data_3_6_flash_v8",
@@ -101,7 +102,7 @@ COMPONENTS = {
     ),
     "eval-budget30": (
         "eval_results/data_3_6_flash_v8_budget30",
-        "463 MB",
+        "440 MB",
         "Step-budget ablation at 30 steps. Needed by ablation.py.",
     ),
     "eval-budget40": (
@@ -130,7 +131,7 @@ COMPONENTS = {
 }
 
 # What `--default` fetches: enough to recompute the main-paper tables, plus the
-# 68 KB split that makes the corpus usable as a benchmark. Everything omitted
+# 58 KB split that makes the corpus usable as a benchmark. Everything omitted
 # here is an ablation arm or raw assets.
 DEFAULT = ["eval-v8", "tasks-v8", "splits-v8"]
 
@@ -145,7 +146,30 @@ def _print_manifest() -> None:
         print(f"{mark} {key:<{width}}  {size:>7}  [{have}]  {dest}")
         for line in _wrap(why, 72):
             print(f"  {'':<{width}}  {'':>7}         {line}")
-    print("\n* = fetched by --default")
+    print(f"\n* = fetched by --default ({_total(DEFAULT)}); "
+          f"--all is {_total(COMPONENTS)}")
+
+
+_UNITS = {"KB": 10**3, "MB": 10**6, "GB": 10**9}
+
+
+def _total(keys) -> str:
+    """Sum the manifest sizes of `keys`, in the manifest's own decimal units."""
+    total = 0.0
+    for key in keys:
+        number, unit = COMPONENTS[key][1].split()
+        total += float(number) * _UNITS[unit]
+    for unit in ("GB", "MB"):
+        if total >= _UNITS[unit]:
+            return f"{total / _UNITS[unit]:.1f} {unit}"
+    return f"{total / _UNITS['KB']:.0f} KB"
+
+
+def _has_files(path: str) -> bool:
+    for _, _, files in os.walk(path):
+        if files:
+            return True
+    return False
 
 
 def _wrap(text: str, width: int) -> list[str]:
@@ -167,11 +191,14 @@ def main(argv=None) -> int:
     ap.add_argument("--repo", default=os.environ.get("CLASHARNESS_HF_REPO"),
                     help="Hugging Face dataset repo id, e.g. user/clash-harness-corpus "
                          "(or set CLASHARNESS_HF_REPO)")
-    ap.add_argument("--component", action="append", choices=sorted(COMPONENTS),
-                    help="repeatable; defaults to the --default set")
-    ap.add_argument("--all", action="store_true", help="fetch every component")
-    ap.add_argument("--default", action="store_true",
-                    help=f"fetch {', '.join(DEFAULT)} (the implicit default)")
+    # One selection mode per run: letting --all or --default quietly win over
+    # --component would fetch something other than what was named.
+    which = ap.add_mutually_exclusive_group()
+    which.add_argument("--component", action="append", choices=sorted(COMPONENTS),
+                       help="repeatable; defaults to the --default set")
+    which.add_argument("--all", action="store_true", help="fetch every component")
+    which.add_argument("--default", action="store_true",
+                       help=f"fetch {', '.join(DEFAULT)} (the implicit default)")
     ap.add_argument("--list", action="store_true",
                     help="print the manifest and exit")
     ap.add_argument("--dry-run", action="store_true",
@@ -194,6 +221,7 @@ def main(argv=None) -> int:
     for key in wanted:
         dest, size, _ = COMPONENTS[key]
         print(f"  {key:<18} {size:>7}  -> {dest}")
+    print(f"  {'total':<18} {_total(wanted):>7}")
     if args.dry_run:
         return 0
 
@@ -207,8 +235,8 @@ def main(argv=None) -> int:
     except ImportError:
         sys.exit("huggingface_hub is required: pip install huggingface_hub")
 
-    # allow_patterns is what keeps this from pulling all 46.4 GB when the
-    # caller asked for one 463 MB arm. Each component is a directory prefix in the
+    # allow_patterns is what keeps this from pulling the whole repository when
+    # the caller asked for one arm. Each component is a directory prefix in the
     # dataset repo identical to its destination under DATA_ROOT.
     patterns = [f"{COMPONENTS[k][0]}/**" for k in wanted]
     os.makedirs(total_dest, exist_ok=True)
@@ -218,8 +246,28 @@ def main(argv=None) -> int:
         local_dir=total_dest,
         allow_patterns=patterns,
     )
-    print(f"\nDone. analysis/ resolves against {total_dest} with no further "
-          f"configuration.")
+    # huggingface_hub logs only a warning when no pattern matches, and nothing
+    # when just some of them miss, so a component the repository does not
+    # publish would otherwise end in "Done." and surface later as a missing
+    # file inside analysis/.
+    missing = [k for k in wanted
+               if not _has_files(os.path.join(total_dest, COMPONENTS[k][0]))]
+    if missing:
+        print(f"\nThese components are missing or empty under {total_dest}:",
+              file=sys.stderr)
+        for key in missing:
+            print(f"  {key:<18} -> {COMPONENTS[key][0]}", file=sys.stderr)
+        print(f"Check that {args.repo} publishes them under those paths.",
+              file=sys.stderr)
+        return 1
+    # analysis/ needs no flag, but the evaluator does: --task-data-dir takes the
+    # parent of tasks/, which is not the path the component is listed under.
+    print(f"\nDone. {len(wanted)} component(s) under {total_dest}.")
+    for key in wanted:
+        dest = COMPONENTS[key][0]
+        if os.path.basename(dest) == "tasks":
+            print(f"  {key}: evaluate with --task-data-dir "
+                  f"{os.path.join(total_dest, os.path.dirname(dest))}")
     return 0
 
 

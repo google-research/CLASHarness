@@ -65,6 +65,10 @@ def _clear_all(monkeypatch) -> None:
         "GEMINI_API_KEY",
         "VERTEX_PROJECT",
         "VERTEX_LOCATION",
+        "GOOGLE_CLOUD_PROJECT",
+        "GOOGLE_CLOUD_LOCATION",
+        "GEMINI_PROJECT",
+        "GEMINI_LOCATION",
         "ANTHROPIC_API_KEY",
         "BEDROCK_OPENAI_API_KEY",
         "BEDROCK_OPENAI_BASE_URL",
@@ -99,8 +103,59 @@ def _fake_anthropic_vertex(monkeypatch, captured: dict, reply: str) -> None:
 def test_sync_judge_env_vertex_uses_generation_model(monkeypatch) -> None:
     _clear(monkeypatch)
     sync_judge_env("vertex", "gemini-3.5-flash")
-    assert os.environ["LLM_JUDGE_PROVIDER"] == "gemini"
+    # Kept as 'vertex' (the Gemini backend, pinned to Vertex AI).
+    assert os.environ["LLM_JUDGE_PROVIDER"] == "vertex"
+    assert resolve_provider() == "gemini"
     assert os.environ["LLM_JUDGE_MODEL"] == "gemini-3.5-flash"
+
+
+def _fake_genai_client(monkeypatch, captured: dict) -> None:
+    from google import genai
+
+    class _Models:
+        def generate_content(self, model, contents, config):
+            captured["model"] = model
+            return type("_R", (), {
+                "text": '{"passed": true, "score": 1.0, "reason": "ok"}'})()
+
+    class _Client:
+        def __init__(self, **kwargs):
+            captured["client_kwargs"] = kwargs
+            self.models = _Models()
+
+    monkeypatch.setattr(genai, "Client", _Client)
+
+
+def test_judge_vertex_provider_ignores_a_gemini_api_key(monkeypatch) -> None:
+    # A --provider vertex run must not grade on the Developer API just because
+    # a GEMINI_API_KEY is exported.
+    _clear_all(monkeypatch)
+    clear_cache()
+    monkeypatch.setenv("GEMINI_API_KEY", "stray-key")
+    monkeypatch.setenv("VERTEX_PROJECT", "proj-x")
+    monkeypatch.setenv("VERTEX_LOCATION", "global")
+    sync_judge_env("vertex", "gemini-3.8-flash")
+    captured: dict = {}
+    _fake_genai_client(monkeypatch, captured)
+
+    assert judge("c", "crit").ok is True
+    assert captured["client_kwargs"] == {
+        "vertexai": True, "project": "proj-x", "location": "global"}
+    assert captured["model"] == "publishers/google/models/gemini-3.8-flash"
+
+
+def test_judge_gemini_provider_still_prefers_the_api_key(monkeypatch) -> None:
+    _clear_all(monkeypatch)
+    clear_cache()
+    monkeypatch.setenv("GEMINI_API_KEY", "real-key")
+    monkeypatch.setenv("VERTEX_PROJECT", "proj-x")
+    sync_judge_env("gemini", "gemini-3.8-flash")
+    captured: dict = {}
+    _fake_genai_client(monkeypatch, captured)
+
+    assert judge("c", "crit").ok is True
+    assert captured["client_kwargs"] == {"api_key": "real-key"}
+    assert captured["model"] == "gemini-3.8-flash"
 
 
 def test_sync_judge_env_fixes_404_fallback(monkeypatch) -> None:
@@ -435,6 +490,27 @@ def test_judge_vertex_anthropic_defaults_region_us_east5(monkeypatch) -> None:
     assert res.ok is True
     assert res.passed is False
     assert captured["region"] == "us-east5"
+
+
+def test_judge_vertex_anthropic_shares_the_generation_client_fallbacks(
+    monkeypatch,
+) -> None:
+    # Same env chain as AnthropicScenarioLLMClient: without VERTEX_* the judge
+    # follows GOOGLE_CLOUD_* to the project and region generation uses.
+    _clear_all(monkeypatch)
+    clear_cache()
+    monkeypatch.setenv("LLM_JUDGE_PROVIDER", "vertex-anthropic")
+    monkeypatch.setenv("LLM_JUDGE_MODEL", "claude-sonnet-5-5")
+    monkeypatch.setenv("GOOGLE_CLOUD_PROJECT", "proj-g")
+    monkeypatch.setenv("GOOGLE_CLOUD_LOCATION", "global")
+
+    captured: dict = {}
+    _fake_anthropic_vertex(
+        monkeypatch, captured, '{"passed": true, "score": 1.0, "reason": "ok"}'
+    )
+    assert judge("c", "crit").ok is True
+    assert captured["project_id"] == "proj-g"
+    assert captured["region"] == "global"
 
 
 def test_judge_vertex_anthropic_omits_temperature_for_known_model(
@@ -1401,3 +1477,96 @@ def test_extractor_excludes_typed_non_text_block_even_when_it_carries_text() -> 
 
     sneaky_obj = type("_Sneaky", (), {"type": "tool_use", "text": "TOOL NOISE"})()
     assert f(_resp([sneaky_obj, _text_block("answer")])) == "answer"
+
+
+# ---------------------------------------------------------------------------
+# Output cap. Claude and GPT judges cannot be held to a JSON-only reply, so the
+# cap has to leave room for what they actually emit before the verdict. These
+# fakes truncate at the cap the judge sends (one word per token), the way the
+# real endpoints do.
+# ---------------------------------------------------------------------------
+
+# Reason-first reply shape measured on claude-sonnet-5-5 for a multi-part
+# criterion: an element-by-element check (about 350-550 tokens), then the JSON.
+_REASON_FIRST_REPLY = (
+    " ".join(["element-check"] * 550)
+    + ' {"passed": false, "score": 0.4, "reason": "warning sent to the wrong channel"}'
+)
+
+
+def _fake_truncating_anthropic(monkeypatch, reply: str, captured: dict) -> None:
+    class _Messages:
+        def create(self, **kwargs):
+            captured["max_tokens"] = kwargs["max_tokens"]
+            return _resp([_text_block(" ".join(reply.split(" ")[: kwargs["max_tokens"]]))])
+
+    class _Client:
+        def __init__(self, *a, **k):
+            self.messages = _Messages()
+
+    fake_mod = types.ModuleType("anthropic")
+    fake_mod.AnthropicVertex = _Client
+    fake_mod.Anthropic = _Client
+    monkeypatch.setitem(sys.modules, "anthropic", fake_mod)
+
+
+@pytest.mark.parametrize("provider, key_var", [
+    ("vertex-anthropic", "VERTEX_PROJECT"),
+    ("anthropic", "ANTHROPIC_API_KEY"),
+])
+def test_claude_judge_cap_fits_a_reason_first_reply(monkeypatch, provider, key_var) -> None:
+    _clear_all(monkeypatch)
+    clear_cache()
+    monkeypatch.setenv("LLM_JUDGE_PROVIDER", provider)
+    monkeypatch.setenv("LLM_JUDGE_MODEL", "claude-sonnet-5-5")
+    monkeypatch.setenv(key_var, "x")
+    captured: dict = {}
+    _fake_truncating_anthropic(monkeypatch, _REASON_FIRST_REPLY, captured)
+
+    res = judge("transcript", "multi-part criterion")
+    assert res.ok is True, f"verdict cut off at max_tokens={captured['max_tokens']}: {res.error!r}"
+    assert res.passed is False
+    assert res.reason == "warning sent to the wrong channel"
+
+
+@pytest.mark.parametrize("provider, key_var", [
+    ("openai", "OPENAI_API_KEY"),
+    ("bedrock-gpt", "BEDROCK_OPENAI_API_KEY"),
+])
+def test_gpt_judge_cap_leaves_room_after_reasoning(monkeypatch, provider, key_var) -> None:
+    # The Responses API counts reasoning tokens against max_output_tokens; when
+    # they use it up the response is "incomplete" with no output text at all.
+    reasoning_tokens = 1500
+    verdict = '{"passed": true, "score": 1.0, "reason": "ok"}'
+    captured: dict = {}
+
+    class _Resp:
+        def __init__(self, payload):
+            self._payload = payload
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self):
+            return json.dumps(self._payload).encode("utf-8")
+
+    def fake_urlopen(req, timeout):
+        cap = json.loads(req.data.decode("utf-8"))["max_output_tokens"]
+        captured["cap"] = cap
+        if cap < reasoning_tokens + len(verdict.split()):
+            return _Resp({"status": "incomplete", "output": []})
+        return _Resp({"status": "completed", "output_text": verdict})
+
+    _clear_all(monkeypatch)
+    clear_cache()
+    monkeypatch.setenv("LLM_JUDGE_PROVIDER", provider)
+    monkeypatch.setenv("LLM_JUDGE_MODEL", "gpt-5.5")
+    monkeypatch.setenv(key_var, "sk-test")
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+
+    res = judge("transcript", "criterion")
+    assert res.ok is True, f"reasoning used up max_output_tokens={captured['cap']}: {res.error!r}"
+    assert res.passed is True

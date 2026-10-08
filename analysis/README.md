@@ -1,7 +1,7 @@
 # Reproducing Paper Results and Analysis
 
 This directory contains the analysis and reproduction scripts that generate every table, figure, and empirical metric reported in the paper:
-**"CLASHarness: Generating Controllable and Verifiable Multi-Agent Conflict Scenarios in Computer Use"**.
+**"CLASHarness: Benchmarking Multi-Agent Conflict in Computer Use via a Controllable and Verifiable Generation Pipeline"**.
 
 ---
 
@@ -21,6 +21,16 @@ This directory contains the analysis and reproduction scripts that generate ever
 | `clustering_v8.py` | Behavioral clustering across model error modes |
 | `round_example_facts.py` | Re-derives the worked round-example exhibits (requires `scenarios-v8`) |
 | `rejudge/` | Four-phase pipeline to re-judge a corpus under alternative judge models |
+
+## Known-issue Lists
+
+These are data files, not scripts; [docs/dataset-card.md](../docs/dataset-card.md#known-issues) explains each one. None of them changes a published number.
+
+| File | Contents |
+| :--- | :--- |
+| `dead_rounds_exclusion.json` | The 18 v8 rounds that were unwinnable when the panel was scored |
+| `v8_check_fairness_audit.json` | 775 v8 checks flagged by a post-submission fairness audit, with labels and the re-graded pass rates of 13 models under each correction |
+| `sonnet5_gold_replay_audit.json` | 74 arm-B (`tasks-sonnet5`) required checks the reference solution fails, in 59 rounds |
 
 ---
 

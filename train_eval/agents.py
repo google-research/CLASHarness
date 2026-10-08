@@ -2431,7 +2431,7 @@ Execution guidance:
         "Authorization": f"Bearer {self._bearer_token()}",
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "User-Agent": "openclaw-env-train-eval/1.0",
+        "User-Agent": "clasharness-train-eval/1.0",
     }
     if use_responses_api:
       payload = {

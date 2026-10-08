@@ -168,7 +168,7 @@ graded by `gemini-3.6-flash`. Each model is run at three reasoning-effort settin
 Across all 27 collected cells `provider_failures` never exceeded `5` (`5/600` = `0.8%`), so
 no cell is provider-impacted enough to need `provider_adjusted_accuracy`.
 
-Full-pass accuracy (%):
+Full-pass accuracy (%) across the 10-model API effort sweep (`--max-steps 20`):
 
 | model | high | medium | low |
 | --- | --- | --- | --- |
@@ -176,21 +176,24 @@ Full-pass accuracy (%):
 | `sol` | 24.5 | 23.0 | 20.8 |
 | `opus-4.8` | 22.8 | 23.8 | 21.3 |
 | `sonnet-5` | 20.8 | 17.0 | 13.8 |
+| `3.7-flash` | 20.3 | 21.5 | 20.5 |
 | `terra` | 20.0 | 20.0 | 17.7 |
 | `luna` | 19.8 | 17.7 | 19.5 |
 | `3.6-flash` | 18.5 | 20.2 | 18.5 |
 | `3.1-pro` | 12.0 | 9.8 | 8.3 |
 | `3.5-flash` | 3.0 | 3.2 | 13.5 |
 | `gpt-5.5` | — | — | — |
-| **mean** (9 models) | **18.5** | **17.8** | **17.4** |
+| **mean** (10 API models) | **18.7** | **18.1** | **17.7** |
+
+In addition to the 10-model API effort sweep above, the paper evaluates four open-weight models at `high` effort (`--max-steps 20`: `kimi-k3` `21.8%`, `deepseek-v4-pro` `19.8%`, `glm-5.2-fp8` `14.7%`, `deepseek-v4-flash` `8.5%`) and `gpt-6-astra` at `high` effort under a 40-step action budget (`28.7%` pass rate, `66.8%` mean score; see [README.md](../README.md#benchmark-results) for the complete 15-model table).
 
 `gpt-5.5` is intentionally blank: those cells could not be collected. The endpoint returned
 a stable `input-tpm ... (InputTokens) exceeded` 429 on every attempt. This is contention on
 a **shared** token-per-minute quota, not a property of this benchmark's requests: the
 prompts are small (a low single-digit thousands of tokens), the reported overage was
 byte-identical across attempts rather than scaling with request size, and reducing client
-concurrency did not help — the bottleneck is not on the client side. Treat the panel as
-nine models until those cells are re-collected off-peak.
+concurrency did not help — the bottleneck is not on the client side. `3.7-flash` completes
+the 10-model API effort sweep reported in the paper.
 
 ### Reading the panel
 

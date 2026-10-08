@@ -5,9 +5,11 @@ Back to [README](../README.md) · See also [task-generation.md](task-generation.
 ## Repository map
 
 ```text
-cli-agent-env/
+CLASHarness/
+├── analysis/
 ├── docs/
 ├── examples/
+├── fig/
 ├── clasharness/
 │   ├── backend/
 │   ├── core/
@@ -19,6 +21,9 @@ cli-agent-env/
 │   └── utils/
 ├── scripts/
 ├── tests/
+├── tools/
+├── train_eval/
+├── CHECKSUMS.txt
 └── README.md
 ```
 

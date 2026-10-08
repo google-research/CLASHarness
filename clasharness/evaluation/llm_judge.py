@@ -32,7 +32,8 @@ used and are kept working, but they need cloud credentials and are not required.
 
 Provider selection precedence:
   1. ``LLM_JUDGE_PROVIDER`` env override:
-       - "gemini"/"vertex"                    -> Gemini (API key, or Vertex AI via ADC)
+       - "gemini"                             -> Gemini (API key, or Vertex AI via ADC)
+       - "vertex"                             -> Gemini on Vertex AI, even if GEMINI_API_KEY is set
        - "anthropic"/"claude"                 -> Anthropic Claude (official API)
        - "openai"/"gpt"                       -> OpenAI GPT (official Responses API)
        - "vertex-anthropic"/"vertex-claude"   -> Claude on Vertex AI (AnthropicVertex)
@@ -121,6 +122,15 @@ _BEDROCK_GPT_BASE_URL_ENV = "BEDROCK_OPENAI_BASE_URL"
 _OPENAI_DEFAULT_BASE_URL = "https://api.openai.com/v1"
 _OPENAI_API_KEY_ENV = "OPENAI_API_KEY"
 _OPENAI_BASE_URL_ENV = "OPENAI_BASE_URL"
+
+# Output cap for the judges that cannot be held to a JSON-only reply (Claude,
+# GPT). On a multi-part criterion Claude Sonnet 5.5 checks each element in prose
+# before giving the JSON verdict (about 350-550 tokens in a probe), and the
+# Responses API counts a gpt-5-class model's reasoning tokens against the same
+# cap. At the old 256 those replies were cut off before the verdict, so the
+# borderline checks -- the ones that matter -- came back unparseable (ok=False).
+# Unused headroom is not billed.
+_JUDGE_MAX_OUTPUT_TOKENS = 4096
 
 
 def clear_cache() -> None:
@@ -219,7 +229,10 @@ def sync_judge_env(provider: str | None, model: str | None) -> None:
         if model.startswith("openai.") or model.startswith("gpt-"):
             os.environ.setdefault("LLM_JUDGE_MODEL", model)
     elif provider in {"gemini", "vertex"}:
-        os.environ.setdefault("LLM_JUDGE_PROVIDER", "gemini")
+        # 'vertex' stays 'vertex' so _judge_gemini goes to Vertex AI like the
+        # generator does, instead of to the Developer API whenever a
+        # GEMINI_API_KEY happens to be exported.
+        os.environ.setdefault("LLM_JUDGE_PROVIDER", provider)
         if model.startswith("gemini") or model.startswith("publishers/"):
             os.environ.setdefault("LLM_JUDGE_MODEL", model)
     elif provider in {"anthropic", "claude"}:
@@ -464,6 +477,13 @@ def judge_majority(
     ``eval_report.JudgeHealth`` becomes a direct health signal rather than a
     measure of deliberate sampling.
 
+    Neither holds on a Claude judge that rejects sampling parameters
+    (``anthropic_rejects_sampling_params``: Sonnet 5.x, Opus 4.7 and later).
+    ``temperature`` is not sent to those, so their votes are sampled at the
+    model's default temperature: grades are less reproducible and a split
+    vote is partly deliberate sampling. The run report says so on its
+    ``Judge :`` line.
+
     Cost is 3 provider calls per distinct (content, criterion) pair: each vote
     carries its own ``cache_salt`` so the votes neither collapse onto one answer
     nor collide in the shared cache. The salts are per-index and stable, so
@@ -516,8 +536,10 @@ def _judge_gemini(
     # key selects the Gemini Developer API, a project selects Vertex AI. The
     # `publishers/...` form is Vertex-only -- the Developer API wants the bare
     # model id and 404s on the prefixed one -- so the two must be decided
-    # together rather than in separate branches.
-    api_key = (os.environ.get("GEMINI_API_KEY") or "").strip()
+    # together rather than in separate branches. An explicit 'vertex' provider
+    # ignores the key.
+    force_vertex = os.environ.get("LLM_JUDGE_PROVIDER", "").strip().lower() == "vertex"
+    api_key = "" if force_vertex else (os.environ.get("GEMINI_API_KEY") or "").strip()
     model_name = model
     if api_key:
         client = genai.Client(api_key=api_key)
@@ -552,7 +574,7 @@ def _judge_anthropic(
         if include_temperature:
             return client.messages.create(
                 model=model,
-                max_tokens=256,
+                max_tokens=_JUDGE_MAX_OUTPUT_TOKENS,
                 **anthropic_temperature_kwargs(temperature),
                 messages=[
                     {"role": "user", "content": _build_prompt(content, criterion)}
@@ -560,7 +582,7 @@ def _judge_anthropic(
             )
         return client.messages.create(
             model=model,
-            max_tokens=256,
+            max_tokens=_JUDGE_MAX_OUTPUT_TOKENS,
             messages=[
                 {"role": "user", "content": _build_prompt(content, criterion)}
             ],
@@ -598,16 +620,26 @@ def _judge_vertex_anthropic(
     """
     from anthropic import AnthropicVertex
 
+    # The same env fallbacks as the generation client
+    # (AnthropicScenarioLLMClient), so both reach the same project and region.
     client = AnthropicVertex(
-        project_id=os.environ.get("VERTEX_PROJECT"),
-        region=os.environ.get("VERTEX_LOCATION") or "us-east5",
+        project_id=(
+            os.environ.get("VERTEX_PROJECT")
+            or os.environ.get("GOOGLE_CLOUD_PROJECT")
+            or os.environ.get("GEMINI_PROJECT")
+        ),
+        region=(
+            os.environ.get("VERTEX_LOCATION")
+            or os.environ.get("GOOGLE_CLOUD_LOCATION")
+            or "us-east5"
+        ),
     )
 
     def _create(include_temperature: bool):
         if include_temperature:
             return client.messages.create(
                 model=model,
-                max_tokens=256,
+                max_tokens=_JUDGE_MAX_OUTPUT_TOKENS,
                 **anthropic_temperature_kwargs(temperature),
                 messages=[
                     {"role": "user", "content": _build_prompt(content, criterion)}
@@ -615,7 +647,7 @@ def _judge_vertex_anthropic(
             )
         return client.messages.create(
             model=model,
-            max_tokens=256,
+            max_tokens=_JUDGE_MAX_OUTPUT_TOKENS,
             messages=[
                 {"role": "user", "content": _build_prompt(content, criterion)}
             ],
@@ -759,7 +791,7 @@ def _judge_openai_responses(
             "requested JSON object."
         ),
         "input": _build_prompt(content, criterion),
-        "max_output_tokens": 256,
+        "max_output_tokens": _JUDGE_MAX_OUTPUT_TOKENS,
     }
     req = urllib.request.Request(
         f"{base_url}/responses",

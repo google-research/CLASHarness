@@ -45,7 +45,7 @@ Verify the checkout:
 python -m pytest tests -q
 ```
 
-Expected: **2941 passed, 2 skipped, 497 subtests passed** (2,943 collected, ~8 min).
+Expected: **2966 passed, 2 skipped, 497 subtests passed** (2,968 collected, ~8 min).
 `pyproject.toml` pins `testpaths = ["tests"]`, so a bare `pytest` from the
 repository root does the same thing.
 
@@ -204,6 +204,16 @@ python examples/train_and_eval.py \
 `--collect-data`. `--save-report` is ignored when `--collect-data` is set — the
 collection path returns before the report is written
 (`examples/train_and_eval.py:3070`).
+
+The judge grades the semantic checks, so it is part of the protocol. To compare against the
+published v8 numbers, use the judge they used, `gemini-3.6-flash`. The exception is
+`gemini-3.7-flash`, whose three effort cells as `analysis/` reads them were graded by
+`gemini-3.7-flash` (see `RUN_OVERRIDE` in `analysis/corpus.py`).
+
+Each semantic check gets three votes at temperature 0. Claude judges that reject a
+temperature (Sonnet 5.x, Opus 4.7 and later) vote at their default temperature instead, so
+their grades are sampled rather than greedy and less reproducible; the run's `Judge :` line
+notes this.
 
 ### Choosing the step budget
 

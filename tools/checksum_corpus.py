@@ -16,7 +16,7 @@
 
 """Fingerprint the published corpus, and verify a download against it.
 
-WHY THIS EXISTS. The corpus is 46.4 GB fetched over the network into a tree that
+WHY THIS EXISTS. The corpus is 46.3 GB fetched over the network into a tree that
 `analysis/` then reads without further checking. A truncated component does not
 announce itself: the scripts happily compute a number over whatever files
 arrived, and the result is wrong in a way nobody notices. This produces one

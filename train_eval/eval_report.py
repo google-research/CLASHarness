@@ -23,6 +23,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from clasharness.evaluation.llm_retry import anthropic_rejects_sampling_params
 from clasharness.utils.episode_memory import is_read_only_action
 
 
@@ -59,6 +60,9 @@ _VOTE_RE = re.compile(r"\[self-consistency (\d+)/(\d+) passed\]")
 # Fraction of judge checks that may fail to run (ok=False) before the run's
 # semantic grades are called into question and a loud warning is emitted.
 _JUDGE_FAILURE_WARN_RATE = 0.01
+
+# ``llm_judge.resolve_provider`` names for the two Claude judge backends.
+_ANTHROPIC_JUDGE_PROVIDERS = frozenset({"anthropic", "vertex-anthropic"})
 
 
 @dataclass
@@ -644,6 +648,14 @@ class EvalSummary:
           part for part in (self.judge_provider, self.judge_model) if part
       )
       print(f"Judge : {judge_model}")
+      if self.judge_provider in _ANTHROPIC_JUDGE_PROVIDERS and (
+          anthropic_rejects_sampling_params(self.judge_model or "")
+      ):
+        print(
+            "  note: this judge takes no temperature, so its votes are sampled"
+            " at the model default rather than greedy; grades are less"
+            " reproducible and split votes are not only provider noise."
+        )
     print(
         f"Tasks : {self.passed}/{self.total} passed  "
         f"pass@budget={self.pass_at_budget*100:.1f}%  "
@@ -784,7 +796,12 @@ def _load_asset_refs(runs: list[dict], out_dir: Path) -> dict:
     if slug:
       scenarios.add((gen_id, slug))
 
-  repo_root = _repo_root()
+  # The checkout root first, then the directory above this file in case
+  # pyproject.toml is missing and _repo_root() fell back to the cwd.
+  scenario_roots = []
+  for root in (_repo_root(), Path(__file__).resolve().parents[1]):
+    if root not in scenario_roots:
+      scenario_roots.append(root)
 
   try:
     out_dir_abs = Path(out_dir).resolve()
@@ -800,16 +817,10 @@ def _load_asset_refs(runs: list[dict], out_dir: Path) -> dict:
       return resolved.as_posix()
 
   for gen_id, slug in scenarios:
-    scenario_path = None
-    if repo_root:
-      scenario_path = repo_root / "clasharness" / "data" / "scenarios" / gen_id / slug
-
-    if not scenario_path or not scenario_path.is_dir():
-      scenario_path = py_file_path.parent / "clasharness" / "data" / "scenarios" / gen_id / slug
-    if not scenario_path.is_dir():
-      scenario_path = py_file_path.parent.parent / "clasharness" / "data" / "scenarios" / gen_id / slug
-
-    if not scenario_path.is_dir():
+    candidates = (root / "clasharness" / "data" / "scenarios" / gen_id / slug
+                  for root in scenario_roots)
+    scenario_path = next((p for p in candidates if p.is_dir()), None)
+    if scenario_path is None:
       continue
 
     manifest_path = scenario_path / "asset_manifest.json"

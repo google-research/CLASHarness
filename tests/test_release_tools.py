@@ -57,6 +57,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -439,3 +440,81 @@ def test_rel15_quota_id_is_redacted_in_place(tmp_path):
   # the quota id too; otherwise the substitution has no net under it.
   assert scrub_corpus.cmd_check(str(dst), [EVAL_V8]) == 0
   assert scrub_corpus.cmd_check(str(src), [EVAL_V8]) == 1
+
+
+def _fake_hub(monkeypatch, published: set[str], seen: dict):
+  """Install a huggingface_hub whose repo holds only the `published` prefixes."""
+  import types
+
+  def snapshot_download(repo_id, repo_type, local_dir, allow_patterns):
+    seen["patterns"] = list(allow_patterns)
+    for pattern in allow_patterns:
+      prefix = pattern[:-len("/**")]
+      if prefix in published:
+        _write(Path(local_dir), f"{prefix}/part-0.json", "{}")
+    return local_dir
+
+  hub = types.ModuleType("huggingface_hub")
+  hub.snapshot_download = snapshot_download
+  monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
+
+
+def test_rel19_unpublished_component_fails_the_download(
+    tmp_path, monkeypatch, capsys):
+  # REL-19: huggingface_hub does not fail when a pattern matches nothing, so
+  # the script has to. An existing but empty directory counts as missing too.
+  root = tmp_path / "data"
+  (root / TASKS_V8).mkdir(parents=True)
+  monkeypatch.setattr(download_data, "DATA_ROOT", str(root))
+  seen: dict = {}
+  _fake_hub(monkeypatch, {EVAL_V8}, seen)
+  rc = download_data.main(["--repo", "u/d", "--component", "eval-v8",
+                           "--component", "tasks-v8"])
+  err = capsys.readouterr().err
+  assert rc == 1
+  assert seen["patterns"] == [f"{EVAL_V8}/**", f"{TASKS_V8}/**"]
+  assert "tasks-v8" in err and "eval-v8" not in err
+
+
+def test_rel20_complete_download_succeeds(tmp_path, monkeypatch, capsys):
+  monkeypatch.setattr(download_data, "DATA_ROOT", str(tmp_path / "data"))
+  _fake_hub(monkeypatch, {EVAL_V8, TASKS_V8}, {})
+  rc = download_data.main(["--repo", "u/d", "--component", "eval-v8",
+                           "--component", "tasks-v8"])
+  out = capsys.readouterr()
+  assert rc == 0
+  assert "Done." in out.out and out.err == ""
+  # The hint names the directory the evaluator takes (the parent of tasks/),
+  # and only for the task component.
+  root = tmp_path / "data"
+  hint = f"--task-data-dir {root / os.path.dirname(TASKS_V8)}"
+  assert out.out.count("--task-data-dir") == 1 and f"{hint}\n" in out.out
+  assert "analysis/" not in out.out
+
+
+@pytest.mark.parametrize("argv", [
+    ["--all", "--component", "eval-v8"],
+    ["--default", "--component", "eval-v8"],
+    ["--all", "--default"],
+])
+def test_rel21_selection_modes_are_mutually_exclusive(argv, capsys):
+  # REL-21: --all or --default quietly winning over --component would fetch
+  # something other than what was named.
+  with pytest.raises(SystemExit) as excinfo:
+    download_data.main(["--dry-run", *argv])
+  assert excinfo.value.code == 2
+  assert "not allowed with" in capsys.readouterr().err
+
+
+def test_rel22_totals_are_summed_from_the_manifest(monkeypatch, capsys):
+  # REL-22: the totals are derived, so they cannot drift from the table the
+  # way a restated "N GB" did.
+  monkeypatch.setattr(download_data, "COMPONENTS", {
+      "a": ("x/a", "1.5 GB", ""), "b": ("x/b", "600 MB", ""),
+      "c": ("x/c", "58 KB", ""), "d": ("x/d", "58 KB", "")})
+  assert download_data._total(["a", "b"]) == "2.1 GB"
+  assert download_data._total(["b", "c"]) == "600.1 MB"
+  assert download_data._total(["c", "d"]) == "116 KB"
+  assert download_data.main(["--dry-run", "--component", "b",
+                             "--component", "c"]) == 0
+  assert re.search(r"total\s+600\.1 MB", capsys.readouterr().out)

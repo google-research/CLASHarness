@@ -114,6 +114,59 @@ Expansion progress against [conflict-expansion-plan.md](conflict-expansion-plan.
 
 ### Recent changes
 
+- **v8 is the published corpus.** The dataset release is the corpus the paper was computed
+  on: 600 rounds from the 20 seeds, generated with `gemini-3.6-flash`, together with the
+  14-model panel and effort sweep, the `claude-sonnet-5` generator ablation (arm B, released
+  as it was run), the 30- and 40-step budget arms and the text-only arm. That is eleven components, 26,853 files and 46.3 GB,
+  re-measured on the published tree; `eval-budget30` is 440 MB because the incomplete
+  `gemini-3.7-flash` cell, which is in neither the paper's budget ablation nor the other two
+  ablation arms, is left out. `CHECKSUMS.txt` holds one digest per component. No v8 file was
+  changed and the paper's numbers stand. An audit of the v8 checks after submission found
+  checks a fair grader would not count; the dataset card's
+  [Known issues](dataset-card.md#known-issues) section gives the counts and how much they
+  move the results, `analysis/v8_check_fairness_audit.json` lists the checks, and
+  `analysis/sonnet5_gold_replay_audit.json` lists the arm-B checks the reference solution
+  fails. The generator in this repository has changed since v8 was generated, so a corpus
+  generated with it is not v8 and its difficulty has not been calibrated. Corpus version
+  numbers other than v8 that appear in this file or in the docs name unpublished development
+  runs.
+- **Claude and GPT judges get room to reach their verdict.** Their output cap was 256
+  tokens. On a multi-part criterion `claude-sonnet-5-5` checks each element in prose
+  before the JSON verdict (348 to 545 tokens in a probe), and the Responses API counts a
+  gpt-5-class model's reasoning tokens against the same cap, so the reply was cut off
+  before the verdict and the check came back unparseable (`ok=False`), most often on the
+  borderline checks. A generation run with a Claude judge therefore skipped its
+  gold-satisfiability gate on exactly those checks; the generation logs of the arm-B
+  corpus (generator `claude-sonnet-5`) record 83 such skips. The cap is now 4096; unused
+  headroom is not billed. Gemini judges are held to a JSON-only reply, have no cap and are
+  unchanged, so grades from a Gemini judge, as used for v8, are unaffected. A Claude judge
+  that rejects sampling parameters (Sonnet 5.x, Opus 4.7 and later) also gets no
+  `temperature`, so `judge_majority` votes are sampled at the model default rather than
+  greedily; the run report now says so under its `Judge :` line. Verified: 8 tests in
+  `tests/test_llm_judge.py` and `tests/test_judge_health.py`.
+- **The generator's judge stays on Vertex AI when generation does.**
+  `generate_conflict_vlm_scenarios.py --provider vertex` points its judge at the generation
+  provider through `sync_judge_env`, which wrote `LLM_JUDGE_PROVIDER=gemini`; `_judge_gemini`
+  then picked the Gemini Developer API whenever `GEMINI_API_KEY` was set, so with a key
+  exported the generation gates' judge left Vertex AI while generation stayed on it.
+  `LLM_JUDGE_PROVIDER=vertex` is now kept and ignores the key; `gemini` still prefers it.
+  The Claude-on-Vertex judge also falls back to
+  `GOOGLE_CLOUD_PROJECT` / `GEMINI_PROJECT` and `GOOGLE_CLOUD_LOCATION`, as the generation
+  client does, instead of requiring `VERTEX_PROJECT`. Verified: 3 tests in
+  `tests/test_llm_judge.py`.
+- **Release tools: the eval visualizer works on a checkout without scenarios, and
+  `download_data.py` does what was named.** `generate_eval_visualizer.py` and
+  `eval_report.py` fell back to an undefined `py_file_path` whenever a scenario was not
+  under `clasharness/data/scenarios`, which is always the case in a release checkout, so
+  the `NameError` aborted `visualize.html` (15 times in one set of evaluation logs). Both
+  now look under the checkout root and then under the source tree the script belongs to.
+  In `tools/download_data.py`, `--component`, `--all` and `--default` are mutually
+  exclusive, where `--all` or `--default` used to win silently over a named component;
+  `--list` and the download plan print totals summed from the manifest instead of a
+  hand-written figure; a component that arrives missing or empty ends the run with an
+  error instead of `Done.`; and the closing message gives the `--task-data-dir` path for
+  each task component. Verified: 5 tests in `tests/test_eval_visualizer_assets.py` and 6 in
+  `tests/test_release_tools.py`.
 - **Vision-exclusivity instrumentation + honest `asset` tool descriptions.** Closed the
   gap between "this round has a decisive value" and "this round actually requires
   *looking* at the asset". Three layers, documented as §D in

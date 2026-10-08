@@ -24,7 +24,7 @@ harness for multi-agent coordination under conflicting, time-sensitive, multimod
 
 The code repository ships the generator, the harness, the 20 scenario seeds and the frozen
 report artifacts. It does not ship the corpus those artifacts were computed from, which runs
-to 46.4 GB. That corpus is here.
+to 46.3 GB. That corpus is here.
 
 You do not need any of this to install the package, run its test suite, or generate a fresh
 corpus of your own. You need it to recompute the published numbers, or to use the 600-round
@@ -34,7 +34,7 @@ benchmark as a benchmark.
 
 Use the fetcher in the code repository rather than cloning this dataset wholesale — it places
 each component at the one path `analysis/corpus.py` resolves against, and it lets you take the
-8.5 GB you need instead of the 46.4 GB you don't.
+8.5 GB you need instead of the 46.3 GB you don't.
 
 ```bash
 git clone https://github.com/google-research/CLASHarness && cd clash-harness
@@ -57,19 +57,19 @@ SHA-256 rollup per component; verification only checks the components you actual
 
 | Component | Size | What it is |
 | --- | --- | --- |
-| `eval-v8` ★ | 2.8 GB | Primary panel: 14 models, the effort sweep, every main-paper figure. |
+| `eval-v8` ★ | 2.8 GB | Primary 20-step panel: 14 models (10 API effort-swept + 4 open-weight at high), plus the main-paper figures (the paper additionally reports `GPT-6 Astra` at 40 steps as the 15th model). |
 | `tasks-v8` ★ | 5.7 GB | Compiled task specs for the primary corpus (generator `gemini-3.6-flash`). |
 | `splits-v8` ★ | 58 KB | Official train/dev/test split, 420/90/90 of 600 rounds, held out by seed. |
 | `eval-sonnet5` | 1.9 GB | Generator ablation, arm B. |
 | `tasks-sonnet5` | 7.1 GB | Task specs for arm B (generator `claude-sonnet-5`). |
 | `splits-sonnet5` | 58 KB | Split for arm B, same 420/90/90 shape. |
-| `eval-budget30` | 463 MB | Step-budget ablation at 30 steps. |
+| `eval-budget30` | 440 MB | Step-budget ablation at 30 steps. |
 | `eval-budget40` | 577 MB | Step-budget ablation at 40 steps. |
 | `eval-blind` | 219 MB | Text-only arm: the same rounds with the images withheld. |
 | `scenarios-v8` | 12.3 GB | Materialized scenario packages incl. rendered visual assets. |
 | `scenarios-sonnet5` | 15.3 GB | Materialized scenario packages for arm B. |
 
-★ = fetched by `--default`. 46.4 GB for all eleven, 26,897 files. Sizes are measured on this
+★ = fetched by `--default`. 46.3 GB for all eleven, 26,853 files. Sizes are measured on this
 tree, so they are what you download.
 
 ## Layout
@@ -124,10 +124,12 @@ transcripts; `ground_truth` and `check_results` are where that grading lives.
 3 scenario versions per seed, 10 rounds per version. Splits hold out whole seeds — 420 train,
 90 dev, 90 test — under a fixed hash salt, so no round of an episode leaks across a boundary.
 
-The reported panel is 14 models. Ten of them are API endpoints exposing a reasoning-effort
-knob and are the only ones swept across low/medium/high; the four open-weight models are run
-at high only. The paper's primary effort is high, so an effort statement is over 10 models and
-a high-effort statement is over 14.
+The 20-step panel in `eval-v8` covers 14 models: ten API endpoints exposing a reasoning-effort
+knob (swept across `low`/`medium`/`high`) and four open-weight models run at `high` only. The
+paper additionally reports `GPT-6 Astra` (evaluated at `high` effort under a 40-step action
+budget) as the 15th frontier model. The paper's primary effort is `high`, so an effort-sweep
+statement is over the 10 API models and a full high-effort frontier statement is over 14 (or
+15 including `GPT-6 Astra`).
 
 **Eighteen of the 600 rounds were unwinnable when these runs were scored.** A materializer
 visibility defect graded them on a value that appeared in nothing the solver was shown; across
@@ -136,6 +138,85 @@ reports the full 600 with those rows retained, because dropping them rescales ev
 the same 582/600 and changes no ordering and no test. The defect is fixed and the corpus
 repaired in place — only these pre-repair eval rows carry it. `analysis/dead_rounds_exclusion.json`
 identifies them so either view can be computed.
+
+## Known issues
+
+The paper's numbers are computed on the corpus exactly as published here. The issues below were
+found after submission; none of them changed a file in this dataset.
+
+**Checks a fair grader would not count.** A check is fair if the instruction asks for it, or if it
+can reasonably be inferred from the materials the player is shown. It is not fair if nothing asks
+for it, if the materials say someone else does it, or if its criterion asks for a value that
+conflicts with the authoritative material. A post-submission audit labelled all 1,194 required
+message criteria (Claude Opus 5.5, three votes each, with quoted evidence) and all 515 required
+protocol checks (Claude Opus 5.5 and, independently, Gemini 3.1 Pro) against that standard. The
+table re-grades the recorded high-effort episodes of 13 of the 14 panel models (DeepSeek V4 Flash
+was not re-scored) with the flagged checks demoted to diagnostic:
+
+| Checks demoted | Checks | Claude Opus 5 (%) | Kendall τ-b vs. published | Opus 5 vs. Opus 4.8, p |
+| --- | --- | --- | --- | --- |
+| None (as published) | 0 | 25.2 | 1.00 | 0.120 |
+| Message criteria whose required value conflicts with the authoritative material | 200 | 27.2 | 0.99 | 0.057 |
+| Protocol checks both judges call unasked or contradicted | 106 | 29.5 | 0.91 | 0.005 |
+| Both of the above | 306 | 31.7 | 0.94 | 0.002 |
+| Protocol checks Opus 5.5 calls unasked, contradicted or ambiguous, plus message criteria it calls unsupported or unasked | 485 | 36.3 | 0.88 | 0.004 |
+| *Upper bound, not an estimate:* the previous row plus message criteria it calls over-specified or ambiguous | 775 | 42.7 | 0.68 | 0.031 |
+
+p is an exact McNemar test on the rounds where the two models disagree. An over-specified
+criterion grades a message the round does ask for, but requires more elements than the request
+implies, which is why the last row is only a bound.
+
+- In every row the top three (Claude Opus 5, GPT-5.6 Sol, Claude Opus 4.8) and the bottom three
+  (GLM-5.2 FP8, Gemini 3.1 Pro, Gemini 3.5 Flash) of the 13 keep their places, and Claude Opus 5
+  against GPT-5.6 Sol is never significant (p ≥ 0.14).
+- The seven models between them are within 3.3 points of one another as published, and change
+  order among themselves once protocol checks are demoted.
+- Claude Opus 5's lead over Claude Opus 4.8 is not significant as published and is significant in
+  every row that demotes protocol checks.
+
+`analysis/v8_check_fairness_audit.json` in the code repository lists the 775 checks by task id
+and index into `ground_truth.evaluation_checks`, with their labels, which rows count them, and
+every model's pass rate in each row.
+
+**Checks the reference solution fails (20 of 3,760).** The reference solutions of all 600
+rounds were replayed twice with the v8 judge (`gemini-3.6-flash`). No deterministic check failed.
+20 semantic checks failed in both replays: 13 `A written report states the decisive finding: <V>`
+criteria whose slot holds an identifier, timestamp or passcode rather than a finding, so a report
+that labels the value correctly fails, and 7 message criteria that require more than the
+reference message says. They touch 18 rounds, and removing them changes the result of one
+Claude Opus 5 round (25.2% → 25.3%). The replay outputs were not kept, so these checks are not
+listed individually.
+
+**Files that later rounds seed with stale content (50 of 600 rounds).** Each round is seeded from
+its scenario's files, earlier updates and files earlier subagents created, not from what earlier
+rounds' reference solutions wrote. In 50 rounds the reference solution reads a file that an
+earlier round's reference solution had changed, and the round seeds the earlier content. Grading
+uses the round as seeded, and the reference replay above found no failure caused by this.
+
+**Arm B** (`tasks-sonnet5`, `eval-sonnet5`) is published as it was run. The same replay found
+59 of its 600 rounds with at least one required check the reference solution fails: 65 semantic
+checks (failed in both replays) and 9 deterministic ones. In 8 of those rounds none of the 24
+arm-B runs passes the failing check: 7 `sla_support_response` rounds bind a timed message check
+to a human stakeholder as sender while the reference delegates to a subagent, and in
+`expiring_resource_hold_v03` r06 the graded booking extension is never emitted. Counting every
+round that fails only on these checks as a pass raises each model's high-effort arm-B pass rate
+by 0.2–0.8 points and changes no ordering. `analysis/sonnet5_gold_replay_audit.json` lists the
+checks.
+
+**Claude Opus 5 episodes that end in an empty reply (8 of 1,800).** In 3 high-, 3 medium- and 2
+low-effort episodes, all in `payment_chargeback_dispute`, Claude Opus 5 returned no text and the
+harness recorded `"stop_reason": "generation_stall_empty_reply"`, `"error_type":
+"provider_failure"` and an empty `error`. Most are probably safety refusals of the dispute
+scenario: the harness that ran v8 did not keep the provider's stop reason, and a later version
+that does saw refusals on these seeds. The records here cannot confirm it. They are scored as
+failures like any other episode, so the published rates include them; at high effort they are 3
+of 600 rounds, at most 0.5 points. The ablation trees have 12 more (`eval-blind`,
+`eval-budget30`, `eval-budget40`) and each arm-B Claude Opus 5 run 9–13, some of them in
+`multimodal_temporal_conflict_01`. No other Claude model has any.
+
+**The generator has changed since v8.** The generator in the code repository includes fixes made
+after v8 was generated, such as the one behind the eighteen unwinnable rounds above. A corpus you
+generate with it is not v8, and its difficulty has not been calibrated against v8.
 
 ## Redaction
 
@@ -203,12 +284,13 @@ is separately licensed under Apache-2.0. Content was produced by third-party lan
 your use of it remains subject to those providers' terms.
 
 ```bibtex
-@software{clasharness,
-  title  = {CLASHarness: multi-agent coordination under conflicting multimodal evidence},
-  author = {Lai, Yuxiang and Xia, Peng and Ji, Haonian and Xiong, Kaiwen and
-            Zeng, Kaide and Liu, Jiaqi and Wu, Fang and Zhong, Jike and
-            Zheng, Zeyu and Xie, Cihang and Yao, Huaxiu},
-  url    = {https://github.com/google-research/CLASHarness},
-  license = {Apache-2.0}
+@article{lai2026clasharness,
+  title   = {CLASHarness: Benchmarking Multi-Agent Conflict in Computer Use via a Controllable and Verifiable Generation Pipeline},
+  author  = {Lai, Yuxiang and Zhong, Jike and Liu, Chengzhi and Li, Ming and
+             Wang, Haonan and Yang, Xiaofeng and Zhao, Liang and Tang, Youbao and
+             Fan, Ruixi},
+  journal = {arXiv preprint},
+  year    = {2026},
+  url     = {https://github.com/google-research/CLASHarness}
 }
 ```
