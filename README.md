@@ -5,7 +5,6 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-2BA02D.svg?style=flat-square)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![Tests Passing](https://img.shields.io/badge/Tests-2966%20passed-009688.svg?style=flat-square&logo=pytest&logoColor=white)](tests)
 [![Preprint: arXiv](https://img.shields.io/badge/arXiv-Preprint-B31B1B.svg?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org)
 [![Hugging Face](https://img.shields.io/badge/Dataset-Hugging%20Face-FFA000.svg?style=flat-square&logo=huggingface&logoColor=white)](https://huggingface.co/datasets)
 [![Google Research](https://img.shields.io/badge/Google-Research-4285F4.svg?style=flat-square&logo=google&logoColor=white)](https://research.google)
