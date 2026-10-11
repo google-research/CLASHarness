@@ -107,23 +107,23 @@ Evaluating 15 frontier models across 600 benchmark episodes reveals that resolvi
 
 ### Main Benchmark Standings (600 Benchmark Episodes, High Effort)
 
-| Model | Reasoning Effort | All Pass (%) | Easy Pass (%) | Mid Pass (%) | Hard Pass (%) | Mean Score (%) | Avg Cost / Run |
+| Model | Effort | All&nbsp;Pass&nbsp;(%) | Easy&nbsp;(%) | Mid&nbsp;(%) | Hard&nbsp;(%) | Mean&nbsp;Score&nbsp;(%) | Cost&nbsp;/&nbsp;Tokens |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **GPT-6 Astra** | High | **28.7** ± 1.9 | **35.2** ± 3.1 | **28.1** ± 3.1 | **18.6** ± 3.3 | **66.8** ± 1.2 | \$3,003 (663M tok) |
-| **Claude Opus 5** | High | **25.2** ± 1.8 | 32.2 ± 3.0 | 25.0 ± 2.9 | 13.6 ± 2.9 | 64.2 ± 1.2 | \$2,631 (511M tok) |
-| **GPT-5.6 Sol** | High | **24.5** ± 1.7 | 31.4 ± 3.0 | 24.1 ± 2.9 | 13.6 ± 2.9 | 63.3 ± 1.2 | \$2,165 (454M tok) |
-| **Claude Opus 4.8** | High | **22.8** ± 1.7 | 30.1 ± 3.0 | 23.7 ± 2.8 | 9.3 ± 2.4 | 62.1 ± 1.2 | \$2,933 (571M tok) |
-| **Kimi K3** | High | **21.8** ± 1.7 | 26.3 ± 2.8 | 23.2 ± 2.9 | 12.1 ± 2.7 | 55.9 ± 1.4 | \$2,173 (706M tok) |
-| **Claude Sonnet 5** | High | **20.8** ± 1.7 | 28.0 ± 2.9 | 21.4 ± 2.7 | 7.9 ± 2.3 | 59.6 ± 1.3 | \$1,031 (497M tok) |
-| **Gemini 3.7 Flash** | High | **20.3** ± 1.6 | 26.7 ± 2.9 | 21.9 ± 2.8 | 7.1 ± 2.2 | 58.1 ± 1.3 | \$307 (395M tok) |
-| **GPT-5.6 Terra** | High | **20.0** ± 1.6 | 27.1 ± 2.9 | 20.1 ± 2.7 | 7.9 ± 2.3 | 60.2 ± 1.2 | \$731 (382M tok) |
-| **GPT-5.6 Luna** | High | **19.8** ± 1.6 | 23.7 ± 2.7 | 22.3 ± 2.8 | 9.3 ± 2.5 | 60.4 ± 1.2 | \$86 (450M tok) |
-| **DeepSeek V4 Pro**<sup>†</sup> | High | **19.8** ± 1.6 | 24.2 ± 2.8 | 20.5 ± 2.7 | 11.4 ± 2.7 | 58.1 ± 1.3 | \$32 (70M tok) |
-| **Gemini 3.6 Flash** | High | **18.5** ± 1.6 | 24.6 ± 2.8 | 21.4 ± 2.7 | 3.6 ± 1.6 | 58.6 ± 1.3 | \$565 (363M tok) |
-| **GLM-5.2 FP8**<sup>†</sup> | High | **14.7** ± 1.4 | 18.2 ± 2.5 | 16.5 ± 2.5 | 5.7 ± 2.0 | 48.7 ± 1.3 | \$120 (82M tok) |
-| **Gemini 3.1 Pro** | High | **12.0** ± 1.3 | 15.7 ± 2.4 | 12.1 ± 2.2 | 5.7 ± 2.0 | 48.7 ± 1.3 | \$578 (280M tok) |
-| **DeepSeek V4 Flash**<sup>†</sup>| High | **8.5** ± 1.1 | 8.5 ± 1.8 | 11.2 ± 2.1 | 4.3 ± 1.7 | 37.5 ± 1.3 | N/A (95M tok) |
-| **Gemini 3.5 Flash** | High | **3.0** ± 0.7 | 3.8 ± 1.2 | 2.7 ± 1.1 | 2.1 ± 1.2 | 25.9 ± 1.1 | \$712 (445M tok) |
+| **GPT-6&nbsp;Astra** | High | **28.7**<sub>±1.9</sub> | **35.2**<sub>±3.1</sub> | **28.1**<sub>±3.1</sub> | **18.6**<sub>±3.3</sub> | **66.8**<sub>±1.2</sub> | \$3,003&nbsp;(663M) |
+| **Claude&nbsp;Opus&nbsp;5** | High | **25.2**<sub>±1.8</sub> | 32.2<sub>±3.0</sub> | 25.0<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 64.2<sub>±1.2</sub> | \$2,631&nbsp;(511M) |
+| **GPT-5.6&nbsp;Sol** | High | **24.5**<sub>±1.7</sub> | 31.4<sub>±3.0</sub> | 24.1<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 63.3<sub>±1.2</sub> | \$2,165&nbsp;(454M) |
+| **Claude&nbsp;Opus&nbsp;4.8** | High | **22.8**<sub>±1.7</sub> | 30.1<sub>±3.0</sub> | 23.7<sub>±2.8</sub> | 9.3<sub>±2.4</sub> | 62.1<sub>±1.2</sub> | \$2,933&nbsp;(571M) |
+| **Kimi&nbsp;K3** | High | **21.8**<sub>±1.7</sub> | 26.3<sub>±2.8</sub> | 23.2<sub>±2.9</sub> | 12.1<sub>±2.7</sub> | 55.9<sub>±1.4</sub> | \$2,173&nbsp;(706M) |
+| **Claude&nbsp;Sonnet&nbsp;5** | High | **20.8**<sub>±1.7</sub> | 28.0<sub>±2.9</sub> | 21.4<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 59.6<sub>±1.3</sub> | \$1,031&nbsp;(497M) |
+| **Gemini&nbsp;3.7&nbsp;Flash** | High | **20.3**<sub>±1.6</sub> | 26.7<sub>±2.9</sub> | 21.9<sub>±2.8</sub> | 7.1<sub>±2.2</sub> | 58.1<sub>±1.3</sub> | \$307&nbsp;(395M) |
+| **GPT-5.6&nbsp;Terra** | High | **20.0**<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 20.1<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 60.2<sub>±1.2</sub> | \$731&nbsp;(382M) |
+| **GPT-5.6&nbsp;Luna** | High | **19.8**<sub>±1.6</sub> | 23.7<sub>±2.7</sub> | 22.3<sub>±2.8</sub> | 9.3<sub>±2.5</sub> | 60.4<sub>±1.2</sub> | \$86&nbsp;(450M) |
+| **DeepSeek&nbsp;V4&nbsp;Pro**<sup>†</sup> | High | **19.8**<sub>±1.6</sub> | 24.2<sub>±2.8</sub> | 20.5<sub>±2.7</sub> | 11.4<sub>±2.7</sub> | 58.1<sub>±1.3</sub> | \$32&nbsp;(70M) |
+| **Gemini&nbsp;3.6&nbsp;Flash** | High | **18.5**<sub>±1.6</sub> | 24.6<sub>±2.8</sub> | 21.4<sub>±2.7</sub> | 3.6<sub>±1.6</sub> | 58.6<sub>±1.3</sub> | \$565&nbsp;(363M) |
+| **GLM-5.2&nbsp;FP8**<sup>†</sup> | High | **14.7**<sub>±1.4</sub> | 18.2<sub>±2.5</sub> | 16.5<sub>±2.5</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> | \$120&nbsp;(82M) |
+| **Gemini&nbsp;3.1&nbsp;Pro** | High | **12.0**<sub>±1.3</sub> | 15.7<sub>±2.4</sub> | 12.1<sub>±2.2</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> | \$578&nbsp;(280M) |
+| **DeepSeek&nbsp;V4&nbsp;Flash**<sup>†</sup> | High | **8.5**<sub>±1.1</sub> | 8.5<sub>±1.8</sub> | 11.2<sub>±2.1</sub> | 4.3<sub>±1.7</sub> | 37.5<sub>±1.3</sub> | N/A&nbsp;(95M) |
+| **Gemini&nbsp;3.5&nbsp;Flash** | High | **3.0**<sub>±0.7</sub> | 3.8<sub>±1.2</sub> | 2.7<sub>±1.1</sub> | 2.1<sub>±1.2</sub> | 25.9<sub>±1.1</sub> | \$712&nbsp;(445M) |
 
 <sub><sup>†</sup>Text-only models evaluated using OCR transcripts of visual assets. Task difficulty is stratified by ground-truth reference trajectory length (<i>Easy</i>: ≤ 9 steps, <i>Mid</i>: 10–11 steps, <i>Hard</i>: ≥ 12 steps).</sub>
 
@@ -131,38 +131,38 @@ Evaluating 15 frontier models across 600 benchmark episodes reveals that resolvi
 <summary><b>Extended Reasoning Effort Sweep (High / Medium / Low across 10 API Models)</b></summary>
 <br>
 
-| Model | Effort Level | All Pass Rate (%) | Easy Pass (%) | Mid Pass (%) | Hard Pass (%) | Mean Score (%) |
+| Model | Effort | All&nbsp;Pass&nbsp;(%) | Easy&nbsp;(%) | Mid&nbsp;(%) | Hard&nbsp;(%) | Mean&nbsp;Score&nbsp;(%) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Claude Opus 5** | High | 25.2 ± 1.8 | 32.2 ± 3.0 | 25.0 ± 2.9 | 13.6 ± 2.9 | 64.2 ± 1.2 |
-| | Med | 25.3 ± 1.8 | 33.9 ± 3.1 | 24.6 ± 2.9 | 12.1 ± 2.7 | 63.3 ± 1.2 |
-| | Low | 23.5 ± 1.7 | 30.5 ± 3.0 | 23.7 ± 2.9 | 11.4 ± 2.7 | 60.9 ± 1.3 |
-| **Claude Opus 4.8** | High | 22.8 ± 1.7 | 30.1 ± 3.0 | 23.7 ± 2.8 | 9.3 ± 2.4 | 62.1 ± 1.2 |
-| | Med | 23.8 ± 1.7 | 29.7 ± 3.0 | 24.6 ± 2.9 | 12.9 ± 2.8 | 61.8 ± 1.2 |
-| | Low | 21.3 ± 1.7 | 28.0 ± 2.9 | 21.4 ± 2.7 | 10.0 ± 2.6 | 60.8 ± 1.2 |
-| **Claude Sonnet 5** | High | 20.8 ± 1.7 | 28.0 ± 2.9 | 21.4 ± 2.7 | 7.9 ± 2.3 | 59.6 ± 1.3 |
-| | Med | 17.0 ± 1.5 | 25.4 ± 2.8 | 17.0 ± 2.5 | 2.9 ± 1.4 | 57.0 ± 1.3 |
-| | Low | 13.8 ± 1.4 | 20.8 ± 2.6 | 12.9 ± 2.3 | 3.6 ± 1.6 | 53.7 ± 1.2 |
-| **GPT-5.6 Sol** | High | 24.5 ± 1.7 | 31.4 ± 3.0 | 24.1 ± 2.9 | 13.6 ± 2.9 | 63.3 ± 1.2 |
-| | Med | 23.0 ± 1.7 | 29.2 ± 3.0 | 24.6 ± 2.9 | 10.0 ± 2.5 | 62.8 ± 1.2 |
-| | Low | 20.8 ± 1.7 | 26.3 ± 2.9 | 22.8 ± 2.8 | 8.6 ± 2.4 | 61.0 ± 1.2 |
-| **GPT-5.6 Terra** | High | 20.0 ± 1.6 | 27.1 ± 2.9 | 20.1 ± 2.7 | 7.9 ± 2.3 | 60.2 ± 1.2 |
-| | Med | 20.0 ± 1.6 | 25.8 ± 2.9 | 20.1 ± 2.7 | 10.0 ± 2.5 | 58.9 ± 1.3 |
-| | Low | 17.7 ± 1.6 | 23.7 ± 2.8 | 17.9 ± 2.6 | 7.1 ± 2.2 | 57.2 ± 1.2 |
-| **GPT-5.6 Luna** | High | 19.8 ± 1.6 | 23.7 ± 2.7 | 22.3 ± 2.8 | 9.3 ± 2.5 | 60.4 ± 1.2 |
-| | Med | 17.7 ± 1.6 | 22.0 ± 2.7 | 19.2 ± 2.7 | 7.9 ± 2.3 | 59.1 ± 1.2 |
-| | Low | 19.5 ± 1.6 | 25.0 ± 2.8 | 18.3 ± 2.6 | 12.1 ± 2.7 | 59.0 ± 1.2 |
-| **Gemini 3.7 Flash** | High | 20.3 ± 1.6 | 26.7 ± 2.9 | 21.9 ± 2.8 | 7.1 ± 2.2 | 58.1 ± 1.3 |
-| | Med | 21.5 ± 1.7 | 27.1 ± 2.9 | 24.1 ± 2.9 | 7.9 ± 2.3 | 61.8 ± 1.2 |
-| | Low | 20.5 ± 1.6 | 27.1 ± 2.9 | 20.5 ± 2.7 | 9.3 ± 2.4 | 60.0 ± 1.2 |
-| **Gemini 3.6 Flash** | High | 18.5 ± 1.6 | 24.6 ± 2.8 | 21.4 ± 2.7 | 3.6 ± 1.6 | 58.6 ± 1.3 |
-| | Med | 20.2 ± 1.6 | 27.1 ± 2.9 | 21.9 ± 2.8 | 5.7 ± 2.0 | 60.2 ± 1.2 |
-| | Low | 18.5 ± 1.6 | 23.3 ± 2.7 | 19.2 ± 2.6 | 9.3 ± 2.5 | 59.5 ± 1.2 |
-| **Gemini 3.1 Pro** | High | 12.0 ± 1.3 | 15.7 ± 2.4 | 12.1 ± 2.2 | 5.7 ± 2.0 | 48.7 ± 1.3 |
-| | Med | 9.8 ± 1.2 | 11.4 ± 2.1 | 10.3 ± 2.1 | 6.4 ± 2.1 | 47.9 ± 1.2 |
-| | Low | 8.3 ± 1.1 | 10.2 ± 2.0 | 8.5 ± 1.8 | 5.0 ± 1.9 | 46.3 ± 1.2 |
-| **Gemini 3.5 Flash** | High | 3.0 ± 0.7 | 3.8 ± 1.2 | 2.7 ± 1.1 | 2.1 ± 1.2 | 25.9 ± 1.1 |
-| | Med | 3.2 ± 0.7 | 3.8 ± 1.2 | 3.6 ± 1.2 | 1.4 ± 1.0 | 29.9 ± 1.1 |
-| | Low | 13.5 ± 1.4 | 17.4 ± 2.4 | 14.3 ± 2.4 | 5.7 ± 2.0 | 47.3 ± 1.3 |
+| **Claude&nbsp;Opus&nbsp;5** | High | 25.2<sub>±1.8</sub> | 32.2<sub>±3.0</sub> | 25.0<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 64.2<sub>±1.2</sub> |
+| | Med | **25.3**<sub>±1.8</sub> | **33.9**<sub>±3.1</sub> | 24.6<sub>±2.9</sub> | 12.1<sub>±2.7</sub> | 63.3<sub>±1.2</sub> |
+| | Low | 23.5<sub>±1.7</sub> | 30.5<sub>±3.0</sub> | 23.7<sub>±2.9</sub> | 11.4<sub>±2.7</sub> | 60.9<sub>±1.3</sub> |
+| **Claude&nbsp;Opus&nbsp;4.8** | High | 22.8<sub>±1.7</sub> | 30.1<sub>±3.0</sub> | 23.7<sub>±2.8</sub> | 9.3<sub>±2.4</sub> | 62.1<sub>±1.2</sub> |
+| | Med | 23.8<sub>±1.7</sub> | 29.7<sub>±3.0</sub> | 24.6<sub>±2.9</sub> | 12.9<sub>±2.8</sub> | 61.8<sub>±1.2</sub> |
+| | Low | 21.3<sub>±1.7</sub> | 28.0<sub>±2.9</sub> | 21.4<sub>±2.7</sub> | 10.0<sub>±2.6</sub> | 60.8<sub>±1.2</sub> |
+| **Claude&nbsp;Sonnet&nbsp;5** | High | 20.8<sub>±1.7</sub> | 28.0<sub>±2.9</sub> | 21.4<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 59.6<sub>±1.3</sub> |
+| | Med | 17.0<sub>±1.5</sub> | 25.4<sub>±2.8</sub> | 17.0<sub>±2.5</sub> | 2.9<sub>±1.4</sub> | 57.0<sub>±1.3</sub> |
+| | Low | 13.8<sub>±1.4</sub> | 20.8<sub>±2.6</sub> | 12.9<sub>±2.3</sub> | 3.6<sub>±1.6</sub> | 53.7<sub>±1.2</sub> |
+| **GPT-5.6&nbsp;Sol** | High | 24.5<sub>±1.7</sub> | 31.4<sub>±3.0</sub> | 24.1<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 63.3<sub>±1.2</sub> |
+| | Med | 23.0<sub>±1.7</sub> | 29.2<sub>±3.0</sub> | 24.6<sub>±2.9</sub> | 10.0<sub>±2.5</sub> | 62.8<sub>±1.2</sub> |
+| | Low | 20.8<sub>±1.7</sub> | 26.3<sub>±2.9</sub> | 22.8<sub>±2.8</sub> | 8.6<sub>±2.4</sub> | 61.0<sub>±1.2</sub> |
+| **GPT-5.6&nbsp;Terra** | High | 20.0<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 20.1<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 60.2<sub>±1.2</sub> |
+| | Med | 20.0<sub>±1.6</sub> | 25.8<sub>±2.9</sub> | 20.1<sub>±2.7</sub> | 10.0<sub>±2.5</sub> | 58.9<sub>±1.3</sub> |
+| | Low | 17.7<sub>±1.6</sub> | 23.7<sub>±2.8</sub> | 17.9<sub>±2.6</sub> | 7.1<sub>±2.2</sub> | 57.2<sub>±1.2</sub> |
+| **GPT-5.6&nbsp;Luna** | High | 19.8<sub>±1.6</sub> | 23.7<sub>±2.7</sub> | 22.3<sub>±2.8</sub> | 9.3<sub>±2.5</sub> | 60.4<sub>±1.2</sub> |
+| | Med | 17.7<sub>±1.6</sub> | 22.0<sub>±2.7</sub> | 19.2<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 59.1<sub>±1.2</sub> |
+| | Low | 19.5<sub>±1.6</sub> | 25.0<sub>±2.8</sub> | 18.3<sub>±2.6</sub> | 12.1<sub>±2.7</sub> | 59.0<sub>±1.2</sub> |
+| **Gemini&nbsp;3.7&nbsp;Flash** | High | 20.3<sub>±1.6</sub> | 26.7<sub>±2.9</sub> | 21.9<sub>±2.8</sub> | 7.1<sub>±2.2</sub> | 58.1<sub>±1.3</sub> |
+| | Med | 21.5<sub>±1.7</sub> | 27.1<sub>±2.9</sub> | 24.1<sub>±2.9</sub> | 7.9<sub>±2.3</sub> | 61.8<sub>±1.2</sub> |
+| | Low | 20.5<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 20.5<sub>±2.7</sub> | 9.3<sub>±2.4</sub> | 60.0<sub>±1.2</sub> |
+| **Gemini&nbsp;3.6&nbsp;Flash** | High | 18.5<sub>±1.6</sub> | 24.6<sub>±2.8</sub> | 21.4<sub>±2.7</sub> | 3.6<sub>±1.6</sub> | 58.6<sub>±1.3</sub> |
+| | Med | 20.2<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 21.9<sub>±2.8</sub> | 5.7<sub>±2.0</sub> | 60.2<sub>±1.2</sub> |
+| | Low | 18.5<sub>±1.6</sub> | 23.3<sub>±2.7</sub> | 19.2<sub>±2.6</sub> | 9.3<sub>±2.5</sub> | 59.5<sub>±1.2</sub> |
+| **Gemini&nbsp;3.1&nbsp;Pro** | High | 12.0<sub>±1.3</sub> | 15.7<sub>±2.4</sub> | 12.1<sub>±2.2</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> |
+| | Med | 9.8<sub>±1.2</sub> | 11.4<sub>±2.1</sub> | 10.3<sub>±2.1</sub> | 6.4<sub>±2.1</sub> | 47.9<sub>±1.2</sub> |
+| | Low | 8.3<sub>±1.1</sub> | 10.2<sub>±2.0</sub> | 8.5<sub>±1.8</sub> | 5.0<sub>±1.9</sub> | 46.3<sub>±1.2</sub> |
+| **Gemini&nbsp;3.5&nbsp;Flash** | High | 3.0<sub>±0.7</sub> | 3.8<sub>±1.2</sub> | 2.7<sub>±1.1</sub> | 2.1<sub>±1.2</sub> | 25.9<sub>±1.1</sub> |
+| | Med | 3.2<sub>±0.7</sub> | 3.8<sub>±1.2</sub> | 3.6<sub>±1.2</sub> | 1.4<sub>±1.0</sub> | 29.9<sub>±1.1</sub> |
+| | Low | 13.5<sub>±1.4</sub> | 17.4<sub>±2.4</sub> | 14.3<sub>±2.4</sub> | 5.7<sub>±2.0</sub> | 47.3<sub>±1.3</sub> |
 
 </details>
 
