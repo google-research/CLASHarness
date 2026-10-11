@@ -107,23 +107,23 @@ Evaluating 15 frontier models across 600 benchmark episodes reveals that resolvi
 
 ### Main Benchmark Standings (600 Benchmark Episodes, High Effort)
 
-| Model | Effort | All&nbsp;Pass&nbsp;(%) | Easy&nbsp;(%) | Mid&nbsp;(%) | Hard&nbsp;(%) | Mean&nbsp;Score&nbsp;(%) | Cost&nbsp;/&nbsp;Tokens |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **GPT-6&nbsp;Astra** | High | **28.7**<sub>±1.9</sub> | **35.2**<sub>±3.1</sub> | **28.1**<sub>±3.1</sub> | **18.6**<sub>±3.3</sub> | **66.8**<sub>±1.2</sub> | \$3,003&nbsp;(663M) |
-| **Claude&nbsp;Opus&nbsp;5** | High | **25.2**<sub>±1.8</sub> | 32.2<sub>±3.0</sub> | 25.0<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 64.2<sub>±1.2</sub> | \$2,631&nbsp;(511M) |
-| **GPT-5.6&nbsp;Sol** | High | **24.5**<sub>±1.7</sub> | 31.4<sub>±3.0</sub> | 24.1<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 63.3<sub>±1.2</sub> | \$2,165&nbsp;(454M) |
-| **Claude&nbsp;Opus&nbsp;4.8** | High | **22.8**<sub>±1.7</sub> | 30.1<sub>±3.0</sub> | 23.7<sub>±2.8</sub> | 9.3<sub>±2.4</sub> | 62.1<sub>±1.2</sub> | \$2,933&nbsp;(571M) |
-| **Kimi&nbsp;K3** | High | **21.8**<sub>±1.7</sub> | 26.3<sub>±2.8</sub> | 23.2<sub>±2.9</sub> | 12.1<sub>±2.7</sub> | 55.9<sub>±1.4</sub> | \$2,173&nbsp;(706M) |
-| **Claude&nbsp;Sonnet&nbsp;5** | High | **20.8**<sub>±1.7</sub> | 28.0<sub>±2.9</sub> | 21.4<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 59.6<sub>±1.3</sub> | \$1,031&nbsp;(497M) |
-| **Gemini&nbsp;3.7&nbsp;Flash** | High | **20.3**<sub>±1.6</sub> | 26.7<sub>±2.9</sub> | 21.9<sub>±2.8</sub> | 7.1<sub>±2.2</sub> | 58.1<sub>±1.3</sub> | \$307&nbsp;(395M) |
-| **GPT-5.6&nbsp;Terra** | High | **20.0**<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 20.1<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 60.2<sub>±1.2</sub> | \$731&nbsp;(382M) |
-| **GPT-5.6&nbsp;Luna** | High | **19.8**<sub>±1.6</sub> | 23.7<sub>±2.7</sub> | 22.3<sub>±2.8</sub> | 9.3<sub>±2.5</sub> | 60.4<sub>±1.2</sub> | \$86&nbsp;(450M) |
-| **DeepSeek&nbsp;V4&nbsp;Pro**<sup>†</sup> | High | **19.8**<sub>±1.6</sub> | 24.2<sub>±2.8</sub> | 20.5<sub>±2.7</sub> | 11.4<sub>±2.7</sub> | 58.1<sub>±1.3</sub> | \$32&nbsp;(70M) |
-| **Gemini&nbsp;3.6&nbsp;Flash** | High | **18.5**<sub>±1.6</sub> | 24.6<sub>±2.8</sub> | 21.4<sub>±2.7</sub> | 3.6<sub>±1.6</sub> | 58.6<sub>±1.3</sub> | \$565&nbsp;(363M) |
-| **GLM-5.2&nbsp;FP8**<sup>†</sup> | High | **14.7**<sub>±1.4</sub> | 18.2<sub>±2.5</sub> | 16.5<sub>±2.5</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> | \$120&nbsp;(82M) |
-| **Gemini&nbsp;3.1&nbsp;Pro** | High | **12.0**<sub>±1.3</sub> | 15.7<sub>±2.4</sub> | 12.1<sub>±2.2</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> | \$578&nbsp;(280M) |
-| **DeepSeek&nbsp;V4&nbsp;Flash**<sup>†</sup> | High | **8.5**<sub>±1.1</sub> | 8.5<sub>±1.8</sub> | 11.2<sub>±2.1</sub> | 4.3<sub>±1.7</sub> | 37.5<sub>±1.3</sub> | N/A&nbsp;(95M) |
-| **Gemini&nbsp;3.5&nbsp;Flash** | High | **3.0**<sub>±0.7</sub> | 3.8<sub>±1.2</sub> | 2.7<sub>±1.1</sub> | 2.1<sub>±1.2</sub> | 25.9<sub>±1.1</sub> | \$712&nbsp;(445M) |
+| Model | Pass&nbsp;(%) | Easy&nbsp;(%) | Mid&nbsp;(%) | Hard&nbsp;(%) | Score&nbsp;(%) | Cost&nbsp;(Tokens) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **GPT-6&nbsp;Astra** | **28.7**<sub>±1.9</sub> | **35.2**<sub>±3.1</sub> | **28.1**<sub>±3.1</sub> | **18.6**<sub>±3.3</sub> | **66.8**<sub>±1.2</sub> | \$3,003&nbsp;(663M) |
+| **Claude&nbsp;Opus&nbsp;5** | **25.2**<sub>±1.8</sub> | 32.2<sub>±3.0</sub> | 25.0<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 64.2<sub>±1.2</sub> | \$2,631&nbsp;(511M) |
+| **GPT-5.6&nbsp;Sol** | **24.5**<sub>±1.7</sub> | 31.4<sub>±3.0</sub> | 24.1<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 63.3<sub>±1.2</sub> | \$2,165&nbsp;(454M) |
+| **Claude&nbsp;Opus&nbsp;4.8** | **22.8**<sub>±1.7</sub> | 30.1<sub>±3.0</sub> | 23.7<sub>±2.8</sub> | 9.3<sub>±2.4</sub> | 62.1<sub>±1.2</sub> | \$2,933&nbsp;(571M) |
+| **Kimi&nbsp;K3** | **21.8**<sub>±1.7</sub> | 26.3<sub>±2.8</sub> | 23.2<sub>±2.9</sub> | 12.1<sub>±2.7</sub> | 55.9<sub>±1.4</sub> | \$2,173&nbsp;(706M) |
+| **Claude&nbsp;Sonnet&nbsp;5** | **20.8**<sub>±1.7</sub> | 28.0<sub>±2.9</sub> | 21.4<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 59.6<sub>±1.3</sub> | \$1,031&nbsp;(497M) |
+| **Gemini&nbsp;3.7&nbsp;Flash** | **20.3**<sub>±1.6</sub> | 26.7<sub>±2.9</sub> | 21.9<sub>±2.8</sub> | 7.1<sub>±2.2</sub> | 58.1<sub>±1.3</sub> | \$307&nbsp;(395M) |
+| **GPT-5.6&nbsp;Terra** | **20.0**<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 20.1<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 60.2<sub>±1.2</sub> | \$731&nbsp;(382M) |
+| **GPT-5.6&nbsp;Luna** | **19.8**<sub>±1.6</sub> | 23.7<sub>±2.7</sub> | 22.3<sub>±2.8</sub> | 9.3<sub>±2.5</sub> | 60.4<sub>±1.2</sub> | \$86&nbsp;(450M) |
+| **DeepSeek&nbsp;V4&nbsp;Pro**<sup>†</sup> | **19.8**<sub>±1.6</sub> | 24.2<sub>±2.8</sub> | 20.5<sub>±2.7</sub> | 11.4<sub>±2.7</sub> | 58.1<sub>±1.3</sub> | \$32&nbsp;(70M) |
+| **Gemini&nbsp;3.6&nbsp;Flash** | **18.5**<sub>±1.6</sub> | 24.6<sub>±2.8</sub> | 21.4<sub>±2.7</sub> | 3.6<sub>±1.6</sub> | 58.6<sub>±1.3</sub> | \$565&nbsp;(363M) |
+| **GLM-5.2&nbsp;FP8**<sup>†</sup> | **14.7**<sub>±1.4</sub> | 18.2<sub>±2.5</sub> | 16.5<sub>±2.5</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> | \$120&nbsp;(82M) |
+| **Gemini&nbsp;3.1&nbsp;Pro** | **12.0**<sub>±1.3</sub> | 15.7<sub>±2.4</sub> | 12.1<sub>±2.2</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> | \$578&nbsp;(280M) |
+| **DeepSeek&nbsp;V4&nbsp;Flash**<sup>†</sup> | **8.5**<sub>±1.1</sub> | 8.5<sub>±1.8</sub> | 11.2<sub>±2.1</sub> | 4.3<sub>±1.7</sub> | 37.5<sub>±1.3</sub> | N/A&nbsp;(95M) |
+| **Gemini&nbsp;3.5&nbsp;Flash** | **3.0**<sub>±0.7</sub> | 3.8<sub>±1.2</sub> | 2.7<sub>±1.1</sub> | 2.1<sub>±1.2</sub> | 25.9<sub>±1.1</sub> | \$712&nbsp;(445M) |
 
 <sub><sup>†</sup>Text-only models evaluated using OCR transcripts of visual assets. Task difficulty is stratified by ground-truth reference trajectory length (<i>Easy</i>: ≤ 9 steps, <i>Mid</i>: 10–11 steps, <i>Hard</i>: ≥ 12 steps).</sub>
 
@@ -131,7 +131,7 @@ Evaluating 15 frontier models across 600 benchmark episodes reveals that resolvi
 <summary><b>Extended Reasoning Effort Sweep (High / Medium / Low across 10 API Models)</b></summary>
 <br>
 
-| Model | Effort | All&nbsp;Pass&nbsp;(%) | Easy&nbsp;(%) | Mid&nbsp;(%) | Hard&nbsp;(%) | Mean&nbsp;Score&nbsp;(%) |
+| Model | Effort | Pass&nbsp;(%) | Easy&nbsp;(%) | Mid&nbsp;(%) | Hard&nbsp;(%) | Score&nbsp;(%) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Claude&nbsp;Opus&nbsp;5** | High | 25.2<sub>±1.8</sub> | 32.2<sub>±3.0</sub> | 25.0<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 64.2<sub>±1.2</sub> |
 | | Med | **25.3**<sub>±1.8</sub> | **33.9**<sub>±3.1</sub> | 24.6<sub>±2.9</sub> | 12.1<sub>±2.7</sub> | 63.3<sub>±1.2</sub> |
