@@ -107,23 +107,159 @@ Evaluating 15 frontier models across 600 benchmark episodes reveals that resolvi
 
 ### Main Benchmark Standings (600 Benchmark Episodes, High Effort)
 
-| Model | Pass&nbsp;(%) | Easy&nbsp;(%) | Mid&nbsp;(%) | Hard&nbsp;(%) | Score&nbsp;(%) | Cost&nbsp;(Tokens) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **GPT-6&nbsp;Astra** | **28.7**<sub>±1.9</sub> | **35.2**<sub>±3.1</sub> | **28.1**<sub>±3.1</sub> | **18.6**<sub>±3.3</sub> | **66.8**<sub>±1.2</sub> | \$3,003&nbsp;(663M) |
-| **Claude&nbsp;Opus&nbsp;5** | **25.2**<sub>±1.8</sub> | 32.2<sub>±3.0</sub> | 25.0<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 64.2<sub>±1.2</sub> | \$2,631&nbsp;(511M) |
-| **GPT-5.6&nbsp;Sol** | **24.5**<sub>±1.7</sub> | 31.4<sub>±3.0</sub> | 24.1<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 63.3<sub>±1.2</sub> | \$2,165&nbsp;(454M) |
-| **Claude&nbsp;Opus&nbsp;4.8** | **22.8**<sub>±1.7</sub> | 30.1<sub>±3.0</sub> | 23.7<sub>±2.8</sub> | 9.3<sub>±2.4</sub> | 62.1<sub>±1.2</sub> | \$2,933&nbsp;(571M) |
-| **Kimi&nbsp;K3** | **21.8**<sub>±1.7</sub> | 26.3<sub>±2.8</sub> | 23.2<sub>±2.9</sub> | 12.1<sub>±2.7</sub> | 55.9<sub>±1.4</sub> | \$2,173&nbsp;(706M) |
-| **Claude&nbsp;Sonnet&nbsp;5** | **20.8**<sub>±1.7</sub> | 28.0<sub>±2.9</sub> | 21.4<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 59.6<sub>±1.3</sub> | \$1,031&nbsp;(497M) |
-| **Gemini&nbsp;3.7&nbsp;Flash** | **20.3**<sub>±1.6</sub> | 26.7<sub>±2.9</sub> | 21.9<sub>±2.8</sub> | 7.1<sub>±2.2</sub> | 58.1<sub>±1.3</sub> | \$307&nbsp;(395M) |
-| **GPT-5.6&nbsp;Terra** | **20.0**<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 20.1<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 60.2<sub>±1.2</sub> | \$731&nbsp;(382M) |
-| **GPT-5.6&nbsp;Luna** | **19.8**<sub>±1.6</sub> | 23.7<sub>±2.7</sub> | 22.3<sub>±2.8</sub> | 9.3<sub>±2.5</sub> | 60.4<sub>±1.2</sub> | \$86&nbsp;(450M) |
-| **DeepSeek&nbsp;V4&nbsp;Pro**<sup>†</sup> | **19.8**<sub>±1.6</sub> | 24.2<sub>±2.8</sub> | 20.5<sub>±2.7</sub> | 11.4<sub>±2.7</sub> | 58.1<sub>±1.3</sub> | \$32&nbsp;(70M) |
-| **Gemini&nbsp;3.6&nbsp;Flash** | **18.5**<sub>±1.6</sub> | 24.6<sub>±2.8</sub> | 21.4<sub>±2.7</sub> | 3.6<sub>±1.6</sub> | 58.6<sub>±1.3</sub> | \$565&nbsp;(363M) |
-| **GLM-5.2&nbsp;FP8**<sup>†</sup> | **14.7**<sub>±1.4</sub> | 18.2<sub>±2.5</sub> | 16.5<sub>±2.5</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> | \$120&nbsp;(82M) |
-| **Gemini&nbsp;3.1&nbsp;Pro** | **12.0**<sub>±1.3</sub> | 15.7<sub>±2.4</sub> | 12.1<sub>±2.2</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> | \$578&nbsp;(280M) |
-| **DeepSeek&nbsp;V4&nbsp;Flash**<sup>†</sup> | **8.5**<sub>±1.1</sub> | 8.5<sub>±1.8</sub> | 11.2<sub>±2.1</sub> | 4.3<sub>±1.7</sub> | 37.5<sub>±1.3</sub> | N/A&nbsp;(95M) |
-| **Gemini&nbsp;3.5&nbsp;Flash** | **3.0**<sub>±0.7</sub> | 3.8<sub>±1.2</sub> | 2.7<sub>±1.1</sub> | 2.1<sub>±1.2</sub> | 25.9<sub>±1.1</sub> | \$712&nbsp;(445M) |
+<table>
+<thead>
+  <tr>
+    <th rowspan="2" align="left">Model</th>
+    <th rowspan="2" align="center">All Pass<br>(%)</th>
+    <th colspan="3" align="center">Pass Rate by Difficulty (%)</th>
+    <th rowspan="2" align="center">Mean Score<br>(%)</th>
+    <th rowspan="2" align="center">Avg. Cost<br>($ / Tokens)</th>
+  </tr>
+  <tr>
+    <th align="center">Easy</th>
+    <th align="center">Mid</th>
+    <th align="center">Hard</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><b>GPT-6&nbsp;Astra</b></td>
+    <td align="center"><b>28.7</b><sub>±1.9</sub></td>
+    <td align="center"><b>35.2</b><sub>±3.1</sub></td>
+    <td align="center"><b>28.1</b><sub>±3.1</sub></td>
+    <td align="center"><b>18.6</b><sub>±3.3</sub></td>
+    <td align="center"><b>66.8</b><sub>±1.2</sub></td>
+    <td align="center">$3,003&nbsp;(663M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>Claude&nbsp;Opus&nbsp;5</b></td>
+    <td align="center"><b>25.2</b><sub>±1.8</sub></td>
+    <td align="center">32.2<sub>±3.0</sub></td>
+    <td align="center">25.0<sub>±2.9</sub></td>
+    <td align="center">13.6<sub>±2.9</sub></td>
+    <td align="center">64.2<sub>±1.2</sub></td>
+    <td align="center">$2,631&nbsp;(511M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>GPT-5.6&nbsp;Sol</b></td>
+    <td align="center"><b>24.5</b><sub>±1.7</sub></td>
+    <td align="center">31.4<sub>±3.0</sub></td>
+    <td align="center">24.1<sub>±2.9</sub></td>
+    <td align="center">13.6<sub>±2.9</sub></td>
+    <td align="center">63.3<sub>±1.2</sub></td>
+    <td align="center">$2,165&nbsp;(454M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>Claude&nbsp;Opus&nbsp;4.8</b></td>
+    <td align="center"><b>22.8</b><sub>±1.7</sub></td>
+    <td align="center">30.1<sub>±3.0</sub></td>
+    <td align="center">23.7<sub>±2.8</sub></td>
+    <td align="center">9.3<sub>±2.4</sub></td>
+    <td align="center">62.1<sub>±1.2</sub></td>
+    <td align="center">$2,933&nbsp;(571M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>Kimi&nbsp;K3</b></td>
+    <td align="center"><b>21.8</b><sub>±1.7</sub></td>
+    <td align="center">26.3<sub>±2.8</sub></td>
+    <td align="center">23.2<sub>±2.9</sub></td>
+    <td align="center">12.1<sub>±2.7</sub></td>
+    <td align="center">55.9<sub>±1.4</sub></td>
+    <td align="center">$2,173&nbsp;(706M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>Claude&nbsp;Sonnet&nbsp;5</b></td>
+    <td align="center"><b>20.8</b><sub>±1.7</sub></td>
+    <td align="center">28.0<sub>±2.9</sub></td>
+    <td align="center">21.4<sub>±2.7</sub></td>
+    <td align="center">7.9<sub>±2.3</sub></td>
+    <td align="center">59.6<sub>±1.3</sub></td>
+    <td align="center">$1,031&nbsp;(497M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>Gemini&nbsp;3.7&nbsp;Flash</b></td>
+    <td align="center"><b>20.3</b><sub>±1.6</sub></td>
+    <td align="center">26.7<sub>±2.9</sub></td>
+    <td align="center">21.9<sub>±2.8</sub></td>
+    <td align="center">7.1<sub>±2.2</sub></td>
+    <td align="center">58.1<sub>±1.3</sub></td>
+    <td align="center">$307&nbsp;(395M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>GPT-5.6&nbsp;Terra</b></td>
+    <td align="center"><b>20.0</b><sub>±1.6</sub></td>
+    <td align="center">27.1<sub>±2.9</sub></td>
+    <td align="center">20.1<sub>±2.7</sub></td>
+    <td align="center">7.9<sub>±2.3</sub></td>
+    <td align="center">60.2<sub>±1.2</sub></td>
+    <td align="center">$731&nbsp;(382M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>GPT-5.6&nbsp;Luna</b></td>
+    <td align="center"><b>19.8</b><sub>±1.6</sub></td>
+    <td align="center">23.7<sub>±2.7</sub></td>
+    <td align="center">22.3<sub>±2.8</sub></td>
+    <td align="center">9.3<sub>±2.5</sub></td>
+    <td align="center">60.4<sub>±1.2</sub></td>
+    <td align="center">$86&nbsp;(450M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>DeepSeek&nbsp;V4&nbsp;Pro</b><sup>†</sup></td>
+    <td align="center"><b>19.8</b><sub>±1.6</sub></td>
+    <td align="center">24.2<sub>±2.8</sub></td>
+    <td align="center">20.5<sub>±2.7</sub></td>
+    <td align="center">11.4<sub>±2.7</sub></td>
+    <td align="center">58.1<sub>±1.3</sub></td>
+    <td align="center">$32&nbsp;(70M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>Gemini&nbsp;3.6&nbsp;Flash</b></td>
+    <td align="center"><b>18.5</b><sub>±1.6</sub></td>
+    <td align="center">24.6<sub>±2.8</sub></td>
+    <td align="center">21.4<sub>±2.7</sub></td>
+    <td align="center">3.6<sub>±1.6</sub></td>
+    <td align="center">58.6<sub>±1.3</sub></td>
+    <td align="center">$565&nbsp;(363M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>GLM-5.2&nbsp;FP8</b><sup>†</sup></td>
+    <td align="center"><b>14.7</b><sub>±1.4</sub></td>
+    <td align="center">18.2<sub>±2.5</sub></td>
+    <td align="center">16.5<sub>±2.5</sub></td>
+    <td align="center">5.7<sub>±2.0</sub></td>
+    <td align="center">48.7<sub>±1.3</sub></td>
+    <td align="center">$120&nbsp;(82M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>Gemini&nbsp;3.1&nbsp;Pro</b></td>
+    <td align="center"><b>12.0</b><sub>±1.3</sub></td>
+    <td align="center">15.7<sub>±2.4</sub></td>
+    <td align="center">12.1<sub>±2.2</sub></td>
+    <td align="center">5.7<sub>±2.0</sub></td>
+    <td align="center">48.7<sub>±1.3</sub></td>
+    <td align="center">$578&nbsp;(280M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>DeepSeek&nbsp;V4&nbsp;Flash</b><sup>†</sup></td>
+    <td align="center"><b>8.5</b><sub>±1.1</sub></td>
+    <td align="center">8.5<sub>±1.8</sub></td>
+    <td align="center">11.2<sub>±2.1</sub></td>
+    <td align="center">4.3<sub>±1.7</sub></td>
+    <td align="center">37.5<sub>±1.3</sub></td>
+    <td align="center">N/A&nbsp;(95M)</td>
+  </tr>
+  <tr>
+    <td align="left"><b>Gemini&nbsp;3.5&nbsp;Flash</b></td>
+    <td align="center"><b>3.0</b><sub>±0.7</sub></td>
+    <td align="center">3.8<sub>±1.2</sub></td>
+    <td align="center">2.7<sub>±1.1</sub></td>
+    <td align="center">2.1<sub>±1.2</sub></td>
+    <td align="center">25.9<sub>±1.1</sub></td>
+    <td align="center">$712&nbsp;(445M)</td>
+  </tr>
+</tbody>
+</table>
 
 <sub><sup>†</sup>Text-only models evaluated using OCR transcripts of visual assets. Task difficulty is stratified by ground-truth reference trajectory length (<i>Easy</i>: ≤ 9 steps, <i>Mid</i>: 10–11 steps, <i>Hard</i>: ≥ 12 steps).</sub>
 
@@ -131,38 +267,274 @@ Evaluating 15 frontier models across 600 benchmark episodes reveals that resolvi
 <summary><b>Extended Reasoning Effort Sweep (High / Medium / Low across 10 API Models)</b></summary>
 <br>
 
-| Model | Effort | Pass&nbsp;(%) | Easy&nbsp;(%) | Mid&nbsp;(%) | Hard&nbsp;(%) | Score&nbsp;(%) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Claude&nbsp;Opus&nbsp;5** | High | 25.2<sub>±1.8</sub> | 32.2<sub>±3.0</sub> | 25.0<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 64.2<sub>±1.2</sub> |
-| | Med | **25.3**<sub>±1.8</sub> | **33.9**<sub>±3.1</sub> | 24.6<sub>±2.9</sub> | 12.1<sub>±2.7</sub> | 63.3<sub>±1.2</sub> |
-| | Low | 23.5<sub>±1.7</sub> | 30.5<sub>±3.0</sub> | 23.7<sub>±2.9</sub> | 11.4<sub>±2.7</sub> | 60.9<sub>±1.3</sub> |
-| **Claude&nbsp;Opus&nbsp;4.8** | High | 22.8<sub>±1.7</sub> | 30.1<sub>±3.0</sub> | 23.7<sub>±2.8</sub> | 9.3<sub>±2.4</sub> | 62.1<sub>±1.2</sub> |
-| | Med | 23.8<sub>±1.7</sub> | 29.7<sub>±3.0</sub> | 24.6<sub>±2.9</sub> | 12.9<sub>±2.8</sub> | 61.8<sub>±1.2</sub> |
-| | Low | 21.3<sub>±1.7</sub> | 28.0<sub>±2.9</sub> | 21.4<sub>±2.7</sub> | 10.0<sub>±2.6</sub> | 60.8<sub>±1.2</sub> |
-| **Claude&nbsp;Sonnet&nbsp;5** | High | 20.8<sub>±1.7</sub> | 28.0<sub>±2.9</sub> | 21.4<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 59.6<sub>±1.3</sub> |
-| | Med | 17.0<sub>±1.5</sub> | 25.4<sub>±2.8</sub> | 17.0<sub>±2.5</sub> | 2.9<sub>±1.4</sub> | 57.0<sub>±1.3</sub> |
-| | Low | 13.8<sub>±1.4</sub> | 20.8<sub>±2.6</sub> | 12.9<sub>±2.3</sub> | 3.6<sub>±1.6</sub> | 53.7<sub>±1.2</sub> |
-| **GPT-5.6&nbsp;Sol** | High | 24.5<sub>±1.7</sub> | 31.4<sub>±3.0</sub> | 24.1<sub>±2.9</sub> | 13.6<sub>±2.9</sub> | 63.3<sub>±1.2</sub> |
-| | Med | 23.0<sub>±1.7</sub> | 29.2<sub>±3.0</sub> | 24.6<sub>±2.9</sub> | 10.0<sub>±2.5</sub> | 62.8<sub>±1.2</sub> |
-| | Low | 20.8<sub>±1.7</sub> | 26.3<sub>±2.9</sub> | 22.8<sub>±2.8</sub> | 8.6<sub>±2.4</sub> | 61.0<sub>±1.2</sub> |
-| **GPT-5.6&nbsp;Terra** | High | 20.0<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 20.1<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 60.2<sub>±1.2</sub> |
-| | Med | 20.0<sub>±1.6</sub> | 25.8<sub>±2.9</sub> | 20.1<sub>±2.7</sub> | 10.0<sub>±2.5</sub> | 58.9<sub>±1.3</sub> |
-| | Low | 17.7<sub>±1.6</sub> | 23.7<sub>±2.8</sub> | 17.9<sub>±2.6</sub> | 7.1<sub>±2.2</sub> | 57.2<sub>±1.2</sub> |
-| **GPT-5.6&nbsp;Luna** | High | 19.8<sub>±1.6</sub> | 23.7<sub>±2.7</sub> | 22.3<sub>±2.8</sub> | 9.3<sub>±2.5</sub> | 60.4<sub>±1.2</sub> |
-| | Med | 17.7<sub>±1.6</sub> | 22.0<sub>±2.7</sub> | 19.2<sub>±2.7</sub> | 7.9<sub>±2.3</sub> | 59.1<sub>±1.2</sub> |
-| | Low | 19.5<sub>±1.6</sub> | 25.0<sub>±2.8</sub> | 18.3<sub>±2.6</sub> | 12.1<sub>±2.7</sub> | 59.0<sub>±1.2</sub> |
-| **Gemini&nbsp;3.7&nbsp;Flash** | High | 20.3<sub>±1.6</sub> | 26.7<sub>±2.9</sub> | 21.9<sub>±2.8</sub> | 7.1<sub>±2.2</sub> | 58.1<sub>±1.3</sub> |
-| | Med | 21.5<sub>±1.7</sub> | 27.1<sub>±2.9</sub> | 24.1<sub>±2.9</sub> | 7.9<sub>±2.3</sub> | 61.8<sub>±1.2</sub> |
-| | Low | 20.5<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 20.5<sub>±2.7</sub> | 9.3<sub>±2.4</sub> | 60.0<sub>±1.2</sub> |
-| **Gemini&nbsp;3.6&nbsp;Flash** | High | 18.5<sub>±1.6</sub> | 24.6<sub>±2.8</sub> | 21.4<sub>±2.7</sub> | 3.6<sub>±1.6</sub> | 58.6<sub>±1.3</sub> |
-| | Med | 20.2<sub>±1.6</sub> | 27.1<sub>±2.9</sub> | 21.9<sub>±2.8</sub> | 5.7<sub>±2.0</sub> | 60.2<sub>±1.2</sub> |
-| | Low | 18.5<sub>±1.6</sub> | 23.3<sub>±2.7</sub> | 19.2<sub>±2.6</sub> | 9.3<sub>±2.5</sub> | 59.5<sub>±1.2</sub> |
-| **Gemini&nbsp;3.1&nbsp;Pro** | High | 12.0<sub>±1.3</sub> | 15.7<sub>±2.4</sub> | 12.1<sub>±2.2</sub> | 5.7<sub>±2.0</sub> | 48.7<sub>±1.3</sub> |
-| | Med | 9.8<sub>±1.2</sub> | 11.4<sub>±2.1</sub> | 10.3<sub>±2.1</sub> | 6.4<sub>±2.1</sub> | 47.9<sub>±1.2</sub> |
-| | Low | 8.3<sub>±1.1</sub> | 10.2<sub>±2.0</sub> | 8.5<sub>±1.8</sub> | 5.0<sub>±1.9</sub> | 46.3<sub>±1.2</sub> |
-| **Gemini&nbsp;3.5&nbsp;Flash** | High | 3.0<sub>±0.7</sub> | 3.8<sub>±1.2</sub> | 2.7<sub>±1.1</sub> | 2.1<sub>±1.2</sub> | 25.9<sub>±1.1</sub> |
-| | Med | 3.2<sub>±0.7</sub> | 3.8<sub>±1.2</sub> | 3.6<sub>±1.2</sub> | 1.4<sub>±1.0</sub> | 29.9<sub>±1.1</sub> |
-| | Low | 13.5<sub>±1.4</sub> | 17.4<sub>±2.4</sub> | 14.3<sub>±2.4</sub> | 5.7<sub>±2.0</sub> | 47.3<sub>±1.3</sub> |
+<table>
+<thead>
+  <tr>
+    <th rowspan="2" align="left">Model</th>
+    <th rowspan="2" align="center">Effort</th>
+    <th rowspan="2" align="center">All Pass<br>(%)</th>
+    <th colspan="3" align="center">Pass Rate by Difficulty (%)</th>
+    <th rowspan="2" align="center">Mean Score<br>(%)</th>
+  </tr>
+  <tr>
+    <th align="center">Easy</th>
+    <th align="center">Mid</th>
+    <th align="center">Hard</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td rowspan="3" align="left"><b>Claude&nbsp;Opus&nbsp;5</b></td>
+    <td align="center">High</td>
+    <td align="center">25.2<sub>±1.8</sub></td>
+    <td align="center">32.2<sub>±3.0</sub></td>
+    <td align="center">25.0<sub>±2.9</sub></td>
+    <td align="center">13.6<sub>±2.9</sub></td>
+    <td align="center">64.2<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center"><b>25.3</b><sub>±1.8</sub></td>
+    <td align="center"><b>33.9</b><sub>±3.1</sub></td>
+    <td align="center">24.6<sub>±2.9</sub></td>
+    <td align="center">12.1<sub>±2.7</sub></td>
+    <td align="center">63.3<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">23.5<sub>±1.7</sub></td>
+    <td align="center">30.5<sub>±3.0</sub></td>
+    <td align="center">23.7<sub>±2.9</sub></td>
+    <td align="center">11.4<sub>±2.7</sub></td>
+    <td align="center">60.9<sub>±1.3</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>Claude&nbsp;Opus&nbsp;4.8</b></td>
+    <td align="center">High</td>
+    <td align="center">22.8<sub>±1.7</sub></td>
+    <td align="center">30.1<sub>±3.0</sub></td>
+    <td align="center">23.7<sub>±2.8</sub></td>
+    <td align="center">9.3<sub>±2.4</sub></td>
+    <td align="center">62.1<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">23.8<sub>±1.7</sub></td>
+    <td align="center">29.7<sub>±3.0</sub></td>
+    <td align="center">24.6<sub>±2.9</sub></td>
+    <td align="center">12.9<sub>±2.8</sub></td>
+    <td align="center">61.8<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">21.3<sub>±1.7</sub></td>
+    <td align="center">28.0<sub>±2.9</sub></td>
+    <td align="center">21.4<sub>±2.7</sub></td>
+    <td align="center">10.0<sub>±2.6</sub></td>
+    <td align="center">60.8<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>Claude&nbsp;Sonnet&nbsp;5</b></td>
+    <td align="center">High</td>
+    <td align="center">20.8<sub>±1.7</sub></td>
+    <td align="center">28.0<sub>±2.9</sub></td>
+    <td align="center">21.4<sub>±2.7</sub></td>
+    <td align="center">7.9<sub>±2.3</sub></td>
+    <td align="center">59.6<sub>±1.3</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">17.0<sub>±1.5</sub></td>
+    <td align="center">25.4<sub>±2.8</sub></td>
+    <td align="center">17.0<sub>±2.5</sub></td>
+    <td align="center">2.9<sub>±1.4</sub></td>
+    <td align="center">57.0<sub>±1.3</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">13.8<sub>±1.4</sub></td>
+    <td align="center">20.8<sub>±2.6</sub></td>
+    <td align="center">12.9<sub>±2.3</sub></td>
+    <td align="center">3.6<sub>±1.6</sub></td>
+    <td align="center">53.7<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>GPT-5.6&nbsp;Sol</b></td>
+    <td align="center">High</td>
+    <td align="center">24.5<sub>±1.7</sub></td>
+    <td align="center">31.4<sub>±3.0</sub></td>
+    <td align="center">24.1<sub>±2.9</sub></td>
+    <td align="center">13.6<sub>±2.9</sub></td>
+    <td align="center">63.3<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">23.0<sub>±1.7</sub></td>
+    <td align="center">29.2<sub>±3.0</sub></td>
+    <td align="center">24.6<sub>±2.9</sub></td>
+    <td align="center">10.0<sub>±2.5</sub></td>
+    <td align="center">62.8<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">20.8<sub>±1.7</sub></td>
+    <td align="center">26.3<sub>±2.9</sub></td>
+    <td align="center">22.8<sub>±2.8</sub></td>
+    <td align="center">8.6<sub>±2.4</sub></td>
+    <td align="center">61.0<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>GPT-5.6&nbsp;Terra</b></td>
+    <td align="center">High</td>
+    <td align="center">20.0<sub>±1.6</sub></td>
+    <td align="center">27.1<sub>±2.9</sub></td>
+    <td align="center">20.1<sub>±2.7</sub></td>
+    <td align="center">7.9<sub>±2.3</sub></td>
+    <td align="center">60.2<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">20.0<sub>±1.6</sub></td>
+    <td align="center">25.8<sub>±2.9</sub></td>
+    <td align="center">20.1<sub>±2.7</sub></td>
+    <td align="center">10.0<sub>±2.5</sub></td>
+    <td align="center">58.9<sub>±1.3</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">17.7<sub>±1.6</sub></td>
+    <td align="center">23.7<sub>±2.8</sub></td>
+    <td align="center">17.9<sub>±2.6</sub></td>
+    <td align="center">7.1<sub>±2.2</sub></td>
+    <td align="center">57.2<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>GPT-5.6&nbsp;Luna</b></td>
+    <td align="center">High</td>
+    <td align="center">19.8<sub>±1.6</sub></td>
+    <td align="center">23.7<sub>±2.7</sub></td>
+    <td align="center">22.3<sub>±2.8</sub></td>
+    <td align="center">9.3<sub>±2.5</sub></td>
+    <td align="center">60.4<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">17.7<sub>±1.6</sub></td>
+    <td align="center">22.0<sub>±2.7</sub></td>
+    <td align="center">19.2<sub>±2.7</sub></td>
+    <td align="center">7.9<sub>±2.3</sub></td>
+    <td align="center">59.1<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">19.5<sub>±1.6</sub></td>
+    <td align="center">25.0<sub>±2.8</sub></td>
+    <td align="center">18.3<sub>±2.6</sub></td>
+    <td align="center">12.1<sub>±2.7</sub></td>
+    <td align="center">59.0<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>Gemini&nbsp;3.7&nbsp;Flash</b></td>
+    <td align="center">High</td>
+    <td align="center">20.3<sub>±1.6</sub></td>
+    <td align="center">26.7<sub>±2.9</sub></td>
+    <td align="center">21.9<sub>±2.8</sub></td>
+    <td align="center">7.1<sub>±2.2</sub></td>
+    <td align="center">58.1<sub>±1.3</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">21.5<sub>±1.7</sub></td>
+    <td align="center">27.1<sub>±2.9</sub></td>
+    <td align="center">24.1<sub>±2.9</sub></td>
+    <td align="center">7.9<sub>±2.3</sub></td>
+    <td align="center">61.8<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">20.5<sub>±1.6</sub></td>
+    <td align="center">27.1<sub>±2.9</sub></td>
+    <td align="center">20.5<sub>±2.7</sub></td>
+    <td align="center">9.3<sub>±2.4</sub></td>
+    <td align="center">60.0<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>Gemini&nbsp;3.6&nbsp;Flash</b></td>
+    <td align="center">High</td>
+    <td align="center">18.5<sub>±1.6</sub></td>
+    <td align="center">24.6<sub>±2.8</sub></td>
+    <td align="center">21.4<sub>±2.7</sub></td>
+    <td align="center">3.6<sub>±1.6</sub></td>
+    <td align="center">58.6<sub>±1.3</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">20.2<sub>±1.6</sub></td>
+    <td align="center">27.1<sub>±2.9</sub></td>
+    <td align="center">21.9<sub>±2.8</sub></td>
+    <td align="center">5.7<sub>±2.0</sub></td>
+    <td align="center">60.2<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">18.5<sub>±1.6</sub></td>
+    <td align="center">23.3<sub>±2.7</sub></td>
+    <td align="center">19.2<sub>±2.6</sub></td>
+    <td align="center">9.3<sub>±2.5</sub></td>
+    <td align="center">59.5<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>Gemini&nbsp;3.1&nbsp;Pro</b></td>
+    <td align="center">High</td>
+    <td align="center">12.0<sub>±1.3</sub></td>
+    <td align="center">15.7<sub>±2.4</sub></td>
+    <td align="center">12.1<sub>±2.2</sub></td>
+    <td align="center">5.7<sub>±2.0</sub></td>
+    <td align="center">48.7<sub>±1.3</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">9.8<sub>±1.2</sub></td>
+    <td align="center">11.4<sub>±2.1</sub></td>
+    <td align="center">10.3<sub>±2.1</sub></td>
+    <td align="center">6.4<sub>±2.1</sub></td>
+    <td align="center">47.9<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">8.3<sub>±1.1</sub></td>
+    <td align="center">10.2<sub>±2.0</sub></td>
+    <td align="center">8.5<sub>±1.8</sub></td>
+    <td align="center">5.0<sub>±1.9</sub></td>
+    <td align="center">46.3<sub>±1.2</sub></td>
+  </tr>
+  <tr>
+    <td rowspan="3" align="left"><b>Gemini&nbsp;3.5&nbsp;Flash</b></td>
+    <td align="center">High</td>
+    <td align="center">3.0<sub>±0.7</sub></td>
+    <td align="center">3.8<sub>±1.2</sub></td>
+    <td align="center">2.7<sub>±1.1</sub></td>
+    <td align="center">2.1<sub>±1.2</sub></td>
+    <td align="center">25.9<sub>±1.1</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Med</td>
+    <td align="center">3.2<sub>±0.7</sub></td>
+    <td align="center">3.8<sub>±1.2</sub></td>
+    <td align="center">3.6<sub>±1.2</sub></td>
+    <td align="center">1.4<sub>±1.0</sub></td>
+    <td align="center">29.9<sub>±1.1</sub></td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td align="center">13.5<sub>±1.4</sub></td>
+    <td align="center">17.4<sub>±2.4</sub></td>
+    <td align="center">14.3<sub>±2.4</sub></td>
+    <td align="center">5.7<sub>±2.0</sub></td>
+    <td align="center">47.3<sub>±1.3</sub></td>
+  </tr>
+</tbody>
+</table>
 
 </details>
 
