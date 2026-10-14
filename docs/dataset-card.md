@@ -58,11 +58,11 @@ SHA-256 rollup per component; verification only checks the components you actual
 | Component | Size | What it is |
 | --- | --- | --- |
 | `eval-v8` ★ | 2.8 GB | Primary 20-step panel: 14 models (10 API effort-swept + 4 open-weight at high), plus the main-paper figures (the paper additionally reports `GPT-6 Astra` at 40 steps as the 15th model). |
-| `tasks-v8` ★ | 5.7 GB | Compiled task specs for the primary corpus (generator `gemini-3.6-flash`). |
-| `splits-v8` ★ | 58 KB | Official train/dev/test split, 420/90/90 of 600 rounds, held out by seed. |
+| `tasks-v8` ★ | 5.7 GB | Compiled task specs for all 600 episodes of the primary corpus (generator `gemini-3.6-flash`). |
+| `splits-v8` ★ | 58 KB | Episode index files (`datasets/total.txt` listing all 600 evaluated episodes, plus optional subset files). Required by `examples/train_and_eval.py --split total`. |
 | `eval-sonnet5` | 1.9 GB | Generator ablation, arm B. |
 | `tasks-sonnet5` | 7.1 GB | Task specs for arm B (generator `claude-sonnet-5`). |
-| `splits-sonnet5` | 58 KB | Split for arm B, same 420/90/90 shape. |
+| `splits-sonnet5` | 58 KB | Episode index files (`datasets/total.txt`) for arm B. |
 | `eval-budget30` | 440 MB | Step-budget ablation at 30 steps. |
 | `eval-budget40` | 577 MB | Step-budget ablation at 40 steps. |
 | `eval-blind` | 219 MB | Text-only arm: the same rounds with the images withheld. |
@@ -84,7 +84,7 @@ eval_results/
   data_sonnet_5/  data_3_6_flash_v8_{blind,budget30,budget40}/
 multiagent_conflict_data_v8_Gemini_3_6_flash/
   tasks/<task_id>/specs.json            # tasks-v8
-  datasets/{train,dev,test,total}.txt   # splits-v8
+  datasets/total.txt                    # splits-v8 (600-episode index for --split total)
 multiagent_conflict_data_Gemini_Sonnet_5/
 scenarios/conflict_vlm_v8_3.6_flash/    # scenarios-v8
 scenarios/conflict_vlm_sonnet_5/
@@ -121,8 +121,9 @@ transcripts; `ground_truth` and `check_results` are where that grading lives.
 ## Design
 
 600 rounds: 20 scenario seeds covering 15 conflict archetypes across 5 top-level categories,
-3 scenario versions per seed, 10 rounds per version. Splits hold out whole seeds — 420 train,
-90 dev, 90 test — under a fixed hash salt, so no round of an episode leaks across a boundary.
+3 scenario versions per seed, 10 rounds per version. All 600 rounds are evaluated directly
+(`--split total`), stratified by reference trajectory length into Easy (236 rounds, ≤ 9 steps),
+Mid (224 rounds, 10–11 steps), and Hard (140 rounds, ≥ 12 steps).
 
 The 20-step panel in `eval-v8` covers 14 models: ten API endpoints exposing a reasoning-effort
 knob (swept across `low`/`medium`/`high`) and four open-weight models run at `high` only. The

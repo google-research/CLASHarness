@@ -32,10 +32,11 @@ configuration.
 
 WHICH COMPONENTS YOU NEED depends on what you are reproducing. `--list` prints
 the table; the short version is that `eval-v8` plus `tasks-v8` covers every
-main-paper figure, `splits-v8` is the 58 KB train/dev/test definition you want
-if you are treating this as a benchmark rather than replicating the paper, and
-the rest are ablation arms. Nothing here is needed to run the test suite or to
-generate a fresh corpus of your own -- only to recompute the published numbers.
+main-paper figure, `splits-v8` is the 58 KB episode index (`datasets/total.txt`)
+required by `examples/train_and_eval.py --split total`, and the rest are
+ablation arms. Nothing here is needed to run the test suite or to generate a
+fresh corpus of your own -- only to recompute the published numbers or evaluate
+on the released 600-round benchmark.
 
 USAGE
     python tools/download_data.py --list
@@ -81,10 +82,8 @@ COMPONENTS = {
     "splits-v8": (
         "multiagent_conflict_data_v8_Gemini_3_6_flash/datasets",
         "58 KB",
-        "The official train/dev/test split for the primary corpus: 420/90/90 "
-        "of 600 rounds, held out by seed. Not read by analysis/ -- the paper "
-        "reports the whole corpus -- but it is what makes this usable as a "
-        "benchmark rather than a dump, so it is fetched by default.",
+        "Episode index files (datasets/total.txt for all 600 benchmark rounds) "
+        "required by examples/train_and_eval.py --split total.",
     ),
     "eval-sonnet5": (
         "eval_results/data_sonnet_5",
@@ -99,7 +98,7 @@ COMPONENTS = {
     "splits-sonnet5": (
         "multiagent_conflict_data_Gemini_Sonnet_5/datasets",
         "58 KB",
-        "The train/dev/test split for the arm-B corpus, same 420/90/90 shape.",
+        "Episode index files (datasets/total.txt) for the arm-B corpus.",
     ),
     "eval-budget30": (
         "eval_results/data_3_6_flash_v8_budget30",

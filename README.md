@@ -674,8 +674,8 @@ An auditing agent evaluates an expense report. A legacy portal cache reports an 
 | :--- | :---: | :--- |
 | **Conflict Seeds** | **20** | Diverse domains across system admin, finance, cloud deployment, and IAM |
 | **Scenario Packages** | **60** | 3 multi-round scenario packages generated per seed |
-| **Evaluation Episodes** | **600** | 10 evaluation rounds per package |
-| **Split Structure** | **420 / 90 / 90** | Train / Dev / Test strictly held-out by seed hash |
+| **Evaluation Episodes** | **600** | 10 evaluation rounds per package (evaluated in full via `--split total`) |
+| **Difficulty Bands** | **236 / 224 / 140** | Easy (≤ 9 steps) / Mid (10–11 steps) / Hard (≥ 12 steps) across all 600 episodes |
 | **Conflict Plugins** | **23** | Covering challenges, coordination protocols, and subagent interactions |
 | **State Protocols** | **7** | `approval`, `booking`, `containment`, `deploy`, `lock`, `pairing`, `review` |
 | **Execution Modes** | **5** | `multi` (default), `mock`, `martin`, `real`, `hybrid` |
@@ -686,13 +686,13 @@ An auditing agent evaluates an expense report. A legacy portal cache reports an 
 ## <a id="dataset-and-artifacts"></a>📦 Dataset & Artifacts
 
 - **Shipped with Repository (~50 MB)**: All 20 conflict seeds, 1,616 base computer-use task definitions, generation recipes, conflict plugins, and hermetic tests.
-- **Published Evaluation Corpus**: Full evaluation trees, compiled task specifications, and split definitions are hosted on Hugging Face at [**`yuxianglai117/CLASHarness`**](https://huggingface.co/datasets/yuxianglai117/CLASHarness).
+- **Published Evaluation Corpus**: Full evaluation trees, compiled task specifications, and episode index files are hosted on Hugging Face at [**`yuxianglai117/CLASHarness`**](https://huggingface.co/datasets/yuxianglai117/CLASHarness).
 - **Known issues**: checks found unfair after submission, and how much they move the results, are listed in the [dataset card](docs/dataset-card.md#known-issues). The published numbers use the corpus as released.
 
 ```bash
 pip install huggingface_hub
 
-# Download evaluation panel, task specs, and split definitions (8.5 GB)
+# Download evaluation panel, 600 task specs, and episode index (8.5 GB)
 python tools/download_data.py --repo yuxianglai117/CLASHarness --component eval-v8 --component tasks-v8 --component splits-v8
 
 # Verify artifact integrity
