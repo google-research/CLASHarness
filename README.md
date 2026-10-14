@@ -6,7 +6,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-2BA02D.svg?style=flat-square)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![Preprint: arXiv](https://img.shields.io/badge/arXiv-Preprint-B31B1B.svg?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org)
-[![Hugging Face](https://img.shields.io/badge/Dataset-Hugging%20Face-FFA000.svg?style=flat-square&logo=huggingface&logoColor=white)](https://huggingface.co/datasets)
+[![Hugging Face](https://img.shields.io/badge/Dataset-Hugging%20Face-FFA000.svg?style=flat-square&logo=huggingface&logoColor=white)](https://huggingface.co/datasets/yuxianglai117/CLASHarness)
 [![Google Research](https://img.shields.io/badge/Google-Research-4285F4.svg?style=flat-square&logo=google&logoColor=white)](https://research.google)
 
 <p align="center">
@@ -686,14 +686,14 @@ An auditing agent evaluates an expense report. A legacy portal cache reports an 
 ## <a id="dataset-and-artifacts"></a>📦 Dataset & Artifacts
 
 - **Shipped with Repository (~50 MB)**: All 20 conflict seeds, 1,616 base computer-use task definitions, generation recipes, conflict plugins, and hermetic tests.
-- **Published Evaluation Corpus (46.3 GB)**: Full evaluation trees, rendered multimodal visual assets, and reference trajectories are hosted on Hugging Face.
+- **Published Evaluation Corpus**: Full evaluation trees, compiled task specifications, and split definitions are hosted on Hugging Face at [**`yuxianglai117/CLASHarness`**](https://huggingface.co/datasets/yuxianglai117/CLASHarness).
 - **Known issues**: checks found unfair after submission, and how much they move the results, are listed in the [dataset card](docs/dataset-card.md#known-issues). The published numbers use the corpus as released.
 
 ```bash
 pip install huggingface_hub
 
 # Download evaluation panel, task specs, and split definitions (8.5 GB)
-python tools/download_data.py --component eval-v8 --component tasks-v8 --component splits-v8
+python tools/download_data.py --repo yuxianglai117/CLASHarness --component eval-v8 --component tasks-v8 --component splits-v8
 
 # Verify artifact integrity
 python tools/checksum_corpus.py --root data --verify CHECKSUMS.txt

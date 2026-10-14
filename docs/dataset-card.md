@@ -37,12 +37,12 @@ each component at the one path `analysis/corpus.py` resolves against, and it let
 8.5 GB you need instead of the 46.3 GB you don't.
 
 ```bash
-git clone https://github.com/google-research/CLASHarness && cd clash-harness
+git clone https://github.com/google-research/CLASHarness.git && cd CLASHarness
 pip install -e . huggingface_hub
 
-python tools/download_data.py --list                     # the manifest below
-python tools/download_data.py --repo <hf-user>/<dataset> # the default set
-python tools/download_data.py --repo <hf-user>/<dataset> --all
+python tools/download_data.py --list                                   # the manifest below
+python tools/download_data.py --repo yuxianglai117/CLASHarness         # the default set
+python tools/download_data.py --repo yuxianglai117/CLASHarness --all
 
 python tools/checksum_corpus.py --root data --verify CHECKSUMS.txt
 ```

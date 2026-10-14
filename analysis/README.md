@@ -37,11 +37,11 @@ These are data files, not scripts; [docs/dataset-card.md](../docs/dataset-card.m
 ## Running the Reproduction
 
 ### 1. Download the Evaluation Corpus
-The analysis scripts read from `data/` at the repository root (or the directory specified by `CLASHARNESS_DATA_ROOT`). To download the official evaluation trees:
+The analysis scripts read from `data/` at the repository root (or the directory specified by `CLASHARNESS_DATA_ROOT`). To download the official evaluation trees from [`yuxianglai117/CLASHarness`](https://huggingface.co/datasets/yuxianglai117/CLASHarness):
 
 ```bash
 pip install huggingface_hub
-python tools/download_data.py --component eval-v8 --component tasks-v8 --component splits-v8
+python tools/download_data.py --repo yuxianglai117/CLASHarness --component eval-v8 --component tasks-v8 --component splits-v8
 python tools/checksum_corpus.py --root data --verify CHECKSUMS.txt
 ```
 

@@ -39,9 +39,9 @@ generate a fresh corpus of your own -- only to recompute the published numbers.
 
 USAGE
     python tools/download_data.py --list
-    python tools/download_data.py --repo <hf-user>/<hf-dataset>
-    python tools/download_data.py --repo ... --component eval-v8 --component tasks-v8
-    CLASHARNESS_HF_REPO=<hf-user>/<hf-dataset> python tools/download_data.py --all
+    python tools/download_data.py --repo yuxianglai117/CLASHarness
+    python tools/download_data.py --component eval-v8 --component tasks-v8
+    CLASHARNESS_HF_REPO=yuxianglai117/CLASHarness python tools/download_data.py --all
 
 Requires `huggingface_hub` (`pip install huggingface_hub`), which is not a
 dependency of the harness itself.
@@ -55,6 +55,7 @@ import sys
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_ROOT = os.environ.get(
     "CLASHARNESS_DATA_ROOT", os.path.join(REPO_ROOT, "data"))
+DEFAULT_REPO = "yuxianglai117/CLASHarness"
 
 # key -> (destination under DATA_ROOT, approximate on-disk size, what it is for)
 #
@@ -188,9 +189,9 @@ def _wrap(text: str, width: int) -> list[str]:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--repo", default=os.environ.get("CLASHARNESS_HF_REPO"),
-                    help="Hugging Face dataset repo id, e.g. user/clash-harness-corpus "
-                         "(or set CLASHARNESS_HF_REPO)")
+    ap.add_argument("--repo", default=os.environ.get("CLASHARNESS_HF_REPO", DEFAULT_REPO),
+                    help=f"Hugging Face dataset repo id (default: {DEFAULT_REPO}, "
+                         "or set CLASHARNESS_HF_REPO)")
     # One selection mode per run: letting --all or --default quietly win over
     # --component would fetch something other than what was named.
     which = ap.add_mutually_exclusive_group()
