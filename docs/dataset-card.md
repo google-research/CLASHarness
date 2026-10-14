@@ -49,7 +49,23 @@ python tools/checksum_corpus.py --root data --verify CHECKSUMS.txt
 
 Everything lands under `data/` at the repository root; override with `CLASHARNESS_DATA_ROOT`.
 
-Run the last command. A truncated component does not announce itself — `analysis/` will happily
+To evaluate a model on the downloaded 600-episode benchmark (`tasks-v8` + `splits-v8`):
+
+```bash
+python examples/train_and_eval.py \
+  --agent llm \
+  --llm-provider gemini --model gemini-3.6-flash \
+  --llm-judge-provider gemini --llm-judge-model gemini-3.6-flash \
+  --task-data-dir data/multiagent_conflict_data_v8_Gemini_3_6_flash \
+  --split total \
+  --mode multi \
+  --max-steps 20 \
+  --parallel-workers 10 \
+  --collect-data \
+  --out-dir /tmp/clasharness-eval
+```
+
+Run the `checksum_corpus.py` verification command after downloading. A truncated component does not announce itself — `analysis/` will happily
 compute a number over whatever files arrived. `CHECKSUMS.txt` in the code repository carries one
 SHA-256 rollup per component; verification only checks the components you actually downloaded.
 

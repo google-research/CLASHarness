@@ -184,12 +184,21 @@ kebab form only.
 
 ## 4. Evaluate a model
 
+To evaluate on the official 600-episode v8 benchmark released on Hugging Face ([`yuxianglai117/CLASHarness`](https://huggingface.co/datasets/yuxianglai117/CLASHarness)), first download `tasks-v8` and `splits-v8` into `data/`:
+
+```bash
+pip install huggingface_hub
+python tools/download_data.py --repo yuxianglai117/CLASHarness --component tasks-v8 --component splits-v8
+```
+
+Then run `examples/train_and_eval.py` pointing `--task-data-dir` to `data/multiagent_conflict_data_v8_Gemini_3_6_flash` (or `/tmp/clasharness-data` if evaluating locally generated tasks):
+
 ```bash
 python examples/train_and_eval.py \
   --agent llm \
   --llm-provider gemini --model <model-id> \
   --llm-judge-provider gemini --llm-judge-model <judge-model-id> \
-  --task-data-dir /tmp/clasharness-data \
+  --task-data-dir data/multiagent_conflict_data_v8_Gemini_3_6_flash \
   --split total \
   --mode multi \
   --max-steps 20 \

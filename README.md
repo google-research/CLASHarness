@@ -72,27 +72,32 @@ python scripts/generate_conflict_vlm_scenarios.py \
 ```
 > Validates workspace generation, task materialization, and dual-track rubric compilation in ~20 seconds.
 
-### 3. Evaluating an Agent
+### 3. Evaluating an Agent on the Official Benchmark
 
-Evaluate a model on generated or downloaded benchmark episodes:
+Download the official 600-episode v8 benchmark from [Hugging Face (`yuxianglai117/CLASHarness`)](https://huggingface.co/datasets/yuxianglai117/CLASHarness) and run evaluation:
 
 ```bash
+# 1. Fetch the 600 compiled benchmark tasks and episode index into ./data/
+pip install huggingface_hub
+python tools/download_data.py --repo yuxianglai117/CLASHarness --component tasks-v8 --component splits-v8
+
+# 2. Evaluate an agent across all 600 episodes (--split total)
 export GEMINI_API_KEY="your-api-key"
 
 python examples/train_and_eval.py \
   --agent llm \
   --llm-provider gemini --model gemini-3.6-flash \
   --llm-judge-provider gemini --llm-judge-model gemini-3.6-flash \
-  --task-data-dir /tmp/clasharness-data \
+  --task-data-dir data/multiagent_conflict_data_v8_Gemini_3_6_flash \
   --split total \
   --mode multi \
-  --max-steps 30 \
+  --max-steps 20 \
   --parallel-workers 10 \
   --collect-data \
   --out-dir /tmp/clasharness-eval
 ```
 
-> For AWS Bedrock, Google Cloud Vertex AI, and local vLLM deployments, consult the [Quickstart Guide](docs/quickstart.md).
+> To evaluate on locally generated smoke-test tasks instead, set `--task-data-dir /tmp/clasharness-data`. For AWS Bedrock, Google Cloud Vertex AI, and local vLLM deployments, consult the [Quickstart Guide](docs/quickstart.md).
 
 ---
 
@@ -692,11 +697,24 @@ An auditing agent evaluates an expense report. A legacy portal cache reports an 
 ```bash
 pip install huggingface_hub
 
-# Download evaluation panel, 600 task specs, and episode index (8.5 GB)
+# Download evaluation panel, 600 task specs, and episode index (8.5 GB) into ./data/
 python tools/download_data.py --repo yuxianglai117/CLASHarness --component eval-v8 --component tasks-v8 --component splits-v8
 
 # Verify artifact integrity
 python tools/checksum_corpus.py --root data --verify CHECKSUMS.txt
+
+# Recompute paper leaderboard tables from downloaded trajectories (eval-v8)
+python analysis/table1_v8.py
+python analysis/difficulty_bands.py
+
+# Or run live agent evaluation on the downloaded 600 tasks (tasks-v8 + splits-v8)
+python examples/train_and_eval.py \
+  --agent llm \
+  --llm-provider gemini --model gemini-3.6-flash \
+  --llm-judge-provider gemini --llm-judge-model gemini-3.6-flash \
+  --task-data-dir data/multiagent_conflict_data_v8_Gemini_3_6_flash \
+  --split total --mode multi --max-steps 20 \
+  --parallel-workers 10 --collect-data --out-dir /tmp/clasharness-eval
 ```
 
 ---
