@@ -10,6 +10,7 @@ task_categories:
   - text-generation
   - other
 tags:
+  - arxiv:2610.19128
   - agents
   - multi-agent
   - computer-use
@@ -27,16 +28,17 @@ tags:
 ### Benchmarking Multi-Agent Conflict in Computer Use via a Controllable and Verifiable Generation Pipeline
 
 [![GitHub Code](https://img.shields.io/badge/GitHub-google--research%2FCLASHarness-181717.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/google-research/CLASHarness)
+[![Paper: arXiv 2610.19128](https://img.shields.io/badge/arXiv-2610.19128-B31B1B.svg?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.19128)
 [![Dataset License: CC BY 4.0](https://img.shields.io/badge/Dataset_License-CC_BY_4.0-EF9421.svg?style=flat-square)](https://creativecommons.org/licenses/by/4.0/)
 [![Code License: Apache 2.0](https://img.shields.io/badge/Code_License-Apache_2.0-2BA02D.svg?style=flat-square)](https://github.com/google-research/CLASHarness/blob/main/LICENSE)
-[![Preprint: arXiv](https://img.shields.io/badge/arXiv-Preprint-B31B1B.svg?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org)
 [![Google Research](https://img.shields.io/badge/Google-Research-4285F4.svg?style=flat-square&logo=google&logoColor=white)](https://research.google)
 
 <p align="center">
-  <b>The official 600-episode multi-agent conflict evaluation benchmark and recorded 15-model trajectory corpus for <a href="https://github.com/google-research/CLASHarness">CLASHarness</a>.</b>
+  <b>The official 600-episode multi-agent conflict evaluation benchmark and recorded 15-model trajectory corpus for <a href="https://github.com/google-research/CLASHarness">CLASHarness</a> (<a href="https://arxiv.org/abs/2610.19128">arXiv:2610.19128</a>).</b>
 </p>
 
 <p align="center">
+  <a href="https://arxiv.org/abs/2610.19128">📄 Paper (arXiv)</a> &nbsp;•&nbsp;
   <a href="https://github.com/google-research/CLASHarness">💻 GitHub Repository</a> &nbsp;•&nbsp;
   <a href="#overview">🚀 Overview</a> &nbsp;•&nbsp;
   <a href="#quick-start">⚡ Quick Start & Evaluation</a> &nbsp;•&nbsp;
@@ -54,7 +56,9 @@ tags:
 
 This repository hosts the compiled task specifications (`tasks-v8`), full-benchmark episode index (`splits-v8`), and recorded frontier model evaluation trajectories (`eval-v8`) for [**CLASHarness**](https://github.com/google-research/CLASHarness) — a controllable generation and evaluation harness for multi-agent coordination under conflicting, time-sensitive, multimodal evidence.
 
-> 🔗 **Code, Generation Pipeline & Evaluation Harness**: Visit the official GitHub repository at [**`github.com/google-research/CLASHarness`**](https://github.com/google-research/CLASHarness) for the 8-stage scenario generator (`S1`–`S8`), interactive multi-agent CLI runtime, 20 conflict seed recipes, and analysis suite.
+> 🔗 **Paper, Code & Evaluation Harness**:
+> - **Paper**: [*CLASHarness: Benchmarking Multi-Agent Conflict in Computer Use via a Controllable and Verifiable Generation Pipeline*](https://arxiv.org/abs/2610.19128) (`arXiv:2610.19128`)
+> - **GitHub Repository**: [**`github.com/google-research/CLASHarness`**](https://github.com/google-research/CLASHarness) (8-stage scenario generator `S1`–`S8`, interactive multi-agent CLI runtime, 20 conflict seed recipes, and analysis suite)
 
 - **Verifiable by Construction ($v^\star$ + Live Sandbox Execution)** ◈ Every benchmark episode pre-commits an atomic ground-truth decision value ($v^\star$), executes a reference solver trajectory inside a stateful multi-agent CLI sandbox, and compiles dual-track grading rubrics ($\Phi = \Phi_{\text{det}} \cup \Phi_{\text{sem}}$) directly from recorded side effects.
 - **Full 600-Episode Evaluation (`--split total`)** ◈ Built from 20 conflict seeds across 15 conflict archetypes (3 multi-round scenario versions per seed × 10 rounds per version = **600 episodes**). All 600 episodes are evaluated directly without a train/test split, stratified by reference trajectory length into **Easy (236)**, **Mid (224)**, and **Hard (140)**.
@@ -433,8 +437,8 @@ If you use the CLASHarness dataset or codebase in your research, please cite:
   author  = {Lai, Yuxiang and Zhong, Jike and Liu, Chengzhi and Li, Ming and
              Wang, Haonan and Yang, Xiaofeng and Zhao, Liang and Tang, Youbao and
              Fan, Ruixi},
-  journal = {arXiv preprint},
+  journal = {arXiv preprint arXiv:2610.19128},
   year    = {2026},
-  url     = {https://github.com/google-research/CLASHarness}
+  url     = {https://arxiv.org/abs/2610.19128}
 }
 ```

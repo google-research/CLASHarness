@@ -37,6 +37,8 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/google-research/CLASHarness"
 Repository = "https://github.com/google-research/CLASHarness.git"
+Paper = "https://arxiv.org/abs/2610.19128"
+Dataset = "https://huggingface.co/datasets/yuxianglai117/CLASHarness"
 Documentation = "https://github.com/google-research/CLASHarness#documentation"
 dependencies = [
     # Model providers.

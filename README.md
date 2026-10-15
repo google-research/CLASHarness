@@ -5,7 +5,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-2BA02D.svg?style=flat-square)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![Preprint: arXiv](https://img.shields.io/badge/arXiv-Preprint-B31B1B.svg?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org)
+[![Paper: arXiv 2610.19128](https://img.shields.io/badge/arXiv-2610.19128-B31B1B.svg?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.19128)
 [![Hugging Face](https://img.shields.io/badge/Dataset-Hugging%20Face-FFA000.svg?style=flat-square&logo=huggingface&logoColor=white)](https://huggingface.co/datasets/yuxianglai117/CLASHarness)
 [![Google Research](https://img.shields.io/badge/Google-Research-4285F4.svg?style=flat-square&logo=google&logoColor=white)](https://research.google)
 
@@ -14,6 +14,8 @@
 </p>
 
 <p align="center">
+  <a href="https://arxiv.org/abs/2610.19128">Paper</a> &nbsp;•&nbsp;
+  <a href="https://huggingface.co/datasets/yuxianglai117/CLASHarness">Dataset</a> &nbsp;•&nbsp;
   <a href="#overview">Overview</a> &nbsp;•&nbsp;
   <a href="#quick-start">Quick Start</a> &nbsp;•&nbsp;
   <a href="#leaderboard">Leaderboard</a> &nbsp;•&nbsp;
@@ -723,6 +725,7 @@ python examples/train_and_eval.py \
 
 | Resource | Description |
 | :--- | :--- |
+| 📄 [Paper (`arXiv:2610.19128`)](https://arxiv.org/abs/2610.19128) | Technical report, empirical findings across 15 frontier models, and formal verification design |
 | ⚡ [Quickstart Guide](docs/quickstart.md) | Setup, API keys, provider routing, and evaluation commands |
 | ⌘ [CLI Runtime Setup](docs/cli-runtime-setup.md) | Environment configuration, dependencies, and shell sandbox details |
 | ⚙️ [Generation Pipeline](Multi-Agent_GENERATION_PIPELINE.md) | 3-tier hierarchical scenario generation architecture and verification specs |
@@ -742,9 +745,9 @@ If you find CLASHarness useful in your research, please cite:
   author  = {Lai, Yuxiang and Zhong, Jike and Liu, Chengzhi and Li, Ming and
              Wang, Haonan and Yang, Xiaofeng and Zhao, Liang and Tang, Youbao and
              Fan, Ruixi},
-  journal = {arXiv preprint},
+  journal = {arXiv preprint arXiv:2610.19128},
   year    = {2026},
-  url     = {https://github.com/google-research/CLASHarness}
+  url     = {https://arxiv.org/abs/2610.19128}
 }
 ```
 

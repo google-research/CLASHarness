@@ -1,7 +1,7 @@
 # Reproducing Paper Results and Analysis
 
 This directory contains the analysis and reproduction scripts that generate every table, figure, and empirical metric reported in the paper:
-**"CLASHarness: Benchmarking Multi-Agent Conflict in Computer Use via a Controllable and Verifiable Generation Pipeline"**.
+[**"CLASHarness: Benchmarking Multi-Agent Conflict in Computer Use via a Controllable and Verifiable Generation Pipeline"** (`arXiv:2610.19128`)](https://arxiv.org/abs/2610.19128).
 
 ---
 
